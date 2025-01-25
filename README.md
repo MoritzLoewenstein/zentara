@@ -1,3 +1,13 @@
+# Ideen
+
+- [ ] Uhrzeit based Darkmode? Oder prefers-color-scheme?
+- [ ] SQLite Datenbank um Apps und Links zu speichern
+- [ ] Edit Mode
+- [ ] Registrierung
+  - [ ] erste registrierter User ist Admin
+  - [ ] Admin kann Invite Links erstellen
+  - [ ] Registrierung nach erstem Nutzer nur mit Invite Link
+
 # sv
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
