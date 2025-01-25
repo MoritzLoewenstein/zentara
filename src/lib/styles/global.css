@@ -1,0 +1,66 @@
+:root {
+	--turqoise: #4d9ebb;
+	--orange: #e77e11;
+	--green: #96b241;
+	--yellow: #fece3e;
+	--blue: #1b2560;
+	--offwhite: #f6f5f0;
+	--side-padding: max(2rem, calc((100% - 1200px) / 2));
+	--cube-width: 300px;
+}
+
+html,
+body {
+	background-color: var(--offwhite);
+	margin: 0;
+}
+
+body {
+	padding: 2rem var(--side-padding);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: "Courier New", Courier, monospace;
+	font-weight: 700;
+	color: var(--blue);
+}
+
+p,
+label,
+a {
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	color: var(--blue);
+}
+
+main {
+	position: relative;
+}
+
+button {
+	font-family: "Courier New", Courier, monospace;
+	font-weight: 700;
+	color: var(--offwhite);
+	background-color: var(--blue);
+	border: 1px solid var(--blue);
+	border-radius: 0;
+	padding: 0.5rem 1rem;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: transparent;
+	color: var(--blue);
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
