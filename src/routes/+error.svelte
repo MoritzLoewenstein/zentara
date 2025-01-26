@@ -4,16 +4,29 @@
 
 {#if page?.error?.code === 'unauthorized'}
 	<h1>Login</h1>
-	<form method="POST">
+	<form method="POST" action="?/login">
 		<label>
 			Email
-			<input name="email" type="email" placeholder="max.mustermann@example.org" />
+			<input name="email" type="email" placeholder="max.mustermann@example.org" required />
 		</label>
 		<label>
 			Password
-			<input name="password" type="password" placeholder="********" />
+			<input name="password" type="password" placeholder="********" required />
 		</label>
 		<button>Log in</button>
+	</form>
+{:else if page?.error?.code === 'unauthorized_first_user'}
+	<h1>Register</h1>
+	<form method="POST" action="?/register">
+		<label>
+			Email
+			<input name="email" type="email" placeholder="max.mustermann@example.org" required />
+		</label>
+		<label>
+			Password
+			<input name="password" type="password" placeholder="********" required />
+		</label>
+		<button>Register</button>
 	</form>
 {:else}
 	<h1>Error</h1>

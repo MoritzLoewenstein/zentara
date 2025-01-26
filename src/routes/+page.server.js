@@ -1,59 +1,78 @@
-import { error } from '@sveltejs/kit';
-import { dev } from '$app/environment';
-import { USER_MAIL, USER_PASSWORD } from '$env/static/private';
-import argon2 from 'argon2';
-import { ulid } from 'ulid';
-
-const SESSIONS = new Map();
-const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
+import { error } from "@sveltejs/kit";
+import {
+	createSession,
+	getSession,
+	updateSession,
+	SESSION_MAX_AGE,
+} from "$lib/server/session";
+import {
+	isFirstUser,
+	loginUser,
+	createFirstUser,
+	createUser,
+} from "$lib/server/user";
 
 /** @type {import('@sveltejs/kit').ServerLoad} */
 export async function load({ cookies }) {
-	if (dev) {
-		return { user: { mail: USER_MAIL } };
+	const firstUser = isFirstUser();
+	if (firstUser) {
+		return error(401, {
+			message: "Unauthorized",
+			code: "unauthorized_first_user",
+		});
 	}
-	const sessionCookie = cookies.get('sessionid');
-	console.log(sessionCookie);
+	const sessionCookie = cookies.get("session_id");
 	if (!sessionCookie) {
-		return error(401, { message: 'Unauthorized', code: 'unauthorized' });
+		return error(401, { message: "Unauthorized", code: "unauthorized" });
 	}
 
-	if (!SESSIONS.has(sessionCookie)) {
-		return error(401, { message: 'Unauthorized', code: 'unauthorized' });
+	const session = getSession(sessionCookie);
+	if (!session) {
+		return error(401, { message: "Unauthorized", code: "unauthorized" });
 	}
-	const session = SESSIONS.get(sessionCookie);
-	if (session.created_at + SESSION_MAX_AGE < Date.now() / 1000) {
-		// session expired
-		SESSIONS.delete(sessionCookie);
-		return error(401, { message: 'Unauthorized', code: 'unauthorized' });
-	}
-
+	updateSession(sessionCookie);
 	return { user: session };
 }
 
 /** @satisfies {import('./$types').Actions} */
 export const actions = {
-	default: async ({ request, cookies, locals }) => {
+	login: async ({ request, cookies, locals }) => {
 		const formData = await request.formData();
-		const email = formData.get('email');
-		const password = formData.get('password');
-		if (email !== USER_MAIL || !password) {
-			return error(401, { message: 'Unauthorized', code: 'unauthorized' });
+		const email = formData.get("email");
+		const password = formData.get("password");
+		if (!email || !password) {
+			return error(422, { message: "Bad Request", code: "bad_request" });
 		}
-		const valid = await argon2.verify(USER_PASSWORD, password);
-		if (!valid) {
-			return error(401, { message: 'Unauthorized', code: 'unauthorized' });
+		const user = await loginUser(email, password);
+		if (!user) {
+			return error(401, { message: "Unauthorized", code: "unauthorized" });
 		}
-
-		const sessionid = ulid();
-		cookies.set('sessionid', sessionid, { path: '/', maxAge: SESSION_MAX_AGE });
-		locals.user = {
-			sessionid,
-			mail: email
-		};
-		SESSIONS.set(sessionid, {
-			...locals.user,
-			created_at: Date.now() / 1000
+		const session_id = createSession(email);
+		cookies.set("session_id", session_id, {
+			path: "/",
+			maxAge: SESSION_MAX_AGE,
 		});
-	}
+		locals.user = {
+			session_id,
+			...user,
+		};
+	},
+	register: async ({ request, cookies, locals }) => {
+		const formData = await request.formData();
+		const email = formData.get("email");
+		const password = formData.get("password");
+		if (!email || !password) {
+			return error(422, { message: "Bad Request", code: "bad_request" });
+		}
+		const user = createFirstUser(email, password);
+		const session_id = createSession(user.id);
+		cookies.set("session_id", session_id, {
+			path: "/",
+			maxAge: SESSION_MAX_AGE,
+		});
+		locals.user = {
+			session_id,
+			...user,
+		};
+	},
 };
