@@ -1,19 +1,14 @@
 import { error } from "@sveltejs/kit";
 import {
 	createSession,
-	getSession,
+	getSessionUserInfo,
 	updateSession,
 	SESSION_MAX_AGE,
 } from "$lib/server/session";
-import {
-	isFirstUser,
-	loginUser,
-	createFirstUser,
-	createUser,
-} from "$lib/server/user";
+import { isFirstUser, loginUser, createFirstUser } from "$lib/server/user";
 
 /** @type {import('@sveltejs/kit').ServerLoad} */
-export async function load({ cookies }) {
+export function load({ cookies, url, locals }) {
 	const firstUser = isFirstUser();
 	if (firstUser) {
 		return error(401, {
@@ -21,17 +16,23 @@ export async function load({ cookies }) {
 			code: "unauthorized_first_user",
 		});
 	}
-	const sessionCookie = cookies.get("session_id");
-	if (!sessionCookie) {
-		return error(401, { message: "Unauthorized", code: "unauthorized" });
+	const session_id = cookies.get("session_id");
+	if (!session_id) {
+		const code = url.searchParams.get("recovery_code")
+			? "recovery_code"
+			: "unauthorized";
+		return error(401, { message: "Unauthorized", code });
 	}
 
-	const session = getSession(sessionCookie);
-	if (!session) {
+	const user = getSessionUserInfo(session_id);
+	if (!user) {
 		return error(401, { message: "Unauthorized", code: "unauthorized" });
 	}
-	updateSession(sessionCookie);
-	return { user: session };
+	updateSession(session_id);
+	locals.session_id = session_id;
+	locals.user = user;
+
+	return { user };
 }
 
 /** @satisfies {import('./$types').Actions} */
@@ -47,14 +48,16 @@ export const actions = {
 		if (!user) {
 			return error(401, { message: "Unauthorized", code: "unauthorized" });
 		}
-		const session_id = createSession(email);
+		const session_id = createSession(user.id);
 		cookies.set("session_id", session_id, {
 			path: "/",
 			maxAge: SESSION_MAX_AGE,
 		});
-		locals.user = {
+		locals.session_id = session_id;
+		locals.user = user;
+		return {
 			session_id,
-			...user,
+			user,
 		};
 	},
 	register: async ({ request, cookies, locals }) => {
@@ -64,15 +67,17 @@ export const actions = {
 		if (!email || !password) {
 			return error(422, { message: "Bad Request", code: "bad_request" });
 		}
-		const user = createFirstUser(email, password);
+		const user = await createFirstUser(email, password);
 		const session_id = createSession(user.id);
 		cookies.set("session_id", session_id, {
 			path: "/",
 			maxAge: SESSION_MAX_AGE,
 		});
-		locals.user = {
+		locals.session_id = session_id;
+		locals.user = user;
+		return {
 			session_id,
-			...user,
+			user,
 		};
 	},
 };

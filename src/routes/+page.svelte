@@ -5,60 +5,24 @@
 	import LinkGroup from '$lib/LinkGroup.svelte';
 	import Section from '$lib/Section.svelte';
 
-	import plausible from "$lib/icons/plausible.png";
+	import plausible from '$lib/icons/plausible.png';
 </script>
 
 <Section title="Applications">
 	<ApplicationGroup title="Monitoring">
-		<Application
-			name="Plausible"
-			link="https://plausible.monilo.org"
-			icon={plausible}
-		/>
-		<Application
-			name="Plausible"
-			link="https://plausible.monilo.org"
-			icon={plausible}
-		/>
-		<Application
-			name="Plausible"
-			link="https://plausible.monilo.org"
-			icon={plausible}
-		/>
+		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
+		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
+		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
 	</ApplicationGroup>
 	<ApplicationGroup title="Monitoring">
-		<Application
-			name="Plausible"
-			link="https://plausible.monilo.org"
-			icon={plausible}
-		/>
-		<Application
-			name="Plausible"
-			link="https://plausible.monilo.org"
-			icon={plausible}
-		/>
-		<Application
-			name="Plausible"
-			link="https://plausible.monilo.org"
-			icon={plausible}
-		/>
+		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
+		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
+		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
 	</ApplicationGroup>
 	<ApplicationGroup title="Monitoring">
-		<Application
-			name="Plausible"
-			link="https://plausible.monilo.org"
-			icon={plausible}
-		/>
-		<Application
-			name="Plausible"
-			link="https://plausible.monilo.org"
-			icon={plausible}
-		/>
-		<Application
-			name="Plausible"
-			link="https://plausible.monilo.org"
-			icon={plausible}
-		/>
+		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
+		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
+		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
 	</ApplicationGroup>
 </Section>
 

@@ -2,7 +2,7 @@
 --    Columns: id (ULID), email, password
 --    "id" is PRIMARY KEY, "email" is UNIQUE, both TEXT.
 CREATE TABLE IF NOT EXISTS users (
-    id TEXT PRIMARY KEY,
+    id TEXT NOT NULL PRIMARY KEY,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     is_admin INTEGER NOT NULL DEFAULT 0
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
 --    Columns: id (ULID), email, created_at (epoch), accepted_at (epoch)
 --    "id" is PRIMARY KEY, "email" is UNIQUE.
 CREATE TABLE IF NOT EXISTS user_invites (
-    id TEXT PRIMARY KEY,
+    id TEXT NOT NULL PRIMARY KEY,
     email TEXT NOT NULL UNIQUE,
     created_at INTEGER NOT NULL,
     -- Unix epoch
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS user_recovery_codes (
 --    Columns: id (ULID), created_at (epoch), updated_at (epoch), user_id (FK)
 --    "id" is PRIMARY KEY, referencing "users.id" for user_id.
 CREATE TABLE IF NOT EXISTS sessions (
-    id TEXT PRIMARY KEY,
+    id TEXT NOT NULL PRIMARY KEY,
     created_at INTEGER NOT NULL,
     -- Unix epoch
     updated_at INTEGER NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 --    Columns: user_id (FK), config
 --    "user_id" is PRIMARY KEY, referencing "users.id".
 CREATE TABLE IF NOT EXISTS dashboards (
-    user_id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL PRIMARY KEY,
     config TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );

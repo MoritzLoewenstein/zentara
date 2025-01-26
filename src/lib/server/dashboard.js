@@ -1,4 +1,4 @@
-import db from "./db.js";
+import db from './db.js';
 
 /**
  *
@@ -9,8 +9,8 @@ import db from "./db.js";
 export function saveDashboard(user_id, dashboard_config) {
 	const config = JSON.stringify(dashboard_config);
 	db.exec(
-		"INSERT INTO dashboards (user_id, config) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET config = ?",
-		[user_id, config, config],
+		'INSERT INTO dashboards (user_id, config) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET config = ?',
+		[user_id, config, config]
 	);
 }
 
@@ -20,10 +20,9 @@ export function saveDashboard(user_id, dashboard_config) {
  * @returns {?Dashboard}
  */
 export function getDashboard(user_id) {
-	const dashboard_config = db.getColumn(
-		"SELECT config FROM dashboards WHERE user_id = ?",
-		[user_id],
-	);
+	const dashboard_config = db.getColumn('SELECT config FROM dashboards WHERE user_id = ?', [
+		user_id
+	]);
 	if (!dashboard_config) {
 		return null;
 	}

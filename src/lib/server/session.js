@@ -15,7 +15,7 @@ export function createSession(user_id) {
 	const session_id = ulid();
 	const unix = Date.now() / 1000;
 	db.exec(
-		"INSERT INTO sessions (id, created_at, updated_at, user_id) VALUES (?, ?, ?)",
+		"INSERT INTO sessions (id, created_at, updated_at, user_id) VALUES (?, ?, ?, ?)",
 		[session_id, unix, unix, user_id],
 	);
 	return session_id;
@@ -24,19 +24,22 @@ export function createSession(user_id) {
 /**
  * @export
  * @param {string} session_id
- * @returns {{id: string, created_at: number, updated_at: number, user_id: string}|null}
+ * @returns {{id: string, email: string}|null}
  */
-export function getSession(session_id) {
+export function getSessionUserInfo(session_id) {
 	const absoluteTimeout = Date.now() / 1000 - SESSION_TIMEOUT_ABSOLUTE;
 	const inactivityTimeout = Date.now() / 1000 - SESSION_TIMEOUT_INACTIVITY;
-	const session = db.get(
-		"SELECT * FROM sessions WHERE id = ? AND created_at > ? AND updated_at > ?",
+	const user = db.get(
+		`SELECT users.id AS id, users.email AS email
+		FROM sessions
+		LEFT JOIN users ON sessions.user_id = users.id
+		WHERE sessions.id = ? AND sessions.created_at > ? AND sessions.updated_at > ?`,
 		[session_id, absoluteTimeout, inactivityTimeout],
 	);
-	if (!session) {
+	if (!user) {
 		return null;
 	}
-	return session;
+	return user;
 }
 
 /**

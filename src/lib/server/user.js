@@ -1,9 +1,9 @@
-import db from "./db.js";
-import { ulid } from "ulid";
-import argon2 from "argon2";
+import db from './db.js';
+import { ulid } from 'ulid';
+import argon2 from 'argon2';
 
 export function isFirstUser() {
-	const user_count = db.getColumn("SELECT count(*) FROM users");
+	const user_count = db.getColumn('SELECT count(*) FROM users');
 	return user_count === 0;
 }
 
@@ -13,26 +13,25 @@ export function isFirstUser() {
  * @export
  * @param {string} email
  * @param {string} password
- * @returns {string} user_id
+ * @returns {{ id: string, email: string, is_admin: true }}
  */
 export async function createFirstUser(email, password) {
-	const userTransaction = db.transaction((user_id, email, hashed_password) => {
-		const user_count = db.getColumn("SELECT count(*) FROM users");
-		if (user_count !== 0) {
-			throw new Error("First user already exists");
-		}
-		db.exec(
-			"INSERT INTO users (id, email, password, is_admin) VALUES (?, ?, ?, 1)",
-			[user_id, email, hashed_password],
-		);
-	});
+	const insertUser = db.prepare(
+		'INSERT INTO users (id, email, password, is_admin) VALUES (?, ?, ?, 1)'
+	);
 	const user_id = ulid();
 	const hashed_password = await argon2.hash(password);
-	userTransaction(user_id, email, hashed_password);
+	db.transaction(() => {
+		const user_count = db.getColumn('SELECT count(*) FROM users');
+		if (user_count !== 0) {
+			throw new Error('First user already exists');
+		}
+		insertUser.run(user_id, email, hashed_password);
+	});
 	return {
 		id: user_id,
 		email,
-		is_admin: true,
+		is_admin: true
 	};
 }
 
@@ -45,14 +44,14 @@ export async function createFirstUser(email, password) {
 export async function createUser(email, password) {
 	const user_id = ulid();
 	const hashed_password = await argon2.hash(password);
-	db.exec("INSERT INTO users (id, email, password) VALUES (?, ?, ?)", [
+	db.exec('INSERT INTO users (id, email, password) VALUES (?, ?, ?)', [
 		user_id,
 		email,
-		hashed_password,
+		hashed_password
 	]);
 	return {
 		id: user_id,
-		email,
+		email
 	};
 }
 
@@ -64,7 +63,7 @@ export async function createUser(email, password) {
  * @returns {{id: string, email: string}|false}
  */
 export async function loginUser(email, password) {
-	const user = db.get("SELECT * FROM users WHERE email = ?", [email]);
+	const user = db.get('SELECT * FROM users WHERE email = ?', [email]);
 	if (!user) {
 		return false;
 	}
@@ -74,6 +73,6 @@ export async function loginUser(email, password) {
 	}
 	return {
 		id: user.id,
-		email: user.email,
+		email: user.email
 	};
 }
