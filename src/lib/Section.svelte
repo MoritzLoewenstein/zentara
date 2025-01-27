@@ -17,11 +17,13 @@
 		flex-direction: row;
 		row-gap: 0;
 		column-gap: 8rem;
+		row-gap: 4rem;
+		flex-wrap: wrap;
 	}
 
 	.items {
 		display: flex;
 		flex-direction: column;
-		row-gap: 4rem;
+		row-gap: 6rem;
 	}
 </style>

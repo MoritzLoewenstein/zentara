@@ -43,9 +43,6 @@
 		display: grid;
 		gap: 0.5em;
 	}
-	input {
-		padding: 0.5em;
-	}
 	button {
 		padding: 0.5em;
 	}

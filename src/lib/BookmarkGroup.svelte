@@ -3,8 +3,8 @@
 	import { dashboard_state, DASHBOARD_STATES, EDIT_MODES } from './settings.svelte';
 	const { title, children } = $props();
 
-	const dashboard_edit = $derived(EDIT_MODES.includes(dashboard_state.state));
 	let titleValue = $state(title);
+	const dashboard_edit = $derived(EDIT_MODES.includes(dashboard_state.state));
 </script>
 
 <section>
@@ -13,15 +13,14 @@
 	{:else}
 		<h3 class="group-title">{title}</h3>
 	{/if}
-
 	<div class="items">
 		{@render children?.()}
 		{#if dashboard_edit}
 			<button
 				type="button"
-				title="add application"
-				class="btn-secondary"
-				onclick={() => dashboard_state.set(DASHBOARD_STATES.CREATE_APPLICATION)}
+				title="add bookmark"
+				class="btn-secondary bookmark-add"
+				onclick={() => dashboard_state.set(DASHBOARD_STATES.CREATE_BOOKMARK)}
 			>
 				<AddIcon />
 			</button>
@@ -37,7 +36,7 @@
 		display: block;
 		font-size: 1.17em;
 		margin-top: 0;
-		margin-bottom: 1em;
+		margin-bottom: 0.5rem;
 		margin-left: 0;
 		margin-right: 0;
 	}
@@ -52,10 +51,16 @@
 
 	.items {
 		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		justify-content: flex-start;
-		column-gap: 4rem;
-		row-gap: 4rem;
+		flex-direction: column;
+		row-gap: 0.5em;
+	}
+
+	button.bookmark-add {
+		margin-top: 0.5rem;
+		width: 100px;
+		height: max-content;
+		box-sizing: border-box;
+		padding: 0;
+		height: 26px;
 	}
 </style>
