@@ -58,10 +58,6 @@
 </dialog>
 
 <style>
-	dialog {
-		width: 250px;
-	}
-
 	dialog .wrapper {
 		display: flex;
 		flex-direction: column;

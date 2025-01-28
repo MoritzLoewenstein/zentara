@@ -84,10 +84,6 @@
 </dialog>
 
 <style>
-	dialog {
-		width: min(100%, 400px);
-	}
-
 	dialog .wrapper {
 		display: flex;
 		flex-direction: column;

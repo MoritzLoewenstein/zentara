@@ -27,7 +27,7 @@ h3,
 h4,
 h5,
 h6 {
-	font-family: 'Courier New', Courier, monospace;
+	font-family: "Courier New", Courier, monospace;
 	font-weight: 700;
 	color: var(--blue);
 }
@@ -52,6 +52,7 @@ input {
 
 dialog {
 	border: 2px solid var(--blue);
+	width: min(100%, 400px);
 }
 
 main {
@@ -60,7 +61,7 @@ main {
 }
 
 button {
-	font-family: 'Courier New', Courier, monospace;
+	font-family: "Courier New", Courier, monospace;
 	font-weight: 700;
 	color: var(--offwhite);
 	background-color: var(--blue);

@@ -25,8 +25,10 @@
 
 <style>
 	dialog {
+		position: fixed;;
 		right: var(--side-padding);
 		bottom: 2rem;
 		margin-right: 0;
+		width: max-content;
 	}
 </style>
