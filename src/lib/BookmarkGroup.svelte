@@ -20,7 +20,7 @@
 				type="button"
 				title="add bookmark"
 				class="btn-secondary bookmark-add"
-				onclick={() => dashboard_view.set(DASHBOARD_VIEW.CREATE_BOOKMARK)}
+				onclick={() => dashboard_view.set(DASHBOARD_VIEW.BOOKMARK_CREATE)}
 			>
 				<AddIcon />
 			</button>

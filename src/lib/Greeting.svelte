@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { DASHBOARD_VIEW, dashboard_view } from './settings.svelte.js';
+	import { dashboard_view, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte.js';
 	import LogoutIcon from './icons/LogoutIcon.svelte';
 	import SettingsIcon from './icons/SettingsIcon.svelte';
 	import EditIcon from './icons/EditIcon.svelte';
@@ -46,7 +46,7 @@
 			onclick={() => dashboard_view.set(DASHBOARD_VIEW.EDIT)}
 			title="edit dashboard"
 			class="edit"
-			class:active={dashboard_view.value === DASHBOARD_VIEW.EDIT}
+			class:active={EDIT_VIEWS.includes(dashboard_view.value)}
 		>
 			<EditIcon />
 		</button>

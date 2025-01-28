@@ -41,7 +41,6 @@ export function load({ cookies, url }) {
 		return error(401, { message: 'unauthorized', code: 'unauthorized' });
 	}
 	updateSession(session_id);
-	user.first_login = true;
 	return {
 		session_id,
 		user,

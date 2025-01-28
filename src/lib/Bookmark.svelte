@@ -14,13 +14,13 @@
 			type="button"
 			title="move bookmark"
 			class="btn-secondary move"
-			onclick={() => dashboard_view.set(DASHBOARD_VIEW.CREATE_BOOKMARK)}><MoveIcon /></button
+			onclick={() => dashboard_view.set(DASHBOARD_VIEW.BOOKMARK_CREATE)}><MoveIcon /></button
 		>
 		<button
 			type="button"
 			title="edit bookmark"
 			class="btn-secondary edit"
-			onclick={() => dashboard_view.set(DASHBOARD_VIEW.EDIT_BOOKMARK)}><EditIcon /></button
+			onclick={() => dashboard_view.set(DASHBOARD_VIEW.BOOKMARK_EDIT)}><EditIcon /></button
 		>
 	</div>
 {:else}

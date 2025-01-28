@@ -21,7 +21,7 @@
 				type="button"
 				title="add application"
 				class="btn-secondary"
-				onclick={() => dashboard_view.set(DASHBOARD_VIEW.CREATE_APPLICATION)}
+				onclick={() => dashboard_view.set(DASHBOARD_VIEW.APPLICATION_CREATE)}
 			>
 				<AddIcon />
 			</button>

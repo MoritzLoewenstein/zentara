@@ -28,10 +28,12 @@
 
 	/**@type {Dashboard} */
 	let dashboard_config = $state(page.data.dashboard);
-	if(browser) {
-		dashboard_content.update({ dashboard: page.data.dashboard, dashboard_edit: page.data.dashboard });
+	if (browser) {
+		dashboard_content.update({
+			dashboard: page.data.dashboard,
+			dashboard_edit: page.data.dashboard
+		});
 	}
-
 
 	$effect(() => {
 		dashboard_config = EDIT_VIEWS.includes(dashboard_view.value)

@@ -5,7 +5,7 @@
 
 	let dialog;
 	$effect(() => {
-		if (dashboard_view.value === DASHBOARD_VIEW.CREATE_APPLICATION) {
+		if (dashboard_view.value === DASHBOARD_VIEW.APPLICATION_CREATE) {
 			dialog.showModal();
 		} else {
 			dialog.close();

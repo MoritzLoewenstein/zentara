@@ -5,7 +5,7 @@
 
 	let dialog;
 	$effect(() => {
-		if (dashboard_view.value === DASHBOARD_VIEW.CREATE_BOOKMARK) {
+		if (dashboard_view.value === DASHBOARD_VIEW.BOOKMARK_CREATE) {
 			dialog.showModal();
 		} else {
 			dialog.close();

@@ -6,7 +6,7 @@
 
 	let dialog;
 	$effect(() => {
-		if (dashboard_view.value === DASHBOARD_VIEW.EDIT_BOOKMARK) {
+		if (dashboard_view.value === DASHBOARD_VIEW.BOOKMARK_EDIT) {
 			dialog.showModal();
 		} else {
 			dialog.close();
