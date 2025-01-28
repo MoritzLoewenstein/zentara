@@ -44,7 +44,7 @@
 	{#if page.data.user}
 		<button
 			onclick={() => dashboard_view.set(DASHBOARD_VIEW.EDIT)}
-			title="Edit Dashboard"
+			title="edit dashboard"
 			class="edit"
 			class:active={dashboard_view.value === DASHBOARD_VIEW.EDIT}
 		>
@@ -53,13 +53,13 @@
 		{#if dashboard_view.value === DASHBOARD_VIEW.DASHBOARD || dashboard_view.value === DASHBOARD_VIEW.INTRO}
 			<button
 				onclick={() => dashboard_view.set(DASHBOARD_VIEW.SETTINGS)}
-				title="Settings"
+				title="settings"
 				class="settings"
 				class:active={dashboard_view.value === DASHBOARD_VIEW.SETTINGS}
 			>
 				<SettingsIcon />
 			</button>
-			<a href="/logout" title="Logout" class="logout">
+			<a href="/logout" title="logout" class="logout">
 				<LogoutIcon />
 			</a>
 		{/if}

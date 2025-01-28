@@ -28,7 +28,7 @@
 	<div class="wrapper">
 		<button
 			class="close"
-			title="close intro modal"
+			title="close intro"
 			onclick={() => dashboard_view.set(DASHBOARD_VIEW.DASHBOARD)}
 		>
 			<CloseIcon />
