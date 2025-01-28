@@ -9,7 +9,7 @@ import db from './db.js';
 export function saveDashboard(user_id, dashboard_config) {
 	const config = JSON.stringify(dashboard_config);
 	db.exec(
-		'INSERT INTO dashboards (user_id, config) VALUES (?, ?) ON CONFLICT(user_id) DO UPDATE SET config = ?',
+		'INSERT INTO dashboards (user_id, config) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET config = ?',
 		[user_id, config, config]
 	);
 }

@@ -1,5 +1,6 @@
 export const DASHBOARD_STATES = {
 	DEFAULT: 'default',
+	INTRO: 'intro',
 	SETTINGS: 'settings',
 	EDIT: 'edit',
 	CREATE_APPLICATION: 'create_application',

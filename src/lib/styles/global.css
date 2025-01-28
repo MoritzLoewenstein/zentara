@@ -7,6 +7,8 @@
 	--offwhite: #f6f5f0;
 	--side-padding: max(2rem, calc((100% - 1200px) / 2));
 	--cube-width: 300px;
+	--color-transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out,
+		border-color 0.2s ease-in-out;
 }
 
 html,
@@ -38,6 +40,10 @@ input {
 	color: var(--blue);
 }
 
+p {
+	margin: 0;
+}
+
 input {
 	padding: 0.5em;
 	border: 1px solid var(--blue);
@@ -62,6 +68,7 @@ button {
 	border-radius: 0;
 	padding: 0.5rem 1rem;
 	cursor: pointer;
+	transition: var(--color-transition);
 }
 
 button.btn-secondary {

@@ -21,13 +21,13 @@
 
 <dialog open={dashboard_state.state === DASHBOARD_STATES.EDIT_BOOKMARK}>
 	<div class="wrapper">
-		<h4>Edit Bookmark</h4>
+		<h4>edit bookmark</h4>
 		<label>
-			Title
+			title
 			<input type="text" bind:value={titleValue} placeholder="r/homelab" />
 		</label>
 		<label>
-			Link
+			link
 			<input type="url" bind:value={linkValue} placeholder="https://reddit.com/r/homelab" />
 		</label>
 		<div class="buttons">

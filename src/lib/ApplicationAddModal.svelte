@@ -16,13 +16,13 @@
 
 <dialog open={dashboard_state.state === DASHBOARD_STATES.CREATE_APPLICATION}>
 	<div class="wrapper">
-		<h4>Create Application</h4>
+		<h4>create application</h4>
 		<label>
-			Title
-			<input type="text" bind:value={titleValue} placeholder="Grafana" />
+			title
+			<input type="text" bind:value={titleValue} placeholder="grafana" />
 		</label>
 		<label>
-			Link
+			link
 			<input type="url" bind:value={linkValue} placeholder="https://grafana.example.org" />
 		</label>
 		<input

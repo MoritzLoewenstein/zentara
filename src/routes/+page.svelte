@@ -6,21 +6,26 @@
 	import BookmarkAddModal from '$lib/BookmarkAddModal.svelte';
 	import BookmarkEditModal from '$lib/BookmarkEditModal.svelte';
 	import BookmarkGroup from '$lib/BookmarkGroup.svelte';
+	import IntroModal from '$lib/IntroModal.svelte';
 	import SaveDashboardModal from '$lib/SaveDashboardModal.svelte';
 	import Section from '$lib/Section.svelte';
+	import SettingsModal from '$lib/SettingsModal.svelte';
 	import AddIcon from '$lib/icons/AddIcon.svelte';
 	import CloseIcon from '$lib/icons/CloseIcon.svelte';
+	import CopyIcon from '$lib/icons/CopyIcon.svelte';
 	import DeleteIcon from '$lib/icons/DeleteIcon.svelte';
 	import EditIcon from '$lib/icons/EditIcon.svelte';
 	import LogoutIcon from '$lib/icons/LogoutIcon.svelte';
 	import MoveIcon from '$lib/icons/MoveIcon.svelte';
+	import RefreshIcon from '$lib/icons/RefreshIcon.svelte';
 	import SaveIcon from '$lib/icons/SaveIcon.svelte';
 	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
 	import UploadIcon from '$lib/icons/UploadIcon.svelte';
-
 	import plausible from '$lib/icons/plausible.png';
 </script>
 
+<SettingsModal></SettingsModal>
+<IntroModal></IntroModal>
 <SaveDashboardModal></SaveDashboardModal>
 <ApplicationAddModal></ApplicationAddModal>
 <BookmarkAddModal></BookmarkAddModal>
@@ -35,6 +40,8 @@
 	<SaveIcon />
 	<SettingsIcon />
 	<UploadIcon />
+	<CopyIcon />
+	<RefreshIcon />
 </Section>
 <Section title="Applications">
 	<ApplicationGroup title="Monitoring">

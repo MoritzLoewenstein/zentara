@@ -2,6 +2,9 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { DASHBOARD_STATES, dashboard_state } from './settings.svelte.js';
+	import LogoutIcon from './icons/LogoutIcon.svelte';
+	import SettingsIcon from './icons/SettingsIcon.svelte';
+	import EditIcon from './icons/EditIcon.svelte';
 
 	let date = $state(new Date());
 	onMount(() => {
@@ -45,64 +48,19 @@
 			class="edit"
 			class:active={dashboard_state.state === DASHBOARD_STATES.EDIT}
 		>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				width="24"
-				height="24"
-				fill="none"
-				stroke="currentColor"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				stroke-width="2"
-			>
-				<!-- Pencil tip and body -->
-				<path d="M16.5 3.5L20.5 7.5 8 20l-4 1 1-4z" />
-				<!-- Underline or accent line -->
-				<path d="M12 20h9" />
-			</svg>
+			<EditIcon />
 		</button>
-		{#if dashboard_state.state === DASHBOARD_STATES.DEFAULT}
+		{#if dashboard_state.state === DASHBOARD_STATES.DEFAULT || dashboard_state.state === DASHBOARD_STATES.INTRO}
 			<button
 				onclick={() => dashboard_state.set(DASHBOARD_STATES.SETTINGS)}
 				title="Settings"
 				class="settings"
 				class:active={dashboard_state.state === DASHBOARD_STATES.SETTINGS}
 			>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="24"
-					height="24"
-					fill="none"
-					stroke="currentColor"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-				>
-					<!-- Center circle -->
-					<circle cx="12" cy="12" r="3" />
-					<!-- Gear “teeth” -->
-					<path
-						d="M12 2v2M12 20v2M20 12h2M2 12H4M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M19.07 4.93l-1.41 1.41M6.34 17.66l-1.41 1.41"
-					/>
-				</svg>
+				<SettingsIcon />
 			</button>
 			<a href="/logout" title="Logout" class="logout">
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="24"
-					height="24"
-					fill="none"
-					stroke="currentColor"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-				>
-					<!-- Door -->
-					<path d="M9 2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4" />
-					<!-- Arrow pointing out -->
-					<path d="M16 7l5 5-5 5" />
-					<path d="M21 12H9" />
-				</svg>
+				<LogoutIcon />
 			</a>
 		{/if}
 	{/if}
@@ -112,6 +70,10 @@
 <style>
 	h1 {
 		margin-top: 0;
+	}
+
+	p {
+		margin-top: 1rem;
 	}
 
 	div {
@@ -139,10 +101,7 @@
 		background-color: var(--offwhite);
 		border: 1px solid var(--offwhite);
 		background-color: none !important;
-		transition:
-			color 0.2s ease-in-out,
-			background-color 0.2s ease-in-out,
-			border-color 0.2s ease-in-out;
+		transition: var(--color-transition);
 	}
 
 	div button:hover,
