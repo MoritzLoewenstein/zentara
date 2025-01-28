@@ -1,11 +1,11 @@
 <script>
-	import { dashboard_state, DASHBOARD_STATES } from './settings.svelte';
+	import { dashboard_view, DASHBOARD_VIEW } from './settings.svelte';
 	import AddIcon from './icons/AddIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 
 	let dialog;
 	$effect(() => {
-		if (dashboard_state.state === DASHBOARD_STATES.CREATE_APPLICATION) {
+		if (dashboard_view.value === DASHBOARD_VIEW.CREATE_APPLICATION) {
 			dialog.showModal();
 		} else {
 			dialog.close();
@@ -19,7 +19,7 @@
 
 	function createApplication() {
 		//TODO actually save newly created application data locally
-		dashboard_state.set(DASHBOARD_STATES.EDIT);
+		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
 </script>
 
@@ -45,7 +45,7 @@
 				type="button"
 				title="cancel application creation"
 				class="btn-secondary"
-				onclick={() => dashboard_state.set(DASHBOARD_STATES.EDIT)}><CloseIcon /></button
+				onclick={() => dashboard_view.set(DASHBOARD_VIEW.EDIT)}><CloseIcon /></button
 			>
 			<button type="button" title="create application" onclick={createApplication}
 				><AddIcon /></button

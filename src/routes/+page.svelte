@@ -1,4 +1,7 @@
 <script>
+	import { page } from '$app/state';
+	import { browser } from '$app/environment';
+	import { dashboard_view, dashboard_content, EDIT_VIEWS } from '$lib/settings.svelte';
 	import Application from '$lib/Application.svelte';
 	import ApplicationAddModal from '$lib/ApplicationAddModal.svelte';
 	import ApplicationGroup from '$lib/ApplicationGroup.svelte';
@@ -21,7 +24,20 @@
 	import SaveIcon from '$lib/icons/SaveIcon.svelte';
 	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
 	import UploadIcon from '$lib/icons/UploadIcon.svelte';
-	import plausible from '$lib/icons/plausible.png';
+	/**@typedef {import('../lib/server/dashboard').Dashboard} Dashboard */
+
+	/**@type {Dashboard} */
+	let dashboard_config = $state(page.data.dashboard);
+	if(browser) {
+		dashboard_content.update({ dashboard: page.data.dashboard, dashboard_edit: page.data.dashboard });
+	}
+
+
+	$effect(() => {
+		dashboard_config = EDIT_VIEWS.includes(dashboard_view.value)
+			? dashboard_content.value.dashboard_edit
+			: dashboard_content.value.dashboard;
+	});
 </script>
 
 <SettingsModal></SettingsModal>
@@ -44,76 +60,18 @@
 	<RefreshIcon />
 </Section>
 <Section title="Applications">
-	<ApplicationGroup title="Monitoring">
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-	</ApplicationGroup>
-	<ApplicationGroup title="Monitoring">
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-	</ApplicationGroup>
-	<ApplicationGroup title="Monitoring">
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-		<Application name="Plausible" link="https://plausible.monilo.org" icon={plausible} />
-	</ApplicationGroup>
+	{#each dashboard_config.applicationGroups as applicationGroup}
+		<ApplicationGroup title={applicationGroup.title} />
+		{#each applicationGroup.applications as application}
+			<Application {...application} />
+		{/each}
+	{/each}
 </Section>
-
 <Section title="Bookmarks" isRow={true}>
-	<BookmarkGroup title="Social">
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-	</BookmarkGroup>
-	<BookmarkGroup title="Social">
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-	</BookmarkGroup>
-	<BookmarkGroup title="Social">
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-	</BookmarkGroup>
-	<BookmarkGroup title="Social">
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-	</BookmarkGroup>
-	<BookmarkGroup title="Social">
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-	</BookmarkGroup>
-	<BookmarkGroup title="Social">
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-	</BookmarkGroup>
-	<BookmarkGroup title="Social">
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-	</BookmarkGroup>
-	<BookmarkGroup title="Social">
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-	</BookmarkGroup>
-	<BookmarkGroup title="Social">
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-		<Bookmark title="Twitter" link="https://x.com/home" />
-	</BookmarkGroup>
+	{#each dashboard_config.bookmarkGroups as bookmarkGroup}
+		<BookmarkGroup title={bookmarkGroup.title} />
+		{#each bookmarkGroup.bookmarks as bookmark}
+			<Bookmark {...bookmark} />
+		{/each}
+	{/each}
 </Section>

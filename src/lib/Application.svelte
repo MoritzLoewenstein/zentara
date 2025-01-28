@@ -1,10 +1,11 @@
 <script>
+	import plausible from '$lib/icons/plausible.png';
 	const { name, icon, link } = $props();
 	const displayUrl = new URL(link).host;
 </script>
 
 <a href={link} target="_blank" rel="noopener noreferrer">
-	<img src={icon} alt={name} />
+	<img src={icon || plausible} alt={name} />
 	<p class="name">{name}</p>
 	<p class="url">{displayUrl}</p>
 </a>

@@ -1,9 +1,9 @@
 <script>
 	import AddIcon from './icons/AddIcon.svelte';
-	import { dashboard_state, DASHBOARD_STATES, EDIT_MODES } from './settings.svelte';
+	import { dashboard_view, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte';
 	const { title, children } = $props();
 
-	const dashboard_edit = $derived(EDIT_MODES.includes(dashboard_state.state));
+	const dashboard_edit = $derived(EDIT_VIEWS.includes(dashboard_view.value));
 	let titleValue = $state(title);
 </script>
 
@@ -21,7 +21,7 @@
 				type="button"
 				title="add application"
 				class="btn-secondary"
-				onclick={() => dashboard_state.set(DASHBOARD_STATES.CREATE_APPLICATION)}
+				onclick={() => dashboard_view.set(DASHBOARD_VIEW.CREATE_APPLICATION)}
 			>
 				<AddIcon />
 			</button>

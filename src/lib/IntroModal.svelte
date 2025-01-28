@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
 	import { PUBLIC_APP_NAMESPACE } from '$env/static/public';
-	import { dashboard_state, DASHBOARD_STATES } from './settings.svelte';
+	import { dashboard_view, DASHBOARD_VIEW } from './settings.svelte';
 	import CopyIcon from './icons/CopyIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import AddIcon from './icons/AddIcon.svelte';
@@ -11,7 +11,7 @@
 
 	let dialog;
 	$effect(() => {
-		if (dashboard_state.state === DASHBOARD_STATES.INTRO) {
+		if (dashboard_view.value === DASHBOARD_VIEW.INTRO) {
 			dialog.showModal();
 		} else {
 			dialog.close();
@@ -19,7 +19,7 @@
 	});
 	onMount(() => {
 		if (page.data.first_login) {
-			dashboard_state.set(DASHBOARD_STATES.INTRO);
+			dashboard_view.set(DASHBOARD_VIEW.INTRO);
 		}
 	});
 </script>
@@ -29,7 +29,7 @@
 		<button
 			class="close"
 			title="close intro modal"
-			onclick={() => dashboard_state.set(DASHBOARD_STATES.DEFAULT)}
+			onclick={() => dashboard_view.set(DASHBOARD_VIEW.DASHBOARD)}
 		>
 			<CloseIcon />
 		</button>

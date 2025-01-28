@@ -27,7 +27,7 @@ h3,
 h4,
 h5,
 h6 {
-	font-family: "Courier New", Courier, monospace;
+	font-family: 'Courier New', Courier, monospace;
 	font-weight: 700;
 	color: var(--blue);
 }
@@ -61,7 +61,7 @@ main {
 }
 
 button {
-	font-family: "Courier New", Courier, monospace;
+	font-family: 'Courier New', Courier, monospace;
 	font-weight: 700;
 	color: var(--offwhite);
 	background-color: var(--blue);

@@ -1,12 +1,12 @@
 <script>
-	import { dashboard_state, DASHBOARD_STATES } from './settings.svelte';
+	import { dashboard_view, DASHBOARD_VIEW } from './settings.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import SaveIcon from './icons/SaveIcon.svelte';
 	import DeleteIcon from './icons/DeleteIcon.svelte';
 
 	let dialog;
 	$effect(() => {
-		if (dashboard_state.state === DASHBOARD_STATES.EDIT_BOOKMARK) {
+		if (dashboard_view.value === DASHBOARD_VIEW.EDIT_BOOKMARK) {
 			dialog.showModal();
 		} else {
 			dialog.close();
@@ -18,13 +18,13 @@
 
 	function saveBookmark() {
 		//TODO actually save newly created bookmark data locally
-		dashboard_state.set(DASHBOARD_STATES.EDIT);
+		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
 	function deleteBookmark() {
 		const confirmDelete = confirm('Are you sure you want to delete this bookmark?');
 		if (!confirmDelete) return;
 		//TODO actually delete bookmark data locally
-		dashboard_state.set(DASHBOARD_STATES.EDIT);
+		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
 </script>
 
@@ -50,7 +50,7 @@
 				type="button"
 				title="cancel bookmark creation"
 				class="btn-secondary cancel"
-				onclick={() => dashboard_state.set(DASHBOARD_STATES.EDIT)}><CloseIcon /></button
+				onclick={() => dashboard_view.set(DASHBOARD_VIEW.EDIT)}><CloseIcon /></button
 			>
 			<button type="button" title="save bookmark" onclick={saveBookmark}><SaveIcon /></button>
 		</div>

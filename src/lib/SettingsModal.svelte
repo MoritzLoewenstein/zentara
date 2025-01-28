@@ -5,11 +5,11 @@
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import CopyIcon from './icons/CopyIcon.svelte';
 	import RefreshIcon from './icons/RefreshIcon.svelte';
-	import { dashboard_state, DASHBOARD_STATES } from './settings.svelte';
+	import { dashboard_view, DASHBOARD_VIEW } from './settings.svelte';
 
 	let dialog;
 	$effect(() => {
-		if (dashboard_state.state === DASHBOARD_STATES.SETTINGS) {
+		if (dashboard_view.value === DASHBOARD_VIEW.SETTINGS) {
 			dialog.showModal();
 		} else {
 			dialog.close();
@@ -25,7 +25,7 @@
 		<button
 			class="close"
 			title="close settings"
-			onclick={() => dashboard_state.set(DASHBOARD_STATES.DEFAULT)}
+			onclick={() => dashboard_view.set(DASHBOARD_VIEW.DASHBOARD)}
 		>
 			<CloseIcon />
 		</button>

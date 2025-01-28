@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { DASHBOARD_STATES, dashboard_state } from './settings.svelte.js';
+	import { DASHBOARD_VIEW, dashboard_view } from './settings.svelte.js';
 	import LogoutIcon from './icons/LogoutIcon.svelte';
 	import SettingsIcon from './icons/SettingsIcon.svelte';
 	import EditIcon from './icons/EditIcon.svelte';
@@ -43,19 +43,19 @@
 	<p>{formattedDate}</p>
 	{#if page.data.user}
 		<button
-			onclick={() => dashboard_state.set(DASHBOARD_STATES.EDIT)}
+			onclick={() => dashboard_view.set(DASHBOARD_VIEW.EDIT)}
 			title="Edit Dashboard"
 			class="edit"
-			class:active={dashboard_state.state === DASHBOARD_STATES.EDIT}
+			class:active={dashboard_view.value === DASHBOARD_VIEW.EDIT}
 		>
 			<EditIcon />
 		</button>
-		{#if dashboard_state.state === DASHBOARD_STATES.DEFAULT || dashboard_state.state === DASHBOARD_STATES.INTRO}
+		{#if dashboard_view.value === DASHBOARD_VIEW.DASHBOARD || dashboard_view.value === DASHBOARD_VIEW.INTRO}
 			<button
-				onclick={() => dashboard_state.set(DASHBOARD_STATES.SETTINGS)}
+				onclick={() => dashboard_view.set(DASHBOARD_VIEW.SETTINGS)}
 				title="Settings"
 				class="settings"
-				class:active={dashboard_state.state === DASHBOARD_STATES.SETTINGS}
+				class:active={dashboard_view.value === DASHBOARD_VIEW.SETTINGS}
 			>
 				<SettingsIcon />
 			</button>

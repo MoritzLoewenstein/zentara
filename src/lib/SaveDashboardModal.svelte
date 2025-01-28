@@ -1,22 +1,22 @@
 <script>
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import SaveIcon from './icons/SaveIcon.svelte';
-	import { DASHBOARD_STATES, dashboard_state } from './settings.svelte.js';
+	import { DASHBOARD_VIEW, dashboard_view } from './settings.svelte.js';
 
 	async function saveDashboard() {
 		//TODO fetch API with serialized dashboard data
 		//TODO optimistic update, show success message
 		//TODO in case of failure go back to edit mode and display an error message
 		// https://svelte.dev/docs/svelte/bind
-		dashboard_state.set(DASHBOARD_STATES.DEFAULT);
+		dashboard_view.set(DASHBOARD_VIEW.DASHBOARD);
 	}
 </script>
 
-<dialog open={dashboard_state.state === DASHBOARD_STATES.EDIT}>
+<dialog open={dashboard_view.value === DASHBOARD_VIEW.EDIT}>
 	<button
 		title="cancel dashboard edit"
 		class="btn-secondary"
-		onclick={() => dashboard_state.set(DASHBOARD_STATES.DEFAULT)}
+		onclick={() => dashboard_view.set(DASHBOARD_VIEW.DASHBOARD)}
 	>
 		<CloseIcon />
 	</button>
@@ -25,7 +25,7 @@
 
 <style>
 	dialog {
-		position: fixed;;
+		position: fixed;
 		right: var(--side-padding);
 		bottom: 2rem;
 		margin-right: 0;

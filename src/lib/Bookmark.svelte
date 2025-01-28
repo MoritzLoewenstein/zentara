@@ -1,10 +1,10 @@
 <script>
-	import { dashboard_state, DASHBOARD_STATES, EDIT_MODES } from './settings.svelte';
+	import { dashboard_view, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte';
 	import EditIcon from './icons/EditIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
 	const { title, link } = $props();
 
-	const dashboard_edit = $derived(EDIT_MODES.includes(dashboard_state.state));
+	const dashboard_edit = $derived(EDIT_VIEWS.includes(dashboard_view.value));
 </script>
 
 {#if dashboard_edit}
@@ -14,13 +14,13 @@
 			type="button"
 			title="move bookmark"
 			class="btn-secondary move"
-			onclick={() => dashboard_state.set(DASHBOARD_STATES.CREATE_BOOKMARK)}><MoveIcon /></button
+			onclick={() => dashboard_view.set(DASHBOARD_VIEW.CREATE_BOOKMARK)}><MoveIcon /></button
 		>
 		<button
 			type="button"
 			title="edit bookmark"
 			class="btn-secondary edit"
-			onclick={() => dashboard_state.set(DASHBOARD_STATES.EDIT_BOOKMARK)}><EditIcon /></button
+			onclick={() => dashboard_view.set(DASHBOARD_VIEW.EDIT_BOOKMARK)}><EditIcon /></button
 		>
 	</div>
 {:else}
