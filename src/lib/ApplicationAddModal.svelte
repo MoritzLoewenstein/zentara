@@ -3,6 +3,15 @@
 	import AddIcon from './icons/AddIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 
+	let dialog;
+	$effect(() => {
+		if (dashboard_state.state === DASHBOARD_STATES.CREATE_APPLICATION) {
+			dialog.showModal();
+		} else {
+			dialog.close();
+		}
+	});
+
 	let titleValue = $state('');
 	let linkValue = $state('');
 	let imageValue = $state('');
@@ -14,7 +23,7 @@
 	}
 </script>
 
-<dialog open={dashboard_state.state === DASHBOARD_STATES.CREATE_APPLICATION}>
+<dialog bind:this={dialog}>
 	<div class="wrapper">
 		<h4>create application</h4>
 		<label>
@@ -50,17 +59,6 @@
 		display: flex;
 		flex-direction: column;
 		row-gap: 1rem;
-	}
-
-	dialog {
-		position: fixed;
-		z-index: 3;
-	}
-
-	dialog::backdrop {
-		position: fixed;
-		z-index: 5;
-		background-color: red;
 	}
 
 	h4 {

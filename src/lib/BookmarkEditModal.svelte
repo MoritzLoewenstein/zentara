@@ -4,6 +4,15 @@
 	import SaveIcon from './icons/SaveIcon.svelte';
 	import DeleteIcon from './icons/DeleteIcon.svelte';
 
+	let dialog;
+	$effect(() => {
+		if (dashboard_state.state === DASHBOARD_STATES.EDIT_BOOKMARK) {
+			dialog.showModal();
+		} else {
+			dialog.close();
+		}
+	});
+
 	let titleValue = $state('');
 	let linkValue = $state('');
 
@@ -19,7 +28,7 @@
 	}
 </script>
 
-<dialog open={dashboard_state.state === DASHBOARD_STATES.EDIT_BOOKMARK}>
+<dialog bind:this={dialog}>
 	<div class="wrapper">
 		<h4>edit bookmark</h4>
 		<label>
@@ -57,17 +66,6 @@
 		display: flex;
 		flex-direction: column;
 		row-gap: 1rem;
-	}
-
-	dialog {
-		position: fixed;
-		z-index: 3;
-	}
-
-	dialog::backdrop {
-		position: fixed;
-		z-index: 5;
-		background-color: red;
 	}
 
 	h4 {

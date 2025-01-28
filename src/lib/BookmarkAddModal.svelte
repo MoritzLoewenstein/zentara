@@ -3,6 +3,15 @@
 	import AddIcon from './icons/AddIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 
+	let dialog;
+	$effect(() => {
+		if (dashboard_state.state === DASHBOARD_STATES.CREATE_BOOKMARK) {
+			dialog.showModal();
+		} else {
+			dialog.close();
+		}
+	});
+
 	let titleValue = $state('');
 	let linkValue = $state('');
 
@@ -12,7 +21,7 @@
 	}
 </script>
 
-<dialog open={dashboard_state.state === DASHBOARD_STATES.CREATE_BOOKMARK}>
+<dialog bind:this={dialog}>
 	<div class="wrapper">
 		<h4>create bookmark</h4>
 		<label>
@@ -46,16 +55,6 @@
 		row-gap: 1rem;
 	}
 
-	dialog {
-		position: fixed;
-		z-index: 3;
-	}
-
-	dialog::backdrop {
-		position: fixed;
-		z-index: 5;
-		background-color: red;
-	}
 
 	h4 {
 		margin: 0;

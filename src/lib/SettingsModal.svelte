@@ -6,13 +6,21 @@
 	import CopyIcon from './icons/CopyIcon.svelte';
 	import RefreshIcon from './icons/RefreshIcon.svelte';
 	import { dashboard_state, DASHBOARD_STATES } from './settings.svelte';
-	/** @type {import('./$types').PageProps} */
+
+	let dialog;
+	$effect(() => {
+		if (dashboard_state.state === DASHBOARD_STATES.SETTINGS) {
+			dialog.showModal();
+		} else {
+			dialog.close();
+		}
+	});
 
 	const recoveryCodeCount = page.data.recovery_code_count ?? 0;
 	const openInvites = page.data.user_invites ?? [];
 </script>
 
-<dialog open={dashboard_state.state === DASHBOARD_STATES.SETTINGS}>
+<dialog bind:this={dialog}>
 	<div class="wrapper">
 		<button
 			class="close"
@@ -109,7 +117,6 @@
 <style>
 	dialog {
 		width: min(100%, 400px);
-		z-index: 1;
 	}
 
 	dialog .wrapper {

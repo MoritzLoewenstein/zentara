@@ -7,18 +7,29 @@
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import AddIcon from './icons/AddIcon.svelte';
 	import SaveIcon from './icons/SaveIcon.svelte';
+	import { onMount } from 'svelte';
 
-	if (page.data.first_login) {
-		dashboard_state.set(DASHBOARD_STATES.INTRO);
-	}
+	let dialog;
+	$effect(() => {
+		if (dashboard_state.state === DASHBOARD_STATES.INTRO) {
+			dialog.showModal();
+		} else {
+			dialog.close();
+		}
+	});
+	onMount(() => {
+		if (page.data.first_login) {
+			dashboard_state.set(DASHBOARD_STATES.INTRO);
+		}
+	});
 </script>
 
-<dialog open={dashboard_state.state === DASHBOARD_STATES.INTRO}>
+<dialog bind:this={dialog}>
 	<div class="wrapper">
 		<button
 			class="close"
 			title="close intro modal"
-			on:click={() => dashboard_state.set(DASHBOARD_STATES.DEFAULT)}
+			onclick={() => dashboard_state.set(DASHBOARD_STATES.DEFAULT)}
 		>
 			<CloseIcon />
 		</button>
@@ -35,13 +46,13 @@
 				<button
 					title="copy recovery codes"
 					class="recover-code-copy"
-					on:click={() => navigator.clipboard.writeText(page.data.recovery_codes.join('\n'))}
+					onclick={() => navigator.clipboard.writeText(page.data.recovery_codes.join('\n'))}
 					><CopyIcon />
 				</button>
 				<button
 					title="download recovery codes"
 					class="recovery-code-download"
-					on:click={() => {
+					onclick={() => {
 						const blob = new Blob([page.data.recovery_codes.join('\n')], { type: 'text/plain' });
 						const url = URL.createObjectURL(blob);
 						const a = document.createElement('a');
@@ -75,7 +86,6 @@
 <style>
 	dialog {
 		width: min(100%, 400px);
-		z-index: 1;
 	}
 
 	dialog .wrapper {
