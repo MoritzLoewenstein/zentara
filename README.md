@@ -58,12 +58,30 @@ When I went looking for a sleek server dashboard, missing login systems in other
 - **recovery codes**: Zentara offers the possibility to use recovery codes. These codes can be used to set a new password when you have lost your access. They can only be used once. Recovery codes can be regenerated at any time, but only if you have access (re-authentication). You can check how many recovery codes you have left at any time.
 - **invite links**: Zentara offers the possibility to generate invite links for new users. New users will have their own dashboard, they can not watch your dashboard! You can see the open invites at any time. Invite links will expire after 14 days and can only be used once with the same email that they were created with.
 
-# todo
+# todo first version (not really an mvp anymore but still)
 
-- [ ] finish regenerate recovery codes
-- [ ] finish dashboard serialization
-- [ ] finish draggable
+- [ ] regenerate recovery codes
+- [ ] dashboard serialization
+- [ ] draggable bookmarks and applications
+- [ ] draggable bookmark groups and application groups
 - [ ] finish invite functionality
-- [ ] time based darkmode? or prefers-color-scheme?
 - [ ] docker / docker-compose deployment
+
+# todo after first version
+
+- [ ] time based darkmode? or prefers-color-scheme?
+- [ ] built-in icons for popular applications: how?
+
+## sqlite backups
+
 - [ ] sqlite backup trigger as admin
+  - [ ] 3 radio buttons: backup, backup + download, backup + download + delete on server
+  - [ ] dynamic submit button text and icon
+- [ ] sqlite backup file list in settings
+  - [ ] delete backup file
+  - [ ] download backup file
+- [ ] sqlite manual restore / setup from backup docs
+- [ ] sqlite automatic scheduled backup as admin
+  - [ ] choice daily, weekly, monthly
+- [ ] sqlite automatic scheduled backup cleanup as admin
+  - [ ] backup max age in days
