@@ -1,5 +1,5 @@
 <script>
-	import { dashboard_view, DASHBOARD_VIEW } from './settings.svelte';
+	import { dashboard_view, dashboard_content, DASHBOARD_VIEW } from './settings.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import SaveIcon from './icons/SaveIcon.svelte';
 	import DeleteIcon from './icons/DeleteIcon.svelte';
@@ -13,17 +13,24 @@
 		}
 	});
 
-	let titleValue = $state('');
-	let linkValue = $state('');
+	const bookmark = dashboard_content.getBookmarkEdit();
+	let titleValue = $state(bookmark.title);
+	let linkValue = $state(bookmark.link);
+
+	$effect(() => {
+		const bm = dashboard_content.getBookmarkEdit();
+		titleValue = bm.title;
+		linkValue = bm.link;
+	});
 
 	function saveBookmark() {
-		//TODO actually save newly created bookmark data locally
+		dashboard_content.saveBookmarkEdit({ title: titleValue, link: linkValue });
 		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
 	function deleteBookmark() {
 		const confirmDelete = confirm('Are you sure you want to delete this bookmark?');
 		if (!confirmDelete) return;
-		//TODO actually delete bookmark data locally
+		dashboard_content.deleteBookmarkEdit();
 		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
 </script>

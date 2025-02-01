@@ -62,18 +62,18 @@
 	<RefreshIcon />
 </Section>
 <Section title="Applications">
-	{#each dashboard_config.applicationGroups as applicationGroup}
-		<ApplicationGroup title={applicationGroup.title} />
-		{#each applicationGroup.applications as application}
-			<Application {...application} />
+	{#each dashboard_config.applicationGroups as applicationGroup, groupIndex}
+		<ApplicationGroup title={applicationGroup.title} {groupIndex}/>
+		{#each applicationGroup.applications as application, applicationIndex}
+			<Application {...application} {groupIndex} {applicationIndex} />
 		{/each}
 	{/each}
 </Section>
 <Section title="Bookmarks" isRow={true}>
-	{#each dashboard_config.bookmarkGroups as bookmarkGroup}
-		<BookmarkGroup title={bookmarkGroup.title} />
-		{#each bookmarkGroup.bookmarks as bookmark}
-			<Bookmark {...bookmark} />
+	{#each dashboard_config.bookmarkGroups as bookmarkGroup, groupIndex}
+		<BookmarkGroup title={bookmarkGroup.title} {groupIndex} />
+		{#each bookmarkGroup.bookmarks as bookmark, bookmarkIndex}
+			<Bookmark {...bookmark} {groupIndex} {bookmarkIndex} />
 		{/each}
 	{/each}
 </Section>

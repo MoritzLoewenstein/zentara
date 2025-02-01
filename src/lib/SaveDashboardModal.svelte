@@ -1,13 +1,14 @@
 <script>
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import SaveIcon from './icons/SaveIcon.svelte';
-	import { DASHBOARD_VIEW, dashboard_view } from './settings.svelte.js';
+	import { dashboard_content, dashboard_view, DASHBOARD_VIEW } from './settings.svelte.js';
 
 	async function saveDashboard() {
 		//TODO fetch API with serialized dashboard data
 		//TODO optimistic update, show success message
 		//TODO in case of failure go back to edit mode and display an error message
 		// https://svelte.dev/docs/svelte/bind
+		dashboard_content.commitDashboardEdit();
 		dashboard_view.set(DASHBOARD_VIEW.DASHBOARD);
 	}
 </script>

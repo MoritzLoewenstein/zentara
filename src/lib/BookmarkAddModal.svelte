@@ -1,5 +1,5 @@
 <script>
-	import { dashboard_view, DASHBOARD_VIEW } from './settings.svelte';
+	import { dashboard_view, dashboard_content, DASHBOARD_VIEW } from './settings.svelte';
 	import AddIcon from './icons/AddIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 
@@ -16,7 +16,7 @@
 	let linkValue = $state('');
 
 	function createBookmark() {
-		//TODO actually save newly created bookmark data locally
+		dashboard_content.addBookmark({ title: titleValue, link: linkValue });
 		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
 </script>

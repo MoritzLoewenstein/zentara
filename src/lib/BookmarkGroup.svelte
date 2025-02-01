@@ -1,10 +1,19 @@
 <script>
 	import AddIcon from './icons/AddIcon.svelte';
-	import { dashboard_view, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte';
-	const { title, children } = $props();
+	import { dashboard_view, dashboard_content, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte';
+	const { title, children, groupIndex } = $props();
 
-	let titleValue = $state(title);
 	const dashboard_edit = $derived(EDIT_VIEWS.includes(dashboard_view.value));
+	let titleValue = $state(title);
+
+	$effect(() => {
+		dashboard_content.setBookmarkGroupTitle(groupIndex, titleValue);
+	});
+
+	function createBookmark() {
+		dashboard_content.setBookmarkCreate(groupIndex);
+		dashboard_view.set(DASHBOARD_VIEW.BOOKMARK_CREATE);
+	}
 </script>
 
 <section>
@@ -20,7 +29,7 @@
 				type="button"
 				title="add bookmark"
 				class="btn-secondary bookmark-add"
-				onclick={() => dashboard_view.set(DASHBOARD_VIEW.BOOKMARK_CREATE)}
+				onclick={createBookmark}
 			>
 				<AddIcon />
 			</button>

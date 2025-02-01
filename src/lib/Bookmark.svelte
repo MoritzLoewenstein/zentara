@@ -1,10 +1,15 @@
 <script>
-	import { dashboard_view, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte';
+	import { dashboard_view, dashboard_content, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte';
 	import EditIcon from './icons/EditIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
-	const { title, link } = $props();
+	const { title, link, groupIndex, bookmarkIndex } = $props();
 
 	const dashboard_edit = $derived(EDIT_VIEWS.includes(dashboard_view.value));
+
+	function editBookmark() {
+		dashboard_content.setBookmarkEdit(groupIndex, bookmarkIndex);
+		dashboard_view.set(DASHBOARD_VIEW.BOOKMARK_EDIT);
+	}
 </script>
 
 {#if dashboard_edit}
@@ -20,7 +25,7 @@
 			type="button"
 			title="edit bookmark"
 			class="btn-secondary edit"
-			onclick={() => dashboard_view.set(DASHBOARD_VIEW.BOOKMARK_EDIT)}><EditIcon /></button
+			onclick={editBookmark}><EditIcon /></button
 		>
 	</div>
 {:else}

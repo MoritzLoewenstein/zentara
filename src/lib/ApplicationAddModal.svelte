@@ -1,5 +1,5 @@
 <script>
-	import { dashboard_view, DASHBOARD_VIEW } from './settings.svelte';
+	import { dashboard_view, dashboard_content, DASHBOARD_VIEW } from './settings.svelte';
 	import AddIcon from './icons/AddIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 
@@ -12,13 +12,14 @@
 		}
 	});
 
-	let titleValue = $state('');
+	let iconValue = $state('');
+	let nameValue = $state('');
 	let linkValue = $state('');
-	let imageValue = $state('');
-	// use https://www.npmjs.com/package/dompurify for svgs
 
 	function createApplication() {
-		//TODO actually save newly created application data locally
+		// use https://www.npmjs.com/package/dompurify for svgs on server
+		//TODO: icon img to string
+		dashboard_content.addApplication({ icon: iconValue, name: nameValue, link: linkValue });
 		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
 </script>
@@ -27,8 +28,8 @@
 	<div class="wrapper">
 		<h4>create application</h4>
 		<label>
-			title
-			<input type="text" bind:value={titleValue} placeholder="grafana" />
+			name
+			<input type="text" bind:value={nameValue} placeholder="grafana" />
 		</label>
 		<label>
 			link
@@ -37,7 +38,7 @@
 		<input
 			type="file"
 			accept="image/png, image/jpeg, image/svg+xml"
-			bind:value={imageValue}
+			bind:value={iconValue}
 			placeholder="Image"
 		/>
 		<div class="buttons">

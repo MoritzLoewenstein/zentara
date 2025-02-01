@@ -1,10 +1,19 @@
 <script>
 	import AddIcon from './icons/AddIcon.svelte';
-	import { dashboard_view, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte';
-	const { title, children } = $props();
+	import { dashboard_view, dashboard_content, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte';
+	const { title, children, groupIndex } = $props();
 
 	const dashboard_edit = $derived(EDIT_VIEWS.includes(dashboard_view.value));
 	let titleValue = $state(title);
+
+	$effect(() => {
+		dashboard_content.setApplicationGroupTitle(groupIndex, titleValue);
+	});
+
+	function createApplication() {
+		dashboard_content.setApplicationCreate(groupIndex);
+		dashboard_view.set(DASHBOARD_VIEW.APPLICATION_CREATE);
+	}
 </script>
 
 <section>
@@ -21,7 +30,7 @@
 				type="button"
 				title="add application"
 				class="btn-secondary"
-				onclick={() => dashboard_view.set(DASHBOARD_VIEW.APPLICATION_CREATE)}
+				onclick={createApplication}
 			>
 				<AddIcon />
 			</button>
