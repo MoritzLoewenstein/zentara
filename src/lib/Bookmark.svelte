@@ -21,11 +21,8 @@
 			class="btn-secondary move"
 			onclick={() => dashboard_view.set(DASHBOARD_VIEW.BOOKMARK_CREATE)}><MoveIcon /></button
 		>
-		<button
-			type="button"
-			title="edit bookmark"
-			class="btn-secondary edit"
-			onclick={editBookmark}><EditIcon /></button
+		<button type="button" title="edit bookmark" class="btn-secondary edit" onclick={editBookmark}
+			><EditIcon /></button
 		>
 	</div>
 {:else}

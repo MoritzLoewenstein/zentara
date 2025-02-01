@@ -63,7 +63,7 @@
 </Section>
 <Section title="Applications">
 	{#each dashboard_config.applicationGroups as applicationGroup, groupIndex}
-		<ApplicationGroup title={applicationGroup.title} {groupIndex}/>
+		<ApplicationGroup title={applicationGroup.title} {groupIndex} />
 		{#each applicationGroup.applications as application, applicationIndex}
 			<Application {...application} {groupIndex} {applicationIndex} />
 		{/each}

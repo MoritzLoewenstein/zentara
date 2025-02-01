@@ -4,12 +4,18 @@
 	import { dashboard_content, dashboard_view, DASHBOARD_VIEW } from './settings.svelte.js';
 
 	async function saveDashboard() {
-		//TODO fetch API with serialized dashboard data
-		//TODO optimistic update, show success message
-		//TODO in case of failure go back to edit mode and display an error message
-		// https://svelte.dev/docs/svelte/bind
 		dashboard_content.commitDashboardEdit();
 		dashboard_view.set(DASHBOARD_VIEW.DASHBOARD);
+		const res = await fetch('/', {
+			method: 'POST',
+			body: JSON.stringify(dashboard_content),
+			credentials: 'same-origin'
+		});
+		//TODO display error toast and revert to edit mode
+		if (!res.ok) {
+			console.error('Failed to save dashboard');
+			dashboard_view.set(DASHBOARD_VIEW.EDIT);
+		}
 	}
 </script>
 

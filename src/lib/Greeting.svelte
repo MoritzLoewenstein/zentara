@@ -1,7 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { dashboard_view, dashboard_content, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte.js';
+	import {
+		dashboard_view,
+		dashboard_content,
+		DASHBOARD_VIEW,
+		EDIT_VIEWS
+	} from './settings.svelte.js';
 	import LogoutIcon from './icons/LogoutIcon.svelte';
 	import SettingsIcon from './icons/SettingsIcon.svelte';
 	import EditIcon from './icons/EditIcon.svelte';
