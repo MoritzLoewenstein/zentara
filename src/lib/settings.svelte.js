@@ -174,6 +174,11 @@ function createDashboardContent() {
 				group_index
 			].applications.splice(application_index, 1);
 		},
+		setDashboardEdit: () => {
+			dashboard_content_state.dashboard_edit = {
+				...dashboard_content_state.dashboard,
+			};
+		},
 		commitDashboardEdit: () => {
 			dashboard_content_state.dashboard = {
 				...dashboard_content_state.dashboard_edit,

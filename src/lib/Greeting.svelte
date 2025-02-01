@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { dashboard_view, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte.js';
+	import { dashboard_view, dashboard_content, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte.js';
 	import LogoutIcon from './icons/LogoutIcon.svelte';
 	import SettingsIcon from './icons/SettingsIcon.svelte';
 	import EditIcon from './icons/EditIcon.svelte';
@@ -36,6 +36,11 @@
 		timeZone: 'Europe/Berlin'
 	});
 	const formattedDate = $derived.by(() => dateFormatter.format(date));
+
+	function setDashboardEdit() {
+		dashboard_content.setDashboardEdit();
+		dashboard_view.set(DASHBOARD_VIEW.EDIT);
+	}
 </script>
 
 <hr />
@@ -43,7 +48,7 @@
 	<p>{formattedDate}</p>
 	{#if page.data.user}
 		<button
-			onclick={() => dashboard_view.set(DASHBOARD_VIEW.EDIT)}
+			onclick={setDashboardEdit}
 			title="edit dashboard"
 			class="edit"
 			class:active={EDIT_VIEWS.includes(dashboard_view.value)}

@@ -24,7 +24,7 @@
 	});
 
 	function saveBookmark() {
-		dashboard_content.saveBookmarkEdit({ title: titleValue, link: linkValue });
+		dashboard_content.saveBookmarkEdit(titleValue, linkValue);
 		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
 	function deleteBookmark() {

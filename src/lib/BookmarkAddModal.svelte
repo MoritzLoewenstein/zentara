@@ -3,6 +3,8 @@
 	import AddIcon from './icons/AddIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 
+	const { groupIndex } = $props();
+
 	let dialog;
 	$effect(() => {
 		if (dashboard_view.value === DASHBOARD_VIEW.BOOKMARK_CREATE) {
@@ -16,7 +18,7 @@
 	let linkValue = $state('');
 
 	function createBookmark() {
-		dashboard_content.addBookmark({ title: titleValue, link: linkValue });
+		dashboard_content.addBookmark(groupIndex, titleValue, linkValue);
 		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
 </script>
