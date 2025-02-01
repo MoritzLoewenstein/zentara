@@ -8,7 +8,7 @@
 		dashboard_view.set(DASHBOARD_VIEW.DASHBOARD);
 		const res = await fetch('/', {
 			method: 'POST',
-			body: JSON.stringify(dashboard_content),
+			body: JSON.stringify(dashboard_content.value.dashboard),
 			credentials: 'same-origin'
 		});
 		//TODO display error toast and revert to edit mode
