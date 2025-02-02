@@ -22,12 +22,12 @@
 		<img src={icon || plausible} alt={name} />
 		<p class="name">{name}</p>
 		<p class="url">{displayUrl}</p>
-		<button type="button" title="move application" class="btn-small btn-secondary move"
+		<button type="button" title="move application '{name}'" class="btn-small btn-secondary move"
 			><MoveIcon /></button
 		>
 		<button
 			type="button"
-			title="edit application"
+			title="edit application '{name}'"
 			class="btn-small btn-secondary edit"
 			onclick={editApplication}><EditIcon /></button
 		>

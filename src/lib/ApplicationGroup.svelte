@@ -6,6 +6,8 @@
 		DASHBOARD_VIEW,
 		EDIT_VIEWS
 	} from './client/dashboard.svelte.js';
+	import DeleteIcon from './icons/DeleteIcon.svelte';
+	import MoveIcon from './icons/MoveIcon.svelte';
 	const { title, children, groupIndex } = $props();
 
 	const dashboard_edit = $derived(EDIT_VIEWS.includes(dashboard_view.value));
@@ -19,11 +21,32 @@
 		dashboard_content.setApplicationCreate(groupIndex);
 		dashboard_view.set(DASHBOARD_VIEW.APPLICATION_CREATE);
 	}
+
+	function deleteApplicationGroup() {
+		const confirmDelete = confirm(
+			`Are you sure you want to delete the application group '${titleValue}' ?`
+		);
+		if (!confirmDelete) return;
+		dashboard_content.deleteApplicationGroup(groupIndex);
+	}
 </script>
 
-<section>
+<section draggable={dashboard_edit}>
 	{#if dashboard_edit}
-		<input type="text" bind:value={titleValue} class="group-title" />
+		<div class="group-edit">
+			<input type="text" bind:value={titleValue} class="group-title" />
+			<button
+				type="button"
+				title="move application group '{titleValue}'"
+				class="btn-small btn-secondary move"><MoveIcon /></button
+			>
+			<button
+				type="button"
+				title="delete application group '{titleValue}'"
+				class="btn-small btn-danger delete"
+				onclick={deleteApplicationGroup}><DeleteIcon /></button
+			>
+		</div>
 	{:else}
 		<h3 class="group-title">{title}</h3>
 	{/if}
@@ -33,7 +56,7 @@
 		{#if dashboard_edit}
 			<button
 				type="button"
-				title="add application"
+				title="add application to group '{titleValue}'"
 				class="btn-secondary"
 				onclick={createApplication}
 			>
@@ -44,6 +67,11 @@
 </section>
 
 <style>
+	.group-edit {
+		display: flex;
+		flex-direction: row;
+		gap: 0.5rem;
+	}
 	.group-title {
 		font-family: 'Courier New', Courier, monospace;
 		font-weight: 700;

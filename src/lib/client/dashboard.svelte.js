@@ -80,8 +80,17 @@ function createDashboardContent() {
 		update: (content) => {
 			dashboard_content_state = { ...dashboard_content_state, ...content };
 		},
+		addBookmarkGroup(title) {
+			dashboard_content_state.dashboard_edit.bookmarkGroups.push({
+				title,
+				bookmarks: []
+			});
+		},
 		setBookmarkGroupTitle(group_index, title) {
 			dashboard_content_state.dashboard_edit.bookmarkGroups[group_index].title = title;
+		},
+		deleteBookmarkGroup(group_index) {
+			dashboard_content_state.dashboard_edit.bookmarkGroups.splice(group_index, 1);
 		},
 		setBookmarkCreate(group_index) {
 			dashboard_content_state.bookmark_add = {
@@ -132,8 +141,17 @@ function createDashboardContent() {
 				1
 			);
 		},
+		addApplicationGroup(title) {
+			dashboard_content_state.dashboard_edit.applicationGroups.push({
+				title,
+				applications: []
+			});
+		},
 		setApplicationGroupTitle(group_index, title) {
 			dashboard_content_state.dashboard_edit.applicationGroups[group_index].title = title;
+		},
+		deleteApplicationGroup(group_index) {
+			dashboard_content_state.dashboard_edit.applicationGroups.splice(group_index, 1);
 		},
 		setApplicationCreate(group_index) {
 			dashboard_content_state.application_add = {

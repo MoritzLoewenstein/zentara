@@ -56,12 +56,10 @@ When I went looking for a sleek server dashboard, missing login systems in other
 - **password hashing**: Zentara uses the argon2 algorithm to hash passwords. This is a widely used and secure algorithm.
 - **session expiry**: Zentara uses a session inactivity timeout of one day and a session lifetime of one week. This means that you will be logged out after one day of inactivity and after one week of activity. This is longer than most websites, but I think it is a good compromise between security and convenience.
 - **recovery codes**: Zentara offers the possibility to use recovery codes. These codes can be used to set a new password when you have lost your access. They can only be used once. Recovery codes can be regenerated at any time, but only if you have access (re-authentication). You can check how many recovery codes you have left at any time.
-- **invite links**: Zentara offers the possibility to generate invite links for new users. New users will have their own dashboard, they can not watch your dashboard! You can see the open invites at any time. Invite links will expire after 14 days and can only be used once with the same email that they were created with.
+- **invite links**: Zentara offers the possibility to generate invite links for new users. New users will have their own dashboard, they can not watch your dashboard! You can see the open invites at any time. Invite links will expire after 14 days and can only be used once to create an account with the same email that they were created with.
 
 # todo first version (not really an mvp anymore but still)
 
-- [ ] add application groups
-- [ ] add bookmark groups
 - [ ] regenerate recovery codes
 - [ ] draggable bookmarks and applications
 - [ ] draggable bookmark groups and application groups

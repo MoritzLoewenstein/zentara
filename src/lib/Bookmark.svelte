@@ -18,12 +18,12 @@
 {#if EDIT_VIEWS.includes(dashboard_view.value)}
 	<div class="bookmark-edit" draggable="true">
 		<p>{title}</p>
-		<button type="button" title="move bookmark" class="btn-small btn-secondary move"
+		<button type="button" title="move bookmark '{title}'" class="btn-small btn-secondary move"
 			><MoveIcon /></button
 		>
 		<button
 			type="button"
-			title="edit bookmark"
+			title="edit bookmark '{title}'"
 			class="btn-small btn-secondary edit"
 			onclick={editBookmark}><EditIcon /></button
 		>
