@@ -3,14 +3,15 @@
 	import AddIcon from './icons/AddIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 
-	const { groupIndex } = $props();
-
 	let dialog;
 	$effect(() => {
 		if (dashboard_view.value === DASHBOARD_VIEW.APPLICATION_CREATE) {
 			dialog.showModal();
 		} else {
 			dialog.close();
+			iconValue = '';
+			nameValue = '';
+			linkValue = '';
 		}
 	});
 
@@ -21,7 +22,7 @@
 	function createApplication() {
 		// use https://www.npmjs.com/package/dompurify for svgs on server
 		//TODO: icon img to string
-		dashboard_content.addApplication(groupIndex, iconValue, nameValue, linkValue);
+		dashboard_content.addApplication(iconValue, nameValue, linkValue);
 		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
 </script>

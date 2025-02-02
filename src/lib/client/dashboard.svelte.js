@@ -51,21 +51,12 @@ let dashboard_content_state = $state({
 		group_index: null,
 		application_index: null
 	},
-	application_add: {
-		group_index: null,
-		icon: '',
-		name: '',
-		link: ''
-	},
+	application_add: null,
 	bookmark_edit: {
 		group_index: null,
 		bookmark_index: null
 	},
-	bookmark_add: {
-		group_index: null,
-		title: '',
-		link: ''
-	},
+	bookmark_add: null,
 	dashboard: { applicationGroups: [], bookmarkGroups: [] },
 	dashboard_edit: { applicationGroups: [], bookmarkGroups: [] }
 });
@@ -92,14 +83,11 @@ function createDashboardContent() {
 		deleteBookmarkGroup(group_index) {
 			dashboard_content_state.dashboard_edit.bookmarkGroups.splice(group_index, 1);
 		},
-		setBookmarkCreate(group_index) {
-			dashboard_content_state.bookmark_add = {
-				group_index,
-				title: '',
-				link: ''
-			};
+		setBookmarkAdd(group_index) {
+			dashboard_content_state.bookmark_add = group_index;
 		},
-		addBookmark(group_index, title, link) {
+		addBookmark(title, link) {
+			const group_index = dashboard_content_state.bookmark_add;
 			dashboard_content_state.dashboard_edit.bookmarkGroups[group_index].bookmarks.push({
 				title,
 				link
@@ -153,15 +141,11 @@ function createDashboardContent() {
 		deleteApplicationGroup(group_index) {
 			dashboard_content_state.dashboard_edit.applicationGroups.splice(group_index, 1);
 		},
-		setApplicationCreate(group_index) {
-			dashboard_content_state.application_add = {
-				group_index,
-				icon: '',
-				name: '',
-				link: ''
-			};
+		setApplicationAdd(group_index) {
+			dashboard_content_state.application_add = group_index;
 		},
-		addApplication(group_index, icon, name, link) {
+		addApplication(icon, name, link) {
+			const group_index = dashboard_content_state.application_add;
 			dashboard_content_state.dashboard_edit.applicationGroups[group_index].applications.push({
 				icon,
 				name,

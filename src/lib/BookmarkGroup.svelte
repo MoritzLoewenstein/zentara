@@ -18,7 +18,7 @@
 	});
 
 	function createBookmark() {
-		dashboard_content.setBookmarkCreate(groupIndex);
+		dashboard_content.setBookmarkAdd(groupIndex);
 		dashboard_view.set(DASHBOARD_VIEW.BOOKMARK_CREATE);
 	}
 

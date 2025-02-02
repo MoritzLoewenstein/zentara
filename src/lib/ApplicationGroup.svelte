@@ -18,7 +18,7 @@
 	});
 
 	function createApplication() {
-		dashboard_content.setApplicationCreate(groupIndex);
+		dashboard_content.setApplicationAdd(groupIndex);
 		dashboard_view.set(DASHBOARD_VIEW.APPLICATION_CREATE);
 	}
 
