@@ -9,6 +9,7 @@
 	import BookmarkAddModal from '$lib/BookmarkAddModal.svelte';
 	import BookmarkEditModal from '$lib/BookmarkEditModal.svelte';
 	import BookmarkGroup from '$lib/BookmarkGroup.svelte';
+	import Toast from '$lib/Toast.svelte';
 	import IntroModal from '$lib/IntroModal.svelte';
 	import SaveDashboardModal from '$lib/SaveDashboardModal.svelte';
 	import Section from '$lib/Section.svelte';
@@ -42,6 +43,7 @@
 	});
 </script>
 
+<Toast></Toast>
 <SettingsModal></SettingsModal>
 <IntroModal></IntroModal>
 <SaveDashboardModal></SaveDashboardModal>
