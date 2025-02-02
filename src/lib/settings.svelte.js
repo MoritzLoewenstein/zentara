@@ -34,7 +34,7 @@ function createDashboardView() {
 export const dashboard_view = createDashboardView();
 
 /**
- * @typed {Object} DashboardContentState
+ * @typedef {Object} DashboardContentState
  * @property {Dashboard} dashboard
  * @property {Dashboard} dashboard_edit
  */
