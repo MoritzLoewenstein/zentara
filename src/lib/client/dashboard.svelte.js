@@ -17,6 +17,12 @@ export const EDIT_VIEWS = [
 	DASHBOARD_VIEW.BOOKMARK_EDIT
 ];
 
+export const DASHBOARD_VIEWS = [
+	DASHBOARD_VIEW.DASHBOARD,
+	DASHBOARD_VIEW.INTRO,
+	DASHBOARD_VIEW.SETTINGS
+];
+
 let dashboard_view_state = $state(DASHBOARD_VIEW.DASHBOARD);
 function createDashboardView() {
 	return {

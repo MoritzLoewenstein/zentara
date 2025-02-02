@@ -9,15 +9,13 @@
 	import MoveIcon from './icons/MoveIcon.svelte';
 	const { title, link, groupIndex, bookmarkIndex } = $props();
 
-	const dashboard_edit = $derived(EDIT_VIEWS.includes(dashboard_view.value));
-
 	function editBookmark() {
 		dashboard_content.setBookmarkEdit(groupIndex, bookmarkIndex);
 		dashboard_view.set(DASHBOARD_VIEW.BOOKMARK_EDIT);
 	}
 </script>
 
-{#if dashboard_edit}
+{#if EDIT_VIEWS.includes(dashboard_view.value)}
 	<div class="bookmark-edit" draggable="true">
 		<p>{title}</p>
 		<button

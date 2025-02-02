@@ -65,17 +65,19 @@
 </Section>
 <Section title="Applications">
 	{#each dashboard_config.applicationGroups as applicationGroup, groupIndex}
-		<ApplicationGroup title={applicationGroup.title} {groupIndex} />
-		{#each applicationGroup.applications as application, applicationIndex}
-			<Application {...application} {groupIndex} {applicationIndex} />
-		{/each}
+		<ApplicationGroup title={applicationGroup.title} {groupIndex}>
+			{#each applicationGroup.applications as application, applicationIndex}
+				<Application {...application} {groupIndex} {applicationIndex} />
+			{/each}
+		</ApplicationGroup>
 	{/each}
 </Section>
 <Section title="Bookmarks" isRow={true}>
 	{#each dashboard_config.bookmarkGroups as bookmarkGroup, groupIndex}
-		<BookmarkGroup title={bookmarkGroup.title} {groupIndex} />
-		{#each bookmarkGroup.bookmarks as bookmark, bookmarkIndex}
-			<Bookmark {...bookmark} {groupIndex} {bookmarkIndex} />
-		{/each}
+		<BookmarkGroup title={bookmarkGroup.title} {groupIndex}>
+			{#each bookmarkGroup.bookmarks as bookmark, bookmarkIndex}
+				<Bookmark {...bookmark} {groupIndex} {bookmarkIndex} />
+			{/each}
+		</BookmarkGroup>
 	{/each}
 </Section>

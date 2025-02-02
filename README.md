@@ -60,8 +60,10 @@ When I went looking for a sleek server dashboard, missing login systems in other
 
 # todo first version (not really an mvp anymore but still)
 
+- [ ] edit applications
+- [ ] add application groups
+- [ ] add bookmark groups
 - [ ] regenerate recovery codes
-- [ ] dashboard serialization
 - [ ] draggable bookmarks and applications
 - [ ] draggable bookmark groups and application groups
 - [ ] finish invite functionality

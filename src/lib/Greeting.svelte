@@ -5,7 +5,8 @@
 		dashboard_view,
 		dashboard_content,
 		DASHBOARD_VIEW,
-		EDIT_VIEWS
+		EDIT_VIEWS,
+		DASHBOARD_VIEWS
 	} from './client/dashboard.svelte.js';
 	import LogoutIcon from './icons/LogoutIcon.svelte';
 	import SettingsIcon from './icons/SettingsIcon.svelte';
@@ -60,7 +61,7 @@
 		>
 			<EditIcon />
 		</button>
-		{#if dashboard_view.value === DASHBOARD_VIEW.DASHBOARD || dashboard_view.value === DASHBOARD_VIEW.INTRO}
+		{#if DASHBOARD_VIEWS.includes(dashboard_view.value)}
 			<button
 				onclick={() => dashboard_view.set(DASHBOARD_VIEW.SETTINGS)}
 				title="settings"

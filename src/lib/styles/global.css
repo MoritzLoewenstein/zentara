@@ -55,6 +55,10 @@ dialog {
 	width: min(100%, 400px);
 }
 
+dialog::backdrop {
+	backdrop-filter: blur(2px);
+}
+
 main {
 	position: relative;
 	padding-bottom: 10rem;
