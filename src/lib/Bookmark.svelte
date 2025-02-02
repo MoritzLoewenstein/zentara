@@ -5,9 +5,12 @@
 		DASHBOARD_VIEW,
 		EDIT_VIEWS
 	} from './client/dashboard.svelte.js';
+	import { MIME_TYPES } from './client/draggable.js';
 	import EditIcon from './icons/EditIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
 	const { title, link, groupIndex, bookmarkIndex } = $props();
+
+	let isDragging = $state(false);
 
 	function editBookmark() {
 		dashboard_content.setBookmarkEdit(groupIndex, bookmarkIndex);
@@ -16,7 +19,21 @@
 </script>
 
 {#if EDIT_VIEWS.includes(dashboard_view.value)}
-	<div class="bookmark-edit" draggable="true">
+	<div
+		class="bookmark-edit"
+		draggable="true"
+		role="listitem"
+		aria-grabbed={isDragging}
+		ondragstart={(event) => {
+			isDragging = true;
+			event.dataTransfer.effectAllowed = 'move';
+			event.dataTransfer.setData(
+				MIME_TYPES.BOOKMARK,
+				JSON.stringify({ groupIndex, bookmarkIndex, title, link })
+			);
+		}}
+		ondragend={() => (isDragging = false)}
+	>
 		<p>{title}</p>
 		<button type="button" title="move bookmark '{title}'" class="btn-small btn-secondary move"
 			><MoveIcon /></button

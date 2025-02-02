@@ -1,11 +1,12 @@
 <script>
-	import AddIcon from './icons/AddIcon.svelte';
 	import {
 		dashboard_view,
 		dashboard_content,
 		DASHBOARD_VIEW,
 		EDIT_VIEWS
 	} from './client/dashboard.svelte.js';
+	import { MIME_TYPES } from './client/draggable';
+	import AddIcon from './icons/AddIcon.svelte';
 	import DeleteIcon from './icons/DeleteIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
 	const { title, children, groupIndex } = $props();
@@ -29,6 +30,25 @@
 		if (!confirmDelete) return;
 		dashboard_content.deleteBookmarkGroup(groupIndex);
 	}
+
+	function bookmarkDragEnter(event) {
+		const isBookmark = event.dataTransfer.types.includes(MIME_TYPES.BOOKMARK);
+		if (!isBookmark) return;
+		event.preventDefault();
+	}
+
+	function bookmarkDragOver(event) {
+		const isBookmark = event.dataTransfer.types.includes(MIME_TYPES.BOOKMARK);
+		if (!isBookmark) return;
+		event.preventDefault();
+	}
+
+	function bookmarkDrop(event) {
+		const isBookmark = event.dataTransfer.types.includes(MIME_TYPES.BOOKMARK);
+		if (!isBookmark) return;
+		const bookmark_data = JSON.parse(event.dataTransfer.getData(MIME_TYPES.BOOKMARK));
+		console.log('drop bookmark', event, bookmark_data);
+	}
 </script>
 
 <section draggable={dashboard_edit}>
@@ -50,7 +70,13 @@
 	{:else}
 		<h3 class="group-title">{title}</h3>
 	{/if}
-	<div class="items">
+	<div
+		class="items"
+		role="list"
+		ondragenter={bookmarkDragEnter}
+		ondragover={bookmarkDragOver}
+		ondrop={bookmarkDrop}
+	>
 		{@render children?.()}
 		{#if dashboard_edit}
 			<button
