@@ -91,6 +91,18 @@ button.btn-danger {
 	border-color: var(--orange);
 }
 
+button.btn-small {
+	height: 24px;
+	width: 24px;
+	padding: 2px;
+}
+
+button.btn-small svg {
+	width: 100%;
+	height: auto;
+	display: block;
+}
+
 button:hover {
 	background-color: transparent;
 	color: var(--blue);

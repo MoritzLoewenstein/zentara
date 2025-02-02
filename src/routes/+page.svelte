@@ -25,6 +25,7 @@
 	import SaveIcon from '$lib/icons/SaveIcon.svelte';
 	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
 	import UploadIcon from '$lib/icons/UploadIcon.svelte';
+	import ApplicationEditModal from '$lib/ApplicationEditModal.svelte';
 	/**@typedef {import('../lib/server/dashboard').Dashboard} Dashboard */
 
 	/**@type {Dashboard} */
@@ -48,6 +49,7 @@
 <IntroModal></IntroModal>
 <SaveDashboardModal></SaveDashboardModal>
 <ApplicationAddModal></ApplicationAddModal>
+<ApplicationEditModal></ApplicationEditModal>
 <BookmarkAddModal></BookmarkAddModal>
 <BookmarkEditModal></BookmarkEditModal>
 <Section title="Icons" isRow={true}>

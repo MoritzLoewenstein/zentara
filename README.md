@@ -60,7 +60,6 @@ When I went looking for a sleek server dashboard, missing login systems in other
 
 # todo first version (not really an mvp anymore but still)
 
-- [ ] edit applications
 - [ ] add application groups
 - [ ] add bookmark groups
 - [ ] regenerate recovery codes

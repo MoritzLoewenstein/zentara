@@ -55,7 +55,7 @@
 			>
 			<button
 				type="button"
-				title="cancel bookmark creation"
+				title="cancel bookmark edit"
 				class="btn-secondary cancel"
 				onclick={() => dashboard_view.set(DASHBOARD_VIEW.EDIT)}><CloseIcon /></button
 			>

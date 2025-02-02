@@ -102,6 +102,10 @@ function createDashboardContent() {
 				bookmark_index
 			};
 		},
+
+		/**
+		 * @returns {import("$lib/server/dashboard").Bookmark}
+		 */
 		getBookmarkEdit() {
 			const bookmark_edit = dashboard_content_state.bookmark_edit;
 			const group_index = bookmark_edit.group_index;
@@ -152,6 +156,9 @@ function createDashboardContent() {
 				application_index
 			};
 		},
+		/**
+		 * @returns {import("$lib/server/dashboard").Application}
+		 */
 		getApplicationEdit() {
 			const application_edit = dashboard_content_state.application_edit;
 			const group_index = application_edit.group_index;

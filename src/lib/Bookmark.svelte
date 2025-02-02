@@ -18,14 +18,14 @@
 {#if EDIT_VIEWS.includes(dashboard_view.value)}
 	<div class="bookmark-edit" draggable="true">
 		<p>{title}</p>
+		<button type="button" title="move bookmark" class="btn-small btn-secondary move"
+			><MoveIcon /></button
+		>
 		<button
 			type="button"
-			title="move bookmark"
-			class="btn-secondary move"
-			onclick={() => dashboard_view.set(DASHBOARD_VIEW.BOOKMARK_CREATE)}><MoveIcon /></button
-		>
-		<button type="button" title="edit bookmark" class="btn-secondary edit" onclick={editBookmark}
-			><EditIcon /></button
+			title="edit bookmark"
+			class="btn-small btn-secondary edit"
+			onclick={editBookmark}><EditIcon /></button
 		>
 	</div>
 {:else}
@@ -55,18 +55,6 @@
 	.bookmark-edit p {
 		margin: 0;
 		line-height: 22px;
-	}
-
-	.bookmark-edit button {
-		height: 24px;
-		width: 24px;
-		padding: 2px;
-	}
-
-	.bookmark-edit button :global(svg) {
-		width: 100%;
-		height: auto;
-		display: block;
 	}
 
 	.bookmark-edit button.move {
