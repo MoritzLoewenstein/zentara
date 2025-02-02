@@ -52,7 +52,7 @@
 <ApplicationEditModal></ApplicationEditModal>
 <BookmarkAddModal></BookmarkAddModal>
 <BookmarkEditModal></BookmarkEditModal>
-<Section title="Icons" isRow={true}>
+<Section title="Icons">
 	<AddIcon />
 	<CloseIcon />
 	<DeleteIcon />
@@ -65,7 +65,7 @@
 	<CopyIcon />
 	<RefreshIcon />
 </Section>
-<Section title="Applications">
+<Section title="Applications" type="applications">
 	{#each dashboard_config.applicationGroups as applicationGroup, groupIndex}
 		<ApplicationGroup title={applicationGroup.title} {groupIndex}>
 			{#each applicationGroup.applications as application, applicationIndex}
@@ -74,7 +74,7 @@
 		</ApplicationGroup>
 	{/each}
 </Section>
-<Section title="Bookmarks" isRow={true}>
+<Section title="Bookmarks" type="bookmarks">
 	{#each dashboard_config.bookmarkGroups as bookmarkGroup, groupIndex}
 		<BookmarkGroup title={bookmarkGroup.title} {groupIndex}>
 			{#each bookmarkGroup.bookmarks as bookmark, bookmarkIndex}

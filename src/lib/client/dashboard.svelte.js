@@ -71,7 +71,7 @@ function createDashboardContent() {
 		update: (content) => {
 			dashboard_content_state = { ...dashboard_content_state, ...content };
 		},
-		addBookmarkGroup(title) {
+		addBookmarkGroup(title = '') {
 			dashboard_content_state.dashboard_edit.bookmarkGroups.push({
 				title,
 				bookmarks: []
@@ -129,7 +129,7 @@ function createDashboardContent() {
 				1
 			);
 		},
-		addApplicationGroup(title) {
+		addApplicationGroup(title = '') {
 			dashboard_content_state.dashboard_edit.applicationGroups.push({
 				title,
 				applications: []
