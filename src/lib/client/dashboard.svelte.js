@@ -186,31 +186,3 @@ function createDashboardContent() {
 	};
 }
 export const dashboard_content = createDashboardContent();
-
-/**@typedef {import('../lib/server/dashboard').Dashboard} Dashboard */
-/**@type {Dashboard} */
-export const DASHBOARD_DEFAULT = {
-	applicationGroups: [
-		{
-			title: 'Applications',
-			applications: [
-				{
-					icon: '',
-					name: 'Example Application',
-					link: 'https://example.com'
-				}
-			]
-		}
-	],
-	bookmarkGroups: [
-		{
-			title: 'Bookmarks',
-			bookmarks: [
-				{
-					title: 'Example Bookmark',
-					link: 'https://example.com'
-				}
-			]
-		}
-	]
-};

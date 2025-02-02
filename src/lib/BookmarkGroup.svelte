@@ -1,6 +1,11 @@
 <script>
 	import AddIcon from './icons/AddIcon.svelte';
-	import { dashboard_view, dashboard_content, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte';
+	import {
+		dashboard_view,
+		dashboard_content,
+		DASHBOARD_VIEW,
+		EDIT_VIEWS
+	} from './client/dashboard.svelte.js';
 	const { title, children, groupIndex } = $props();
 
 	const dashboard_edit = $derived(EDIT_VIEWS.includes(dashboard_view.value));

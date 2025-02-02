@@ -1,5 +1,4 @@
 import db from './db.js';
-import { DASHBOARD_DEFAULT } from '$lib/settings.svelte.js';
 
 /**
  *
@@ -29,6 +28,33 @@ export function getDashboard(user_id) {
 	}
 	return JSON.parse(dashboard_config);
 }
+
+/**@type {Dashboard} */
+const DASHBOARD_DEFAULT = {
+	applicationGroups: [
+		{
+			title: 'Applications',
+			applications: [
+				{
+					icon: '',
+					name: 'Example Application',
+					link: 'https://example.com'
+				}
+			]
+		}
+	],
+	bookmarkGroups: [
+		{
+			title: 'Bookmarks',
+			bookmarks: [
+				{
+					title: 'Example Bookmark',
+					link: 'https://example.com'
+				}
+			]
+		}
+	]
+};
 
 /**
  * Represents an individual application entry.

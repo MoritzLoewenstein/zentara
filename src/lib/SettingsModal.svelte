@@ -5,7 +5,7 @@
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import CopyIcon from './icons/CopyIcon.svelte';
 	import RefreshIcon from './icons/RefreshIcon.svelte';
-	import { dashboard_view, DASHBOARD_VIEW } from './settings.svelte';
+	import { dashboard_view, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
 
 	let dialog;
 	$effect(() => {

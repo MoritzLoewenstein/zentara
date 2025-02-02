@@ -1,7 +1,7 @@
 <script>
 	import { page } from '$app/state';
 	import { browser } from '$app/environment';
-	import { dashboard_view, dashboard_content, EDIT_VIEWS } from '$lib/settings.svelte';
+	import { dashboard_view, dashboard_content, EDIT_VIEWS } from '$lib/client/dashboard.svelte.js';
 	import Application from '$lib/Application.svelte';
 	import ApplicationAddModal from '$lib/ApplicationAddModal.svelte';
 	import ApplicationGroup from '$lib/ApplicationGroup.svelte';

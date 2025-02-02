@@ -2,7 +2,7 @@
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
 	import { PUBLIC_APP_NAMESPACE } from '$env/static/public';
-	import { dashboard_view, DASHBOARD_VIEW } from './settings.svelte';
+	import { dashboard_view, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
 	import CopyIcon from './icons/CopyIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import AddIcon from './icons/AddIcon.svelte';

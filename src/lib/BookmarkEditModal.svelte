@@ -1,5 +1,5 @@
 <script>
-	import { dashboard_view, dashboard_content, DASHBOARD_VIEW } from './settings.svelte';
+	import { dashboard_view, dashboard_content, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import SaveIcon from './icons/SaveIcon.svelte';
 	import DeleteIcon from './icons/DeleteIcon.svelte';

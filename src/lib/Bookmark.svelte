@@ -1,5 +1,10 @@
 <script>
-	import { dashboard_view, dashboard_content, DASHBOARD_VIEW, EDIT_VIEWS } from './settings.svelte';
+	import {
+		dashboard_view,
+		dashboard_content,
+		DASHBOARD_VIEW,
+		EDIT_VIEWS
+	} from './client/dashboard.svelte.js';
 	import EditIcon from './icons/EditIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
 	const { title, link, groupIndex, bookmarkIndex } = $props();

@@ -1,7 +1,7 @@
 <script>
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import SaveIcon from './icons/SaveIcon.svelte';
-	import { dashboard_content, dashboard_view, DASHBOARD_VIEW } from './settings.svelte.js';
+	import { dashboard_content, dashboard_view, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
 
 	async function saveDashboard() {
 		dashboard_content.commitDashboardEdit();
