@@ -43,7 +43,7 @@
 		event.preventDefault();
 		event.dataTransfer.dropEffect = 'move';
 
-		const items = event.target.closest(".items");
+		const items = event.target.closest('.items');
 		const insertIndex = getInsertIndex(items, event.clientY);
 		const hidePreview =
 			insertIndex === null ||
@@ -69,7 +69,7 @@
 		event.preventDefault();
 
 		const bookmark_data = JSON.parse(event.dataTransfer.getData(MIME_TYPES.BOOKMARK));
-		const items = event.target.closest(".items");
+		const items = event.target.closest('.items');
 		const insertIndex = getInsertIndex(items, event.clientY);
 		dashboard_content.resetBookmarkMovePreview();
 		dashboard_content.resetBookmarkMove();
@@ -153,10 +153,6 @@
 		display: flex;
 		flex-direction: column;
 		row-gap: 0.5em;
-	}
-
-	.items.isMoveTarget {
-		border: 1px dashed var(--blue);
 	}
 
 	button.bookmark-add {

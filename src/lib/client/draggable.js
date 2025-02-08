@@ -3,10 +3,10 @@
 // zentara namespace to avoid conflicts
 // +json suffix to indicate serialization format
 export const MIME_TYPES = {
-	APPLICATION_GROUP: "application/x-zentara.application_group+json",
-	APPLICATION: "application/x-zentara.application+json",
-	BOOKMARK_GROUP: "application/x-zentara.bookmark_group+json",
-	BOOKMARK: "application/x-zentara.bookmark+json",
+	APPLICATION_GROUP: 'application/x-zentara.application_group+json',
+	APPLICATION: 'application/x-zentara.application+json',
+	BOOKMARK_GROUP: 'application/x-zentara.bookmark_group+json',
+	BOOKMARK: 'application/x-zentara.bookmark+json'
 };
 
 /**
@@ -19,7 +19,7 @@ export const MIME_TYPES = {
  */
 export function getInsertIndex(container, clientY) {
 	const items = Array.from(container.children).filter(
-		(el) => !el.classList.contains("movePreview"),
+		(el) => !el.classList.contains('movePreview')
 	);
 
 	for (let i = 0; i < items.length; i++) {
