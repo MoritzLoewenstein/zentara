@@ -48,7 +48,7 @@
 			<form action="?/recovery-codes" method="post" use:enhance>
 				<label>
 					password
-					<input type="password" required />
+					<input type="password" placeholder="********" required />
 				</label>
 				<button type="submit">
 					<span>regenerate recovery codes</span>

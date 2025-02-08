@@ -14,17 +14,6 @@
 	import SaveDashboardModal from '$lib/SaveDashboardModal.svelte';
 	import Section from '$lib/Section.svelte';
 	import SettingsModal from '$lib/SettingsModal.svelte';
-	import AddIcon from '$lib/icons/AddIcon.svelte';
-	import CloseIcon from '$lib/icons/CloseIcon.svelte';
-	import CopyIcon from '$lib/icons/CopyIcon.svelte';
-	import DeleteIcon from '$lib/icons/DeleteIcon.svelte';
-	import EditIcon from '$lib/icons/EditIcon.svelte';
-	import LogoutIcon from '$lib/icons/LogoutIcon.svelte';
-	import MoveIcon from '$lib/icons/MoveIcon.svelte';
-	import RefreshIcon from '$lib/icons/RefreshIcon.svelte';
-	import SaveIcon from '$lib/icons/SaveIcon.svelte';
-	import SettingsIcon from '$lib/icons/SettingsIcon.svelte';
-	import UploadIcon from '$lib/icons/UploadIcon.svelte';
 	import ApplicationEditModal from '$lib/ApplicationEditModal.svelte';
 	/**@typedef {import('../lib/server/dashboard').Dashboard} Dashboard */
 
@@ -52,19 +41,6 @@
 <ApplicationEditModal></ApplicationEditModal>
 <BookmarkAddModal></BookmarkAddModal>
 <BookmarkEditModal></BookmarkEditModal>
-<Section title="Icons">
-	<AddIcon />
-	<CloseIcon />
-	<DeleteIcon />
-	<EditIcon />
-	<LogoutIcon />
-	<MoveIcon />
-	<SaveIcon />
-	<SettingsIcon />
-	<UploadIcon />
-	<CopyIcon />
-	<RefreshIcon />
-</Section>
 <Section title="Applications" type="applications">
 	{#each dashboard_config.applicationGroups as applicationGroup, groupIndex}
 		<ApplicationGroup title={applicationGroup.title} {groupIndex}>
