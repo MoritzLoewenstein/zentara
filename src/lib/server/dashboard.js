@@ -1,4 +1,4 @@
-import db from './db.js';
+import db from "./db.js";
 
 /**
  *
@@ -9,8 +9,8 @@ import db from './db.js';
 export function saveDashboard(user_id, dashboard_config) {
 	const config = JSON.stringify(dashboard_config);
 	db.exec(
-		'INSERT INTO dashboards (user_id, config) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET config = ?',
-		[user_id, config, config]
+		"INSERT INTO dashboards (user_id, config) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET config = ?",
+		[user_id, config, config],
 	);
 }
 
@@ -20,9 +20,10 @@ export function saveDashboard(user_id, dashboard_config) {
  * @returns {?Dashboard}
  */
 export function getDashboard(user_id) {
-	const dashboard_config = db.getColumn('SELECT config FROM dashboards WHERE user_id = ?', [
-		user_id
-	]);
+	const dashboard_config = db.getColumn(
+		"SELECT config FROM dashboards WHERE user_id = ?",
+		[user_id],
+	);
 	if (!dashboard_config) {
 		return DASHBOARD_DEFAULT;
 	}
@@ -33,27 +34,27 @@ export function getDashboard(user_id) {
 const DASHBOARD_DEFAULT = {
 	applicationGroups: [
 		{
-			title: 'Applications',
+			title: "Applications",
 			applications: [
 				{
-					icon: '',
-					name: 'Example Application',
-					link: 'https://example.com'
-				}
-			]
-		}
+					icon: "",
+					name: "Example Application",
+					link: "https://example.com",
+				},
+			],
+		},
 	],
 	bookmarkGroups: [
 		{
-			title: 'Bookmarks',
+			title: "Bookmarks",
 			bookmarks: [
 				{
-					title: 'Example Bookmark',
-					link: 'https://example.com'
-				}
-			]
-		}
-	]
+					title: "Example Bookmark",
+					link: "https://example.com",
+				},
+			],
+		},
+	],
 };
 
 /**
@@ -76,6 +77,8 @@ const DASHBOARD_DEFAULT = {
  * @typedef {Object} Bookmark
  * @property {string} title - The display title of the bookmark.
  * @property {string} link - The URL link the bookmark points to.
+ * @property {boolean} movePreview - wether the displayed bookmark is a preview of a move operation
+ * @property {boolean} moving - wether the bookmark is currently being moved
  */
 
 /**

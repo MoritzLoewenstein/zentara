@@ -8,7 +8,7 @@
 	import { MIME_TYPES } from './client/draggable.js';
 	import EditIcon from './icons/EditIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
-	const { title, link, groupIndex, bookmarkIndex } = $props();
+	const { title, link, movePreview, moving, groupIndex, bookmarkIndex } = $props();
 
 	let isDragging = $state(false);
 
@@ -21,18 +21,25 @@
 {#if EDIT_VIEWS.includes(dashboard_view.value)}
 	<div
 		class="bookmark-edit"
+		class:movePreview
+		class:moving
 		draggable="true"
 		role="listitem"
 		aria-grabbed={isDragging}
 		ondragstart={(event) => {
 			isDragging = true;
+			dashboard_content.setBookmarkMove(groupIndex, bookmarkIndex);
 			event.dataTransfer.effectAllowed = 'move';
 			event.dataTransfer.setData(
 				MIME_TYPES.BOOKMARK,
 				JSON.stringify({ groupIndex, bookmarkIndex, title, link })
 			);
 		}}
-		ondragend={() => (isDragging = false)}
+		ondragend={() => {
+			isDragging = false;
+			dashboard_content.resetBookmarkMovePreview();
+			dashboard_content.resetBookmarkMove();
+		}}
 	>
 		<p>{title}</p>
 		<button type="button" title="move bookmark '{title}'" class="btn-small btn-secondary move"
@@ -67,6 +74,15 @@
 		align-items: center;
 		justify-content: space-between;
 		column-gap: 0.5rem;
+	}
+
+	.bookmark-edit.moving:not(.movePreview) {
+		border: 1px dashed var(--blue);
+		opacity: 0.5;
+	}
+
+	.bookmark-edit.movePreview {
+		opacity: 0.5;
 	}
 
 	.bookmark-edit p {

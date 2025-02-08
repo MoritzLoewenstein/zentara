@@ -5,7 +5,7 @@
 		DASHBOARD_VIEW,
 		EDIT_VIEWS
 	} from './client/dashboard.svelte.js';
-	import { MIME_TYPES } from './client/draggable';
+	import { getInsertIndex, MIME_TYPES } from './client/draggable';
 	import AddIcon from './icons/AddIcon.svelte';
 	import DeleteIcon from './icons/DeleteIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
@@ -41,13 +41,44 @@
 		const isBookmark = event.dataTransfer.types.includes(MIME_TYPES.BOOKMARK);
 		if (!isBookmark) return;
 		event.preventDefault();
+		event.dataTransfer.dropEffect = 'move';
+
+		const items = event.target.closest(".items");
+		const insertIndex = getInsertIndex(items, event.clientY);
+		const hidePreview =
+			insertIndex === null ||
+			(dashboard_content.value.bookmark_move.group_index === groupIndex &&
+				(dashboard_content.value.bookmark_move.bookmark_index === insertIndex ||
+					dashboard_content.value.bookmark_move.bookmark_index === insertIndex - 1));
+		if (hidePreview) {
+			dashboard_content.resetBookmarkMovePreview();
+		} else {
+			dashboard_content.updateBookmarkMovePreview(groupIndex, insertIndex);
+		}
+	}
+
+	function bookmarkDragLeave(event) {
+		const isBookmark = event.dataTransfer.types.includes(MIME_TYPES.BOOKMARK);
+		if (!isBookmark) return;
+		dashboard_content.resetBookmarkMovePreview();
 	}
 
 	function bookmarkDrop(event) {
 		const isBookmark = event.dataTransfer.types.includes(MIME_TYPES.BOOKMARK);
 		if (!isBookmark) return;
+		event.preventDefault();
+
 		const bookmark_data = JSON.parse(event.dataTransfer.getData(MIME_TYPES.BOOKMARK));
-		console.log('drop bookmark', event, bookmark_data);
+		const items = event.target.closest(".items");
+		const insertIndex = getInsertIndex(items, event.clientY);
+		dashboard_content.resetBookmarkMovePreview();
+		dashboard_content.resetBookmarkMove();
+		dashboard_content.moveBookmark(
+			bookmark_data.groupIndex,
+			bookmark_data.bookmarkIndex,
+			groupIndex,
+			insertIndex
+		);
 	}
 </script>
 
@@ -73,9 +104,10 @@
 	<div
 		class="items"
 		role="list"
-		ondragenter={bookmarkDragEnter}
-		ondragover={bookmarkDragOver}
-		ondrop={bookmarkDrop}
+		ondragenter={(e) => bookmarkDragEnter(e)}
+		ondragover={(e) => bookmarkDragOver(e)}
+		ondragleave={(e) => bookmarkDragLeave(e)}
+		ondrop={(e) => bookmarkDrop(e)}
 	>
 		{@render children?.()}
 		{#if dashboard_edit}
@@ -121,6 +153,10 @@
 		display: flex;
 		flex-direction: column;
 		row-gap: 0.5em;
+	}
+
+	.items.isMoveTarget {
+		border: 1px dashed var(--blue);
 	}
 
 	button.bookmark-add {
