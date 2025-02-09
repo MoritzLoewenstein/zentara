@@ -3,7 +3,8 @@
 		dashboard_view,
 		dashboard_content,
 		DASHBOARD_VIEW,
-		EDIT_VIEWS
+		EDIT_VIEWS,
+		MOVE_TYPES
 	} from './client/dashboard.svelte.js';
 	import { getInsertIndex, MIME_TYPES } from './client/draggable';
 	import AddIcon from './icons/AddIcon.svelte';
@@ -47,20 +48,20 @@
 		const insertIndex = getInsertIndex(items, event.clientY);
 		const hidePreview =
 			insertIndex === null ||
-			(dashboard_content.value.bookmark_move.group_index === groupIndex &&
-				(dashboard_content.value.bookmark_move.bookmark_index === insertIndex ||
-					dashboard_content.value.bookmark_move.bookmark_index === insertIndex - 1));
+			(dashboard_content.value.move.group_index === groupIndex &&
+				(dashboard_content.value.move.item_index === insertIndex ||
+					dashboard_content.value.move.item_index === insertIndex - 1));
 		if (hidePreview) {
-			dashboard_content.resetBookmarkMovePreview();
+			dashboard_content.resetMovePreview();
 		} else {
-			dashboard_content.updateBookmarkMovePreview(groupIndex, insertIndex);
+			dashboard_content.updateMovePreview(groupIndex, insertIndex);
 		}
 	}
 
 	function bookmarkDragLeave(event) {
 		const isBookmark = event.dataTransfer.types.includes(MIME_TYPES.BOOKMARK);
 		if (!isBookmark) return;
-		dashboard_content.resetBookmarkMovePreview();
+		dashboard_content.resetMovePreview();
 	}
 
 	function bookmarkDrop(event) {
@@ -71,14 +72,9 @@
 		const bookmark_data = JSON.parse(event.dataTransfer.getData(MIME_TYPES.BOOKMARK));
 		const items = event.target.closest('.items');
 		const insertIndex = getInsertIndex(items, event.clientY);
-		dashboard_content.resetBookmarkMovePreview();
-		dashboard_content.resetBookmarkMove();
-		dashboard_content.moveBookmark(
-			bookmark_data.groupIndex,
-			bookmark_data.bookmarkIndex,
-			groupIndex,
-			insertIndex
-		);
+		dashboard_content.resetMovePreview();
+		dashboard_content.resetMove();
+		dashboard_content.moveItem(MOVE_TYPES.BOOKMARK, bookmark_data, groupIndex, insertIndex);
 	}
 </script>
 

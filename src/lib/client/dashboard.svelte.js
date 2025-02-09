@@ -23,6 +23,13 @@ export const DASHBOARD_VIEWS = [
 	DASHBOARD_VIEW.SETTINGS
 ];
 
+export const MOVE_TYPES = {
+	APPLICATION: 'application',
+	BOOKMARK: 'bookmark',
+	APPLICATION_GROUP: 'application_group',
+	BOOKMARK_GROUP: 'bookmark_group'
+};
+
 let dashboard_view_state = $state(DASHBOARD_VIEW.DASHBOARD);
 function createDashboardView() {
 	return {
@@ -47,16 +54,21 @@ export const dashboard_view = createDashboardView();
 
 /** @type {DashboardContentState} */
 let dashboard_content_state = $state({
+	move: {
+		type: null,
+		group_index: null,
+		item_index: null
+	},
+	move_preview: {
+		group_index: null,
+		item_index: null
+	},
 	application_edit: {
 		group_index: null,
 		application_index: null
 	},
 	application_add: null,
 	bookmark_edit: {
-		group_index: null,
-		bookmark_index: null
-	},
-	bookmark_move: {
 		group_index: null,
 		bookmark_index: null
 	},
@@ -78,7 +90,7 @@ function createDashboardContent() {
 		addBookmarkGroup(title = '') {
 			dashboard_content_state.dashboard_edit.bookmarkGroups.push({
 				title,
-				bookmarks: []
+				items: []
 			});
 		},
 		setBookmarkGroupTitle(group_index, title) {
@@ -92,7 +104,7 @@ function createDashboardContent() {
 		},
 		addBookmark(title, link) {
 			const group_index = dashboard_content_state.bookmark_add;
-			dashboard_content_state.dashboard_edit.bookmarkGroups[group_index].bookmarks.push({
+			dashboard_content_state.dashboard_edit.bookmarkGroups[group_index].items.push({
 				title,
 				link
 			});
@@ -114,101 +126,144 @@ function createDashboardContent() {
 				return { title: '', link: '' };
 			}
 			const bookmark_groups = dashboard_content_state.dashboard_edit.bookmarkGroups;
-			return bookmark_groups[group_index].bookmarks[bookmark_index];
+			return bookmark_groups[group_index].items[bookmark_index];
 		},
 		saveBookmarkEdit(title, link) {
 			const bookmark_edit = dashboard_content_state.bookmark_edit;
 			const group_index = bookmark_edit.group_index;
 			const bookmark_index = bookmark_edit.bookmark_index;
-			dashboard_content_state.dashboard_edit.bookmarkGroups[group_index].bookmarks[bookmark_index] =
-				{ title, link };
+			dashboard_content_state.dashboard_edit.bookmarkGroups[group_index].items[bookmark_index] = {
+				title,
+				link
+			};
 		},
 		deleteBookmarkEdit() {
 			const bookmark_edit = dashboard_content_state.bookmark_edit;
 			const groupIndex = bookmark_edit.group_index;
 			const bookmarkIndex = bookmark_edit.bookmark_index;
-			dashboard_content_state.dashboard_edit.bookmarkGroups[groupIndex].bookmarks.splice(
+			dashboard_content_state.dashboard_edit.bookmarkGroups[groupIndex].items.splice(
 				bookmarkIndex,
 				1
 			);
 		},
-		setBookmarkMove(group_index, bookmark_index) {
-			dashboard_content_state.bookmark_move = {
+		setMove(type, group_index, item_index = null) {
+			dashboard_content_state.move = {
+				type,
 				group_index,
-				bookmark_index
+				item_index
 			};
-			dashboard_content.value.dashboard_edit.bookmarkGroups[group_index].bookmarks[
-				bookmark_index
-			].moving = true;
 		},
-		getBookmarkMove() {
-			const bookmark_move = dashboard_content_state.bookmark_move;
-			const move_group_index = bookmark_move.group_index;
-			const move_bookmark_index = bookmark_move.bookmark_index;
-			const bookmark =
-				dashboard_content_state.dashboard_edit.bookmarkGroups[move_group_index].bookmarks[
-					move_bookmark_index
-				];
-			return bookmark;
-		},
-		resetBookmarkMove() {
-			const group_index = dashboard_content_state.bookmark_move.group_index;
-			const bookmark_index = dashboard_content_state.bookmark_move.bookmark_index;
-
-			if (group_index === null || bookmark_index === null) {
-				return;
+		getMove() {
+			const { type, group_index, item_index } = dashboard_content_state.move;
+			const groupKey =
+				type === MOVE_TYPES.APPLICATION || type === MOVE_TYPES.APPLICATION_GROUP
+					? 'applicationGroups'
+					: 'bookmarkGroups';
+			if (type === MOVE_TYPES.APPLICATION_GROUP || type === MOVE_TYPES.BOOKMARK_GROUP) {
+				if (group_index === null) {
+					return null;
+				}
+				return dashboard_content_state.dashboard_edit[groupKey][group_index];
 			}
-			dashboard_content_state.dashboard_edit.bookmarkGroups[group_index].bookmarks[
-				bookmark_index
-			].moving = undefined;
-			dashboard_content_state.bookmark_move = {
+
+			if (group_index === null || item_index === null) {
+				return null;
+			}
+
+			return dashboard_content_state.dashboard_edit[groupKey][group_index].items[item_index];
+		},
+		resetMove() {
+			dashboard_content_state.move = {
+				type: null,
 				group_index: null,
-				bookmark_index: null
+				item_index: null
 			};
 		},
-		updateBookmarkMovePreview(group_index, bookmark_index) {
-			// remove all bookmark move previews
-			this.resetBookmarkMovePreview();
-			const bookmark = this.getBookmarkMove();
-			// insert bookmark move preview
-			dashboard_content_state.dashboard_edit.bookmarkGroups[group_index].bookmarks.splice(
-				bookmark_index,
-				0,
-				{ ...bookmark, movePreview: true }
-			);
+		updateMovePreview(group_index, item_index = null) {
+			this.resetMovePreview();
+			const { type } = dashboard_content_state.move;
+			const groupKey =
+				type === MOVE_TYPES.APPLICATION || type === MOVE_TYPES.APPLICATION_GROUP
+					? 'applicationGroups'
+					: 'bookmarkGroups';
+			dashboard_content_state.move_preview = {
+				group_index,
+				item_index
+			};
+			const item = this.getMove();
+			if (type === MOVE_TYPES.APPLICATION_GROUP || type === MOVE_TYPES.BOOKMARK_GROUP) {
+				if (group_index === null) {
+					return;
+				}
+				dashboard_content_state.dashboard_edit[groupKey].splice(group_index, 0, {
+					...item,
+					movePreview: true
+				});
+			} else {
+				if (group_index === null || item_index === null) {
+					return;
+				}
+				dashboard_content_state.dashboard_edit[groupKey][group_index].items.splice(item_index, 0, {
+					...item,
+					movePreview: true
+				});
+			}
 		},
-		resetBookmarkMovePreview() {
-			// remove all bookmark move previews
-			dashboard_content_state.dashboard_edit.bookmarkGroups.forEach((group, index) => {
-				dashboard_content_state.dashboard_edit.bookmarkGroups[index].bookmarks =
-					group.bookmarks.filter((bookmark) => !bookmark.movePreview);
-			});
-		},
-		moveBookmark(move_group_index, move_bookmark_index, target_group_index, target_bookmark_index) {
-			const bookmark =
-				dashboard_content_state.dashboard_edit.bookmarkGroups[move_group_index].bookmarks[
-					move_bookmark_index
-				];
+		resetMovePreview() {
+			const { type } = dashboard_content_state.move;
+			const { group_index, item_index } = dashboard_content_state.move_preview;
+			const groupKey =
+				type === MOVE_TYPES.APPLICATION || type === MOVE_TYPES.APPLICATION_GROUP
+					? 'applicationGroups'
+					: 'bookmarkGroups';
+			dashboard_content_state.move_preview = {
+				type: null,
+				group_index: null,
+				item_index: null
+			};
+			if (type === MOVE_TYPES.APPLICATION_GROUP || type === MOVE_TYPES.BOOKMARK_GROUP) {
+				if (group_index === null) {
+					return null;
+				}
+				dashboard_content_state.dashboard_edit[groupKey].splice(group_index, 1);
+			}
 
-			// remove bookmark at old position
-			dashboard_content_state.dashboard_edit.bookmarkGroups[move_group_index].bookmarks.splice(
-				move_bookmark_index,
-				1
-			);
-			//set bookmark details
-			bookmark.moving = undefined;
-			// insert bookmark at new position
-			dashboard_content_state.dashboard_edit.bookmarkGroups[target_group_index].bookmarks.splice(
-				target_bookmark_index,
-				0,
-				{ ...bookmark }
-			);
-		},
+			if (group_index === null || item_index === null) {
+				return null;
+			}
 
+			dashboard_content_state.dashboard_edit[groupKey][group_index].items.splice(item_index, 1);
+		},
+		moveItem(type, item, target_group_index, target_item_index = null) {
+			const groupKey =
+				type === MOVE_TYPES.APPLICATION || type === MOVE_TYPES.APPLICATION_GROUP
+					? 'applicationGroups'
+					: 'bookmarkGroups';
+			// step 1: remove item from current position
+			if (type === MOVE_TYPES.APPLICATION_GROUP || type === MOVE_TYPES.BOOKMARK_GROUP) {
+				dashboard_content_state.dashboard_edit[groupKey].splice(item.groupIndex, 1);
+			} else {
+				dashboard_content_state.dashboard_edit[groupKey][item.groupIndex].items.splice(
+					item.itemIndex,
+					1
+				);
+			}
+
+			// step 2: insert item at new position
+			if (type === MOVE_TYPES.APPLICATION_GROUP || type === MOVE_TYPES.BOOKMARK_GROUP) {
+				dashboard_content_state.dashboard_edit[groupKey].splice(target_group_index, 0, { ...item });
+			} else {
+				dashboard_content_state.dashboard_edit[groupKey][target_group_index].items.splice(
+					target_item_index,
+					0,
+					{ ...item }
+				);
+			}
+		},
 		addApplicationGroup(title = '') {
 			dashboard_content_state.dashboard_edit.applicationGroups.push({
 				title,
-				applications: []
+				items: []
 			});
 		},
 		setApplicationGroupTitle(group_index, title) {
@@ -222,7 +277,7 @@ function createDashboardContent() {
 		},
 		addApplication(icon, name, link) {
 			const group_index = dashboard_content_state.application_add;
-			dashboard_content_state.dashboard_edit.applicationGroups[group_index].applications.push({
+			dashboard_content_state.dashboard_edit.applicationGroups[group_index].items.push({
 				icon,
 				name,
 				link
@@ -245,13 +300,13 @@ function createDashboardContent() {
 				return { icon: null, name: '', link: '' };
 			}
 			const application_groups = dashboard_content_state.dashboard_edit.applicationGroups;
-			return application_groups[group_index].applications[application_index];
+			return application_groups[group_index].items[application_index];
 		},
 		saveApplicationEdit(icon, name, link) {
 			const application_edit = dashboard_content_state.application_edit;
 			const group_index = application_edit.group_index;
 			const application_index = application_edit.application_index;
-			dashboard_content_state.dashboard_edit.applicationGroups[group_index].applications[
+			dashboard_content_state.dashboard_edit.applicationGroups[group_index].items[
 				application_index
 			] = { icon, name, link };
 		},
@@ -259,7 +314,7 @@ function createDashboardContent() {
 			const application_edit = dashboard_content_state.application_edit;
 			const group_index = application_edit.group_index;
 			const application_index = application_edit.application_index;
-			dashboard_content_state.dashboard_edit.applicationGroups[group_index].applications.splice(
+			dashboard_content_state.dashboard_edit.applicationGroups[group_index].items.splice(
 				application_index,
 				1
 			);

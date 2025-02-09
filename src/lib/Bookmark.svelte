@@ -3,17 +3,18 @@
 		dashboard_view,
 		dashboard_content,
 		DASHBOARD_VIEW,
-		EDIT_VIEWS
+		EDIT_VIEWS,
+		MOVE_TYPES
 	} from './client/dashboard.svelte.js';
 	import { MIME_TYPES } from './client/draggable.js';
 	import EditIcon from './icons/EditIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
-	const { title, link, movePreview, moving, groupIndex, bookmarkIndex } = $props();
+	const { title, link, movePreview, groupIndex, itemIndex } = $props();
 
 	let isDragging = $state(false);
 
 	function editBookmark() {
-		dashboard_content.setBookmarkEdit(groupIndex, bookmarkIndex);
+		dashboard_content.setBookmarkEdit(groupIndex, itemIndex);
 		dashboard_view.set(DASHBOARD_VIEW.BOOKMARK_EDIT);
 	}
 </script>
@@ -22,23 +23,23 @@
 	<div
 		class="bookmark-edit"
 		class:movePreview
-		class:moving
+		class:moving={isDragging}
 		draggable="true"
 		role="listitem"
 		aria-grabbed={isDragging}
 		ondragstart={(event) => {
 			isDragging = true;
-			dashboard_content.setBookmarkMove(groupIndex, bookmarkIndex);
+			dashboard_content.setMove(MOVE_TYPES.BOOKMARK, groupIndex, itemIndex);
 			event.dataTransfer.effectAllowed = 'move';
 			event.dataTransfer.setData(
 				MIME_TYPES.BOOKMARK,
-				JSON.stringify({ groupIndex, bookmarkIndex, title, link })
+				JSON.stringify({ groupIndex, itemIndex, title, link })
 			);
 		}}
 		ondragend={() => {
 			isDragging = false;
-			dashboard_content.resetBookmarkMovePreview();
-			dashboard_content.resetBookmarkMove();
+			dashboard_content.resetMovePreview();
+			dashboard_content.resetMove();
 		}}
 	>
 		<p>{title}</p>

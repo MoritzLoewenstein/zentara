@@ -3,22 +3,47 @@
 		dashboard_view,
 		dashboard_content,
 		DASHBOARD_VIEW,
-		EDIT_VIEWS
+		EDIT_VIEWS,
+		MOVE_TYPES
 	} from './client/dashboard.svelte.js';
+	import { MIME_TYPES } from './client/draggable.js';
 	import EditIcon from './icons/EditIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
 	import plausible from '$lib/icons/plausible.png';
-	const { name, icon, link, groupIndex, applicationIndex } = $props();
+	const { name, icon, link, movePreview, groupIndex, itemIndex } = $props();
 	const displayUrl = new URL(link).host;
 
+	let isDragging = $state(false);
+
 	function editApplication() {
-		dashboard_content.setApplicationEdit(groupIndex, applicationIndex);
+		dashboard_content.setApplicationEdit(groupIndex, itemIndex);
 		dashboard_view.set(DASHBOARD_VIEW.APPLICATION_EDIT);
 	}
 </script>
 
 {#if EDIT_VIEWS.includes(dashboard_view.value)}
-	<div class="application-edit" draggable="true">
+	<div
+		class="application-edit"
+		class:movePreview
+		class:moving={isDragging}
+		draggable="true"
+		role="listitem"
+		aria-grabbed={isDragging}
+		ondragstart={(event) => {
+			isDragging = true;
+			dashboard_content.setMove(MOVE_TYPES.APPLICATION, groupIndex, itemIndex);
+			event.dataTransfer.effectAllowed = 'move';
+			event.dataTransfer.setData(
+				MIME_TYPES.APPLICATION,
+				JSON.stringify({ groupIndex, itemIndex, name, icon, link })
+			);
+		}}
+		ondragend={() => {
+			isDragging = false;
+			dashboard_content.resetMovePreview();
+			dashboard_content.resetMove();
+		}}
+	>
 		<img src={icon || plausible} alt={name} />
 		<p class="name">{name}</p>
 		<p class="url">{displayUrl}</p>
@@ -48,9 +73,19 @@
 	}
 
 	.application-edit {
+		cursor: move;
 		display: grid;
 		grid-template-areas: 'icon name btn-move' 'icon url btn-edit';
 		gap: 0.5rem;
+	}
+
+	.application-edit.moving:not(.movePreview) {
+		border: 1px dashed var(--blue);
+		opacity: 0.5;
+	}
+
+	.application-edit.movePreview {
+		opacity: 0.5;
 	}
 
 	.application-edit button.move {

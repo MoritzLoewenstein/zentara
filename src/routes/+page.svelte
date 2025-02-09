@@ -44,8 +44,8 @@
 <Section title="Applications" type="applications">
 	{#each dashboard_config.applicationGroups as applicationGroup, groupIndex}
 		<ApplicationGroup title={applicationGroup.title} {groupIndex}>
-			{#each applicationGroup.applications as application, applicationIndex}
-				<Application {...application} {groupIndex} {applicationIndex} />
+			{#each applicationGroup.items as application, itemIndex}
+				<Application {...application} {groupIndex} {itemIndex} />
 			{/each}
 		</ApplicationGroup>
 	{/each}
@@ -53,8 +53,8 @@
 <Section title="Bookmarks" type="bookmarks">
 	{#each dashboard_config.bookmarkGroups as bookmarkGroup, groupIndex}
 		<BookmarkGroup title={bookmarkGroup.title} {groupIndex}>
-			{#each bookmarkGroup.bookmarks as bookmark, bookmarkIndex}
-				<Bookmark {...bookmark} {groupIndex} {bookmarkIndex} />
+			{#each bookmarkGroup.items as bookmark, itemIndex}
+				<Bookmark {...bookmark} {groupIndex} {itemIndex} />
 			{/each}
 		</BookmarkGroup>
 	{/each}

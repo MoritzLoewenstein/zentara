@@ -1,4 +1,4 @@
-import db from './db.js';
+import db from "./db.js";
 
 /**
  *
@@ -9,8 +9,8 @@ import db from './db.js';
 export function saveDashboard(user_id, dashboard_config) {
 	const config = JSON.stringify(dashboard_config);
 	db.exec(
-		'INSERT INTO dashboards (user_id, config) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET config = ?',
-		[user_id, config, config]
+		"INSERT INTO dashboards (user_id, config) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET config = ?",
+		[user_id, config, config],
 	);
 }
 
@@ -20,9 +20,10 @@ export function saveDashboard(user_id, dashboard_config) {
  * @returns {?Dashboard}
  */
 export function getDashboard(user_id) {
-	const dashboard_config = db.getColumn('SELECT config FROM dashboards WHERE user_id = ?', [
-		user_id
-	]);
+	const dashboard_config = db.getColumn(
+		"SELECT config FROM dashboards WHERE user_id = ?",
+		[user_id],
+	);
 	if (!dashboard_config) {
 		return DASHBOARD_DEFAULT;
 	}
@@ -33,27 +34,27 @@ export function getDashboard(user_id) {
 const DASHBOARD_DEFAULT = {
 	applicationGroups: [
 		{
-			title: 'Applications',
-			applications: [
+			title: "Applications",
+			items: [
 				{
-					icon: '',
-					name: 'Example Application',
-					link: 'https://example.com'
-				}
-			]
-		}
+					icon: "",
+					name: "Example Application",
+					link: "https://example.com",
+				},
+			],
+		},
 	],
 	bookmarkGroups: [
 		{
-			title: 'Bookmarks',
-			bookmarks: [
+			title: "Bookmarks",
+			items: [
 				{
-					title: 'Example Bookmark',
-					link: 'https://example.com'
-				}
-			]
-		}
-	]
+					title: "Example Bookmark",
+					link: "https://example.com",
+				},
+			],
+		},
+	],
 };
 
 /**
@@ -62,13 +63,15 @@ const DASHBOARD_DEFAULT = {
  * @property {string} icon - The icon identifier or URL for the application.
  * @property {string} name - The display name of the application.
  * @property {string} link - The URL link to the application.
+ * @property {boolean} movePreview - wether the displayed application is a preview of a move operation
  */
 
 /**
  * A group containing multiple applications.
  * @typedef {Object} ApplicationGroup
  * @property {string} title - The title of this application group.
- * @property {Application[]} applications - The list of applications within this group.
+ * @property {boolean} movePreview - wether the displayed application group is a preview of a move operation
+ * @property {Application[]} items - The list of applications within this group.
  */
 
 /**
@@ -77,14 +80,14 @@ const DASHBOARD_DEFAULT = {
  * @property {string} title - The display title of the bookmark.
  * @property {string} link - The URL link the bookmark points to.
  * @property {boolean} movePreview - wether the displayed bookmark is a preview of a move operation
- * @property {boolean} moving - wether the bookmark is currently being moved
  */
 
 /**
  * A group containing multiple bookmarks.
  * @typedef {Object} BookmarkGroup
  * @property {string} title - The title of this bookmark group.
- * @property {Bookmark[]} bookmarks - The list of bookmarks within this group.
+ * @property {boolean} movePreview - wether the displayed bookmark group is a preview of a move operation
+ * @property {Bookmark[]} items - The list of bookmarks within this group.
  */
 
 /**

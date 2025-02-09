@@ -4,8 +4,10 @@
 		dashboard_view,
 		dashboard_content,
 		DASHBOARD_VIEW,
-		EDIT_VIEWS
+		EDIT_VIEWS,
+		MOVE_TYPES
 	} from './client/dashboard.svelte.js';
+	import { getInsertIndex, MIME_TYPES } from './client/draggable';
 	import DeleteIcon from './icons/DeleteIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
 	const { title, children, groupIndex } = $props();
@@ -29,6 +31,51 @@
 		if (!confirmDelete) return;
 		dashboard_content.deleteApplicationGroup(groupIndex);
 	}
+
+	function applicationDragEnter(event) {
+		const isApplication = event.dataTransfer.types.includes(MIME_TYPES.APPLICATION);
+		if (!isApplication) return;
+		event.preventDefault();
+	}
+
+	function applicationDragOver(event) {
+		const isApplication = event.dataTransfer.types.includes(MIME_TYPES.APPLICATION);
+		if (!isApplication) return;
+		event.preventDefault();
+		event.dataTransfer.dropEffect = 'move';
+
+		const items = event.target.closest('.items');
+		const insertIndex = getInsertIndex(items, event.clientY);
+		const hidePreview =
+			insertIndex === null ||
+			(dashboard_content.value.move.group_index === groupIndex &&
+				(dashboard_content.value.move.item_index === insertIndex ||
+					dashboard_content.value.move.item_index === insertIndex - 1));
+		if (hidePreview) {
+			dashboard_content.resetMovePreview();
+		} else {
+			dashboard_content.updateMovePreview(groupIndex, insertIndex);
+		}
+	}
+
+	function applicationDragLeave(event) {
+		const isApplication = event.dataTransfer.types.includes(MIME_TYPES.APPLICATION);
+		if (!isApplication) return;
+		dashboard_content.resetMovePreview();
+	}
+
+	function applicationDrop(event) {
+		const isApplication = event.dataTransfer.types.includes(MIME_TYPES.APPLICATION);
+		if (!isApplication) return;
+		event.preventDefault();
+
+		const application_data = JSON.parse(event.dataTransfer.getData(MIME_TYPES.APPLICATION));
+		const items = event.target.closest('.items');
+		const insertIndex = getInsertIndex(items, event.clientY);
+		dashboard_content.resetMovePreview();
+		dashboard_content.resetMove();
+		dashboard_content.moveItem(MOVE_TYPES.APPLICATION, application_data, groupIndex, insertIndex);
+	}
 </script>
 
 <section draggable={dashboard_edit}>
@@ -51,7 +98,14 @@
 		<h3 class="group-title">{title}</h3>
 	{/if}
 
-	<div class="items">
+	<div
+		class="items"
+		role="list"
+		ondragenter={(e) => applicationDragEnter(e)}
+		ondragover={(e) => applicationDragOver(e)}
+		ondragleave={(e) => applicationDragLeave(e)}
+		ondrop={(e) => applicationDrop(e)}
+	>
 		{@render children?.()}
 		{#if dashboard_edit}
 			<button
