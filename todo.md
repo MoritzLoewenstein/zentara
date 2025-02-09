@@ -1,7 +1,7 @@
 # todo first version
 
-- [ ] draggable applications
 - [ ] draggable bookmark groups and application groups
+- [ ] application icons (file input preview + saving)
 - [ ] regenerate recovery codes
 - [ ] test recovery code functionality
 - [ ] finish invite functionality

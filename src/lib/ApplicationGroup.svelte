@@ -7,7 +7,7 @@
 		EDIT_VIEWS,
 		MOVE_TYPES
 	} from './client/dashboard.svelte.js';
-	import { getInsertIndex, MIME_TYPES } from './client/draggable';
+	import { getClosestItemIndex, MIME_TYPES } from './client/draggable';
 	import DeleteIcon from './icons/DeleteIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
 	const { title, children, groupIndex } = $props();
@@ -45,12 +45,13 @@
 		event.dataTransfer.dropEffect = 'move';
 
 		const items = event.target.closest('.items');
-		const insertIndex = getInsertIndex(items, event.clientY);
+		const insertIndex = getClosestItemIndex(items, event.clientX, event.clientY);
 		const hidePreview =
 			insertIndex === null ||
 			(dashboard_content.value.move.group_index === groupIndex &&
 				(dashboard_content.value.move.item_index === insertIndex ||
 					dashboard_content.value.move.item_index === insertIndex - 1));
+		console.log('hidePreview', hidePreview, insertIndex);
 		if (hidePreview) {
 			dashboard_content.resetMovePreview();
 		} else {
@@ -71,7 +72,7 @@
 
 		const application_data = JSON.parse(event.dataTransfer.getData(MIME_TYPES.APPLICATION));
 		const items = event.target.closest('.items');
-		const insertIndex = getInsertIndex(items, event.clientY);
+		const insertIndex = getClosestItemIndex(items, event.clientX, event.clientY);
 		dashboard_content.resetMovePreview();
 		dashboard_content.resetMove();
 		dashboard_content.moveItem(MOVE_TYPES.APPLICATION, application_data, groupIndex, insertIndex);

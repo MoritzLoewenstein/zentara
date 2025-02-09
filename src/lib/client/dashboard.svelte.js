@@ -77,6 +77,7 @@ let dashboard_content_state = $state({
 	dashboard_edit: { applicationGroups: [], bookmarkGroups: [] }
 });
 function createDashboardContent() {
+	let movePreviewTimeout = null;
 	return {
 		get value() {
 			return dashboard_content_state;
@@ -180,36 +181,51 @@ function createDashboardContent() {
 			};
 		},
 		updateMovePreview(group_index, item_index = null) {
-			this.resetMovePreview();
-			const { type } = dashboard_content_state.move;
-			const groupKey =
-				type === MOVE_TYPES.APPLICATION || type === MOVE_TYPES.APPLICATION_GROUP
-					? 'applicationGroups'
-					: 'bookmarkGroups';
-			dashboard_content_state.move_preview = {
-				group_index,
-				item_index
-			};
-			const item = this.getMove();
-			if (type === MOVE_TYPES.APPLICATION_GROUP || type === MOVE_TYPES.BOOKMARK_GROUP) {
-				if (group_index === null) {
-					return;
-				}
-				dashboard_content_state.dashboard_edit[groupKey].splice(group_index, 0, {
-					...item,
-					movePreview: true
-				});
-			} else {
-				if (group_index === null || item_index === null) {
-					return;
-				}
-				dashboard_content_state.dashboard_edit[groupKey][group_index].items.splice(item_index, 0, {
-					...item,
-					movePreview: true
-				});
+			if (movePreviewTimeout !== null) {
+				clearTimeout(movePreviewTimeout);
 			}
+			movePreviewTimeout = setTimeout(() => {
+				this.resetMovePreview(false);
+				const { type } = dashboard_content_state.move;
+				const groupKey =
+					type === MOVE_TYPES.APPLICATION || type === MOVE_TYPES.APPLICATION_GROUP
+						? 'applicationGroups'
+						: 'bookmarkGroups';
+				dashboard_content_state.move_preview = {
+					group_index,
+					item_index
+				};
+				const item = this.getMove();
+				if (type === MOVE_TYPES.APPLICATION_GROUP || type === MOVE_TYPES.BOOKMARK_GROUP) {
+					if (group_index === null) {
+						movePreviewTimeout = null;
+						return;
+					}
+					dashboard_content_state.dashboard_edit[groupKey].splice(group_index, 0, {
+						...item,
+						movePreview: true
+					});
+				} else {
+					if (group_index === null || item_index === null) {
+						movePreviewTimeout = null;
+						return;
+					}
+					dashboard_content_state.dashboard_edit[groupKey][group_index].items.splice(
+						item_index,
+						0,
+						{
+							...item,
+							movePreview: true
+						}
+					);
+				}
+				movePreviewTimeout = null;
+			}, 50);
 		},
-		resetMovePreview() {
+		resetMovePreview(resetTimeout = true) {
+			if (resetTimeout) {
+				clearTimeout(movePreviewTimeout);
+			}
 			const { type } = dashboard_content_state.move;
 			const { group_index, item_index } = dashboard_content_state.move_preview;
 			const groupKey =
