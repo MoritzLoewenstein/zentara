@@ -11,6 +11,7 @@
 
 ## ui / ux
 
+- [ ] enable drag & drop between windows (item state contained in drag data, dragEffect copy if not the same dashboard or move if same dashboard)
 - [ ] better keyboard navigation
   - [ ] escape to cancel edit mode
   - [ ] enter to submit in edit/add modals
