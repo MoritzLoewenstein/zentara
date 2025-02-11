@@ -2,19 +2,11 @@
 	import { page } from '$app/state';
 	import { browser } from '$app/environment';
 	import { dashboard_view, dashboard_content, EDIT_VIEWS } from '$lib/client/dashboard.svelte.js';
-	import Application from '$lib/Application.svelte';
-	import ApplicationAddModal from '$lib/ApplicationAddModal.svelte';
 	import ApplicationGroup from '$lib/ApplicationGroup.svelte';
-	import Bookmark from '$lib/Bookmark.svelte';
-	import BookmarkAddModal from '$lib/BookmarkAddModal.svelte';
-	import BookmarkEditModal from '$lib/BookmarkEditModal.svelte';
 	import BookmarkGroup from '$lib/BookmarkGroup.svelte';
-	import Toast from '$lib/Toast.svelte';
-	import IntroModal from '$lib/IntroModal.svelte';
-	import SaveDashboardModal from '$lib/SaveDashboardModal.svelte';
 	import Section from '$lib/Section.svelte';
-	import SettingsModal from '$lib/SettingsModal.svelte';
-	import ApplicationEditModal from '$lib/ApplicationEditModal.svelte';
+	import Modals from '$lib/Modals.svelte';
+
 	/**@typedef {import('../lib/server/dashboard').Dashboard} Dashboard */
 
 	/**@type {Dashboard} */
@@ -33,29 +25,14 @@
 	});
 </script>
 
-<Toast></Toast>
-<SettingsModal></SettingsModal>
-<IntroModal></IntroModal>
-<SaveDashboardModal></SaveDashboardModal>
-<ApplicationAddModal></ApplicationAddModal>
-<ApplicationEditModal></ApplicationEditModal>
-<BookmarkAddModal></BookmarkAddModal>
-<BookmarkEditModal></BookmarkEditModal>
+<Modals />
 <Section title="Applications" type="applications">
-	{#each dashboard_config.applicationGroups as applicationGroup, groupIndex}
-		<ApplicationGroup title={applicationGroup.title} {groupIndex}>
-			{#each applicationGroup.items as application, itemIndex (application)}
-				<Application {...application} {groupIndex} {itemIndex} />
-			{/each}
-		</ApplicationGroup>
+	{#each dashboard_config.applicationGroups as applicationGroup, groupIndex (applicationGroup)}
+		<ApplicationGroup {...applicationGroup} {groupIndex} />
 	{/each}
 </Section>
 <Section title="Bookmarks" type="bookmarks">
-	{#each dashboard_config.bookmarkGroups as bookmarkGroup, groupIndex}
-		<BookmarkGroup title={bookmarkGroup.title} {groupIndex}>
-			{#each bookmarkGroup.items as bookmark, itemIndex (bookmark)}
-				<Bookmark {...bookmark} {groupIndex} {itemIndex} />
-			{/each}
-		</BookmarkGroup>
+	{#each dashboard_config.bookmarkGroups as bookmarkGroup, groupIndex (bookmarkGroup)}
+		<BookmarkGroup {...bookmarkGroup} {groupIndex} />
 	{/each}
 </Section>

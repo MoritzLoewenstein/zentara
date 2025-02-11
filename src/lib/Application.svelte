@@ -3,10 +3,9 @@
 		dashboard_view,
 		dashboard_content,
 		DASHBOARD_VIEW,
-		EDIT_VIEWS,
-		MOVE_TYPES
+		EDIT_VIEWS
 	} from './client/dashboard.svelte.js';
-	import { MIME_TYPES } from './client/draggable.js';
+	import { MOVE_TYPES } from './client/draggable.js';
 	import EditIcon from './icons/EditIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
 	import plausible from '$lib/icons/plausible.png';
@@ -34,7 +33,7 @@
 			dashboard_content.setMove(MOVE_TYPES.APPLICATION, groupIndex, itemIndex);
 			event.dataTransfer.effectAllowed = 'move';
 			event.dataTransfer.setData(
-				MIME_TYPES.APPLICATION,
+				MOVE_TYPES.APPLICATION,
 				JSON.stringify({ groupIndex, itemIndex, name, icon, link })
 			);
 		}}

@@ -1,16 +1,21 @@
 <script>
+	import Bookmark from './Bookmark.svelte';
 	import {
 		dashboard_view,
 		dashboard_content,
 		DASHBOARD_VIEW,
-		EDIT_VIEWS,
-		MOVE_TYPES
+		EDIT_VIEWS
 	} from './client/dashboard.svelte.js';
-	import { getInsertIndex, MIME_TYPES } from './client/draggable';
+	import { getInsertIndex, MOVE_TYPES } from './client/draggable';
 	import AddIcon from './icons/AddIcon.svelte';
 	import DeleteIcon from './icons/DeleteIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
-	const { title, children, groupIndex } = $props();
+	const { title, groupIndex, movePreview, items } = $props();
+
+	// use $props.id() when available: https://github.com/sveltejs/svelte/pull/15185
+	const groupId = Math.random().toString(36).substring(0, 6);
+
+	let isDragging = $state(false);
 
 	const dashboard_edit = $derived(EDIT_VIEWS.includes(dashboard_view.value));
 	let titleValue = $state(title);
@@ -33,13 +38,13 @@
 	}
 
 	function bookmarkDragEnter(event) {
-		const isBookmark = event.dataTransfer.types.includes(MIME_TYPES.BOOKMARK);
+		const isBookmark = event.dataTransfer.types.includes(MOVE_TYPES.BOOKMARK);
 		if (!isBookmark) return;
 		event.preventDefault();
 	}
 
 	function bookmarkDragOver(event) {
-		const isBookmark = event.dataTransfer.types.includes(MIME_TYPES.BOOKMARK);
+		const isBookmark = event.dataTransfer.types.includes(MOVE_TYPES.BOOKMARK);
 		if (!isBookmark) return;
 		event.preventDefault();
 		event.dataTransfer.dropEffect = 'move';
@@ -59,17 +64,17 @@
 	}
 
 	function bookmarkDragLeave(event) {
-		const isBookmark = event.dataTransfer.types.includes(MIME_TYPES.BOOKMARK);
+		const isBookmark = event.dataTransfer.types.includes(MOVE_TYPES.BOOKMARK);
 		if (!isBookmark) return;
 		dashboard_content.resetMovePreview();
 	}
 
 	function bookmarkDrop(event) {
-		const isBookmark = event.dataTransfer.types.includes(MIME_TYPES.BOOKMARK);
+		const isBookmark = event.dataTransfer.types.includes(MOVE_TYPES.BOOKMARK);
 		if (!isBookmark) return;
 		event.preventDefault();
 
-		const bookmark_data = JSON.parse(event.dataTransfer.getData(MIME_TYPES.BOOKMARK));
+		const bookmark_data = JSON.parse(event.dataTransfer.getData(MOVE_TYPES.BOOKMARK));
 		const items = event.target.closest('.items');
 		const insertIndex = getInsertIndex(items, event.clientY);
 		dashboard_content.resetMovePreview();
@@ -78,9 +83,31 @@
 	}
 </script>
 
-<section draggable={dashboard_edit}>
+<section
+	class="group"
+	draggable={dashboard_edit}
+	class:movePreview
+	class:moving={isDragging}
+	role="listitem"
+	aria-grabbed={isDragging}
+	aria-owns={groupId}
+	ondragstart={(event) => {
+		isDragging = true;
+		dashboard_content.setMove(MOVE_TYPES.BOOKMARK_GROUP, groupIndex);
+		event.dataTransfer.effectAllowed = 'move';
+		event.dataTransfer.setData(
+			MOVE_TYPES.BOOKMARK_GROUP,
+			JSON.stringify({ groupIndex, title, items })
+		);
+	}}
+	ondragend={() => {
+		isDragging = false;
+		dashboard_content.resetMovePreview();
+		dashboard_content.resetMove();
+	}}
+>
 	{#if dashboard_edit}
-		<div class="group-edit">
+		<div class="group-heading">
 			<input type="text" bind:value={titleValue} class="group-title" />
 			<button
 				type="button"
@@ -98,14 +125,17 @@
 		<h3 class="group-title">{title}</h3>
 	{/if}
 	<div
+		id={groupId}
 		class="items"
-		role="list"
+		role="group"
 		ondragenter={(e) => bookmarkDragEnter(e)}
 		ondragover={(e) => bookmarkDragOver(e)}
 		ondragleave={(e) => bookmarkDragLeave(e)}
 		ondrop={(e) => bookmarkDrop(e)}
 	>
-		{@render children?.()}
+		{#each items as bookmark, itemIndex (bookmark)}
+			<Bookmark {...bookmark} {groupIndex} {itemIndex} />
+		{/each}
 		{#if dashboard_edit}
 			<button
 				type="button"
@@ -120,7 +150,15 @@
 </section>
 
 <style>
-	.group-edit {
+	.group.moving:not(.movePreview) {
+		border: 1px dashed var(--blue);
+		opacity: 0.5;
+	}
+
+	.group.movePreview {
+		opacity: 0.5;
+	}
+	.group-heading {
 		display: flex;
 		flex-direction: row;
 		gap: 0.5rem;

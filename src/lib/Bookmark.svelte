@@ -3,10 +3,9 @@
 		dashboard_view,
 		dashboard_content,
 		DASHBOARD_VIEW,
-		EDIT_VIEWS,
-		MOVE_TYPES
+		EDIT_VIEWS
 	} from './client/dashboard.svelte.js';
-	import { MIME_TYPES } from './client/draggable.js';
+	import { MOVE_TYPES } from './client/draggable.js';
 	import EditIcon from './icons/EditIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
 	const { title, link, movePreview, groupIndex, itemIndex } = $props();
@@ -32,7 +31,7 @@
 			dashboard_content.setMove(MOVE_TYPES.BOOKMARK, groupIndex, itemIndex);
 			event.dataTransfer.effectAllowed = 'move';
 			event.dataTransfer.setData(
-				MIME_TYPES.BOOKMARK,
+				MOVE_TYPES.BOOKMARK,
 				JSON.stringify({ groupIndex, itemIndex, title, link })
 			);
 		}}

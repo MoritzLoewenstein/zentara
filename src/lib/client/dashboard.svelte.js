@@ -1,3 +1,5 @@
+import { MOVE_TYPES } from './draggable';
+
 export const DASHBOARD_VIEW = {
 	DASHBOARD: 'default',
 	INTRO: 'intro',
@@ -22,13 +24,6 @@ export const DASHBOARD_VIEWS = [
 	DASHBOARD_VIEW.INTRO,
 	DASHBOARD_VIEW.SETTINGS
 ];
-
-export const MOVE_TYPES = {
-	APPLICATION: 'application',
-	BOOKMARK: 'bookmark',
-	APPLICATION_GROUP: 'application_group',
-	BOOKMARK_GROUP: 'bookmark_group'
-};
 
 let dashboard_view_state = $state(DASHBOARD_VIEW.DASHBOARD);
 function createDashboardView() {
