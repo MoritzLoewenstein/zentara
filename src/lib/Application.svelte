@@ -29,6 +29,8 @@
 		role="listitem"
 		aria-grabbed={isDragging}
 		ondragstart={(event) => {
+			// prevent applicationGroup from being dragged
+			event.stopPropagation();
 			isDragging = true;
 			dashboard_content.setMove(MOVE_TYPES.APPLICATION, groupIndex, itemIndex);
 			event.dataTransfer.effectAllowed = 'move';

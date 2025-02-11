@@ -4,6 +4,8 @@
 	import AddIcon from './icons/AddIcon.svelte';
 	const { title, children, type } = $props();
 
+	let group_items_container;
+
 	const isRow = type !== 'applications';
 
 	const supportedDragTypes = [MOVE_TYPES.APPLICATION_GROUP, MOVE_TYPES.BOOKMARK_GROUP];
@@ -27,11 +29,10 @@
 		event.preventDefault();
 		event.dataTransfer.dropEffect = 'move';
 
-		const items = event.target.closest('.items');
 		const insertIndex =
 			dragType === MOVE_TYPES.BOOKMARK_GROUP
-				? getClosestItemIndex(items, event.clientX, event.clientY)
-				: getInsertIndex(items, event.clientY);
+				? getClosestItemIndex(group_items_container, event.clientX, event.clientY)
+				: getInsertIndex(group_items_container, event.clientY);
 		const hidePreview =
 			insertIndex === null || dashboard_content.value.move.group_index === insertIndex;
 		console.log('hidePreview', hidePreview, insertIndex);
@@ -57,11 +58,10 @@
 		event.preventDefault();
 
 		const group_data = JSON.parse(event.dataTransfer.getData(dragType));
-		const items = event.target.closest('.items');
 		const insertIndex =
 			dragType === MOVE_TYPES.BOOKMARK_GROUP
-				? getClosestItemIndex(items, event.clientX, event.clientY)
-				: getInsertIndex(items, event.clientY);
+				? getClosestItemIndex(group_items_container, event.clientX, event.clientY)
+				: getInsertIndex(group_items_container, event.clientY);
 		dashboard_content.resetMovePreview();
 		dashboard_content.resetMove();
 		dashboard_content.moveItem(dragType, group_data, insertIndex);
@@ -98,7 +98,7 @@
 	{:else}
 		<h2>{title}</h2>
 	{/if}
-	<div class="items">
+	<div class="items" bind:this={group_items_container}>
 		{@render children?.()}
 	</div>
 </section>

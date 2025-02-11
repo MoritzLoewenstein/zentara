@@ -17,6 +17,8 @@
 
 	let isDragging = $state(false);
 
+	let bookmarks_container;
+
 	const dashboard_edit = $derived(EDIT_VIEWS.includes(dashboard_view.value));
 	let titleValue = $state(title);
 
@@ -49,8 +51,7 @@
 		event.preventDefault();
 		event.dataTransfer.dropEffect = 'move';
 
-		const items = event.target.closest('.items');
-		const insertIndex = getInsertIndex(items, event.clientY);
+		const insertIndex = getInsertIndex(bookmarks_container, event.clientY);
 		const hidePreview =
 			insertIndex === null ||
 			(dashboard_content.value.move.group_index === groupIndex &&
@@ -75,8 +76,7 @@
 		event.preventDefault();
 
 		const bookmark_data = JSON.parse(event.dataTransfer.getData(MOVE_TYPES.BOOKMARK));
-		const items = event.target.closest('.items');
-		const insertIndex = getInsertIndex(items, event.clientY);
+		const insertIndex = getInsertIndex(bookmarks_container, event.clientY);
 		dashboard_content.resetMovePreview();
 		dashboard_content.resetMove();
 		dashboard_content.moveItem(MOVE_TYPES.BOOKMARK, bookmark_data, groupIndex, insertIndex);
@@ -128,6 +128,7 @@
 		id={groupId}
 		class="items"
 		role="group"
+		bind:this={bookmarks_container}
 		ondragenter={(e) => bookmarkDragEnter(e)}
 		ondragover={(e) => bookmarkDragOver(e)}
 		ondragleave={(e) => bookmarkDragLeave(e)}

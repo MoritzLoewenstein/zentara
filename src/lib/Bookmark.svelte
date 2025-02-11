@@ -27,6 +27,8 @@
 		role="listitem"
 		aria-grabbed={isDragging}
 		ondragstart={(event) => {
+			// prevent bookmarkGroup from being dragged
+			event.stopPropagation();
 			isDragging = true;
 			dashboard_content.setMove(MOVE_TYPES.BOOKMARK, groupIndex, itemIndex);
 			event.dataTransfer.effectAllowed = 'move';

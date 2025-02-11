@@ -15,6 +15,8 @@
 	// use $props.id() when available: https://github.com/sveltejs/svelte/pull/15185
 	const groupId = Math.random().toString(36).substring(0, 6);
 
+	let applications_container;
+
 	let isDragging = $state(false);
 
 	const dashboard_edit = $derived(EDIT_VIEWS.includes(dashboard_view.value));
@@ -49,8 +51,7 @@
 		event.preventDefault();
 		event.dataTransfer.dropEffect = 'move';
 
-		const items = event.target.closest('.items');
-		const insertIndex = getClosestItemIndex(items, event.clientX, event.clientY);
+		const insertIndex = getClosestItemIndex(applications_container, event.clientX, event.clientY);
 		const hidePreview =
 			insertIndex === null ||
 			(dashboard_content.value.move.group_index === groupIndex &&
@@ -75,8 +76,7 @@
 		event.preventDefault();
 
 		const application_data = JSON.parse(event.dataTransfer.getData(MOVE_TYPES.APPLICATION));
-		const items = event.target.closest('.items');
-		const insertIndex = getClosestItemIndex(items, event.clientX, event.clientY);
+		const insertIndex = getClosestItemIndex(applications_container, event.clientX, event.clientY);
 		dashboard_content.resetMovePreview();
 		dashboard_content.resetMove();
 		dashboard_content.moveItem(MOVE_TYPES.APPLICATION, application_data, groupIndex, insertIndex);
@@ -129,6 +129,7 @@
 		id={groupId}
 		class="items"
 		role="group"
+		bind:this={applications_container}
 		ondragenter={(e) => applicationDragEnter(e)}
 		ondragover={(e) => applicationDragOver(e)}
 		ondragleave={(e) => applicationDragLeave(e)}
