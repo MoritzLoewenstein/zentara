@@ -10,10 +10,9 @@
 	import DeleteIcon from './icons/DeleteIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
 	import Application from './Application.svelte';
-	const { title, groupIndex, movePreview, items } = $props();
 
-	// use $props.id() when available: https://github.com/sveltejs/svelte/pull/15185
-	const groupId = Math.random().toString(36).substring(0, 6);
+	const { title, groupIndex, movePreview, items } = $props();
+	const uid = $props.id();
 
 	let applications_container;
 
@@ -90,7 +89,7 @@
 	class:movePreview
 	role="listitem"
 	aria-grabbed={isDragging}
-	aria-owns={groupId}
+	aria-owns="{uid}-list"
 	ondragstart={(event) => {
 		isDragging = true;
 		dashboard_content.setMove(MOVE_TYPES.APPLICATION_GROUP, groupIndex);
@@ -126,7 +125,7 @@
 	{/if}
 
 	<div
-		id={groupId}
+		id="{uid}-list"
 		class="items"
 		role="group"
 		bind:this={applications_container}
