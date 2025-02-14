@@ -8,7 +8,6 @@
 	import { MOVE_TYPES } from './client/draggable.js';
 	import EditIcon from './icons/EditIcon.svelte';
 	import MoveIcon from './icons/MoveIcon.svelte';
-	import plausible from '$lib/icons/plausible.png';
 	const { name, icon, link, movePreview, groupIndex, itemIndex } = $props();
 	const displayUrl = new URL(link).host;
 
@@ -45,7 +44,9 @@
 			dashboard_content.resetMove();
 		}}
 	>
-		<img src={icon || plausible} alt={name} />
+		{#if icon}
+			<img src={icon} alt={name} />
+		{/if}
 		<p class="name">{name}</p>
 		<p class="url">{displayUrl}</p>
 		<button type="button" title="move application '{name}'" class="btn-small btn-secondary move"
@@ -60,7 +61,9 @@
 	</div>
 {:else}
 	<a href={link} target="_blank" rel="noopener noreferrer">
-		<img src={icon || plausible} alt={name} />
+		{#if icon}
+			<img src={icon} alt={name} />
+		{/if}
 		<p class="name">{name}</p>
 		<p class="url">{displayUrl}</p>
 	</a>
@@ -109,7 +112,6 @@
 
 	img {
 		grid-area: icon;
-		filter: grayscale(100%);
 		height: 50px;
 		width: auto;
 		object-fit: container;

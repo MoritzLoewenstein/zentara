@@ -91,6 +91,7 @@
 	aria-grabbed={isDragging}
 	aria-owns="{uid}-list"
 	ondragstart={(event) => {
+		if (!dashboard_edit) return;
 		isDragging = true;
 		dashboard_content.setMove(MOVE_TYPES.APPLICATION_GROUP, groupIndex);
 		event.dataTransfer.effectAllowed = 'move';
@@ -100,6 +101,7 @@
 		);
 	}}
 	ondragend={() => {
+		if (!dashboard_edit) return;
 		isDragging = false;
 		dashboard_content.resetMovePreview();
 		dashboard_content.resetMove();

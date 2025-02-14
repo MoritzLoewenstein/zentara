@@ -19,9 +19,25 @@
 	let nameValue = $state('');
 	let linkValue = $state('');
 
+	function handleFileSelection(event) {
+		const file = event.target.files[0];
+		iconValue = '';
+
+		if (!file) {
+			return;
+		}
+
+		const reader = new FileReader();
+		reader.onload = () => {
+			iconValue = reader.result;
+		};
+		reader.onerror = (err) => {
+			console.error(err);
+		};
+		reader.readAsDataURL(file);
+	}
+
 	function createApplication() {
-		// use https://www.npmjs.com/package/dompurify for svgs on server
-		//TODO: icon img to string
 		dashboard_content.addApplication(iconValue, nameValue, linkValue);
 		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
@@ -38,12 +54,18 @@
 			link
 			<input type="url" bind:value={linkValue} placeholder="https://grafana.example.org" />
 		</label>
-		<input
-			type="file"
-			accept="image/png, image/jpeg, image/svg+xml"
-			bind:value={iconValue}
-			placeholder="Image"
-		/>
+		<label>
+			icon
+			<input
+				type="file"
+				accept="image/png, image/jpeg, image/svg+xml"
+				onchange={handleFileSelection}
+			/>
+		</label>
+
+		{#if iconValue}
+			<img src={iconValue} alt="icon file preview" class="icon-preview" />
+		{/if}
 		<div class="buttons">
 			<button
 				type="button"
@@ -72,6 +94,10 @@
 	label {
 		display: flex;
 		flex-direction: column;
+	}
+
+	.icon-preview {
+		width: 100px;
 	}
 
 	.buttons {

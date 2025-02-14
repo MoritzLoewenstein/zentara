@@ -10,6 +10,9 @@
 			dialog.showModal();
 		} else {
 			dialog.close();
+			iconValue = '';
+			nameValue = '';
+			linkValue = '';
 		}
 	});
 
@@ -34,6 +37,24 @@
 		dashboard_content.deleteApplicationEdit();
 		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
+
+	function handleFileSelection(event) {
+		const file = event.target.files[0];
+		iconValue = '';
+
+		if (!file) {
+			return;
+		}
+
+		const reader = new FileReader();
+		reader.onload = () => {
+			iconValue = reader.result;
+		};
+		reader.onerror = (err) => {
+			console.error(err);
+		};
+		reader.readAsDataURL(file);
+	}
 </script>
 
 <dialog bind:this={dialog}>
@@ -47,12 +68,17 @@
 			link
 			<input type="url" bind:value={linkValue} placeholder="https://grafana.example.org" />
 		</label>
-		<input
-			type="file"
-			accept="image/png, image/jpeg, image/svg+xml"
-			bind:value={iconValue}
-			placeholder="Image"
-		/>
+		<label>
+			icon
+			<input
+				type="file"
+				accept="image/png, image/jpeg, image/svg+xml"
+				onchange={handleFileSelection}
+			/>
+		</label>
+		{#if iconValue}
+			<img src={iconValue} alt="icon file preview" class="icon-preview" />
+		{/if}
 		<div class="buttons">
 			<button
 				type="button"
@@ -85,6 +111,14 @@
 	label {
 		display: flex;
 		flex-direction: column;
+	}
+
+	.icon-preview {
+		max-width: 100px;
+		max-height: 100px;
+		object-fit: contain;
+		object-position: top left;
+		margin-bottom: 2rem;
 	}
 
 	.buttons {

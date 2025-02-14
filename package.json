@@ -38,6 +38,9 @@
 	"dependencies": {
 		"argon2": "^0.41.1",
 		"better-sqlite3": "^11.8.1",
+		"dompurify": "^3.2.4",
+		"jsdom": "^26.0.0",
+		"svgo": "^3.3.2",
 		"ulid": "^2.3.0"
 	}
 }
