@@ -1,0 +1,17 @@
+name: 'zentara'
+
+services:
+  sveltekit:
+    build:
+      context: .
+      dockerfile: 'Dockerfile'
+      args:
+        ZENTARA_ORIGIN: ${ZENTARA_ORIGIN}
+    image: ghcr.io/moritzloewenstein/zentara:latest
+    ports:
+      - '3000:3000'
+    volumes:
+      - zentara_data:/app/data
+
+volumes:
+  zentara_data:
