@@ -10,7 +10,7 @@ Zentara is not ready yet and still in development.
 ## features
 
 There are essentially two types of elements in your dashboard: applications and bookmarks.
-Applications offer the ability to show an icon, a title, and a description, while bookmarks stay simple with just a title and a link. These two types of elements can be organized in application groups and bookmark groups, respectively. There is one application section at the top which contains all application groups, and one bookmark section at the bottom which contains all bookmark groups. It sounds more complicated than it is, trust me. See for yourself:
+Applications offer the ability to show an icon, a title, and a link, while bookmarks stay simple with just a title and a link. These two types of elements can be organized in application groups and bookmark groups, respectively. There is one application section at the top which contains all application groups, and one bookmark section at the bottom which contains all bookmark groups. It sounds more complicated than it is, trust me. See for yourself:
 
 ![zentara dashboard](./docs/assets/home.png)
 
