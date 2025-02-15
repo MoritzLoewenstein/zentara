@@ -1,22 +1,22 @@
-import { error } from "@sveltejs/kit";
-import { saveDashboard } from "$lib/server/dashboard";
-import { getSessionUserInfo } from "$lib/server/session";
-import { formatDataUrl, parseDataUrl } from "$lib/server/util/dataurl";
-import { JSDOM } from "jsdom";
-import DomPurify from "dompurify";
-import { optimize } from "svgo";
+import { error } from '@sveltejs/kit';
+import { saveDashboard } from '$lib/server/dashboard';
+import { getSessionUserInfo } from '$lib/server/session';
+import { formatDataUrl, parseDataUrl } from '$lib/server/util/dataurl';
+import { JSDOM } from 'jsdom';
+import DomPurify from 'dompurify';
+import { optimize } from 'svgo';
 
 const window = new JSDOM().window;
 const purify = DomPurify(window);
 
 export async function POST({ request, cookies }) {
-	const session_id = cookies.get("session_id");
+	const session_id = cookies.get('session_id');
 	if (!session_id) {
-		return error(401, { message: "unauthorized", code: "unauthorized" });
+		return error(401, { message: 'unauthorized', code: 'unauthorized' });
 	}
 	const user = getSessionUserInfo(session_id);
 	if (!user) {
-		return error(401, { message: "unauthorized", code: "unauthorized" });
+		return error(401, { message: 'unauthorized', code: 'unauthorized' });
 	}
 	const dashboard = await request.json();
 	sanitizeDashboard(dashboard);
@@ -35,7 +35,7 @@ function sanitizeDashboard(dashboard) {
 	}
 }
 
-const MIME_TYPES_ALLOWED = ["image/png", "image/jpeg", "image/svg+xml"];
+const MIME_TYPES_ALLOWED = ['image/png', 'image/jpeg', 'image/svg+xml'];
 function processIcon(dataUri) {
 	const result = parseDataUrl(dataUri);
 	if (result === null) {
@@ -46,13 +46,13 @@ function processIcon(dataUri) {
 		return null;
 	}
 
-	if (result.mimeType !== "image/svg+xml") {
+	if (result.mimeType !== 'image/svg+xml') {
 		return dataUri;
 	}
 
 	const sanitizedSvg = sanitizeSvg(result.body);
 	const optimizedSvg = optimizeSvg(sanitizedSvg);
-	const processedDataUri = formatDataUrl("image/svg+xml", optimizedSvg);
+	const processedDataUri = formatDataUrl('image/svg+xml', optimizedSvg);
 	return processedDataUri;
 }
 

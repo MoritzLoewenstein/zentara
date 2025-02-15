@@ -12,9 +12,19 @@ Zentara is not ready yet and still in development.
 There are essentially two types of elements in your dashboard: applications and bookmarks.
 Applications offer the ability to show an icon, a title, and a description, while bookmarks stay simple with just a title and a link. These two types of elements can be organized in application groups and bookmark groups, respectively. There is one application section at the top which contains all application groups, and one bookmark section at the bottom which contains all bookmark groups. It sounds more complicated than it is, trust me. See for yourself:
 
+![zentara dashboard](./docs/assets/home.png)
+
 ## edit mode
 
 When you enter the edit mode, you can move elements around (drag & drop), add new elements, and edit existing elements. You can save the edited state or cancel the edit mode with the buttons in the bottom right corner.
+
+![zentara dashboard in edit mode](./docs/assets/home_editmode.png)
+
+## settings
+
+There is a minimal settings page with self-explanatory options.
+
+![zentara settings](./docs/assets/home_settings.png)
 
 ## architecture
 

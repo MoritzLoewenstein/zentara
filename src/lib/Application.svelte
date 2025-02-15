@@ -73,6 +73,7 @@
 	a {
 		display: grid;
 		grid-template-areas: 'icon name' 'icon url';
+		gap: 0.5rem;
 		height: 50px;
 	}
 
