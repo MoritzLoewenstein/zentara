@@ -1,4 +1,4 @@
-import { ORIGIN } from '$env/dynamic/private';
+import { env } from '$env/dynamic/private';
 import db from './db.js';
 import { ulid } from 'ulid';
 import { unix } from './util/unix.js';
@@ -12,7 +12,7 @@ const INVITE_TOKEN_TIMEOUT = 60 * 60 * 24 * 14; // two weeks
  * @returns {string} link
  */
 function inviteLink(invite_token) {
-	return `${ORIGIN}/?invite_token=${invite_token}`;
+	return `${env.ORIGIN}/?invite_token=${invite_token}`;
 }
 
 /**

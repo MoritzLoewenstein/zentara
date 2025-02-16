@@ -35,5 +35,5 @@ jobs:
           GHCR_IMAGE: ghcr.io/moritzloewenstein/zentara/zentara:${{ github.event.inputs.tag }}
 
         run: |
-          docker build -t $GHCR_IMAGE .
+          docker buildx build -t $GHCR_IMAGE .
           docker push $GHCR_IMAGE
