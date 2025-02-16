@@ -24,4 +24,5 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 # volume / sqlite
-data
+data/*
+!data/.gitkeep

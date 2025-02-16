@@ -3,6 +3,7 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 COPY . .
 RUN npm install --include=dev
+RUN mkdir /app/data
 
 ARG ZENTARA_ORIGIN=http://localhost:3000
 
@@ -20,6 +21,7 @@ COPY --from=builder /app/build build/
 COPY --from=builder /app/static static/
 COPY --from=builder /app/node_modules node_modules/
 COPY --from=builder /app/package.json package.json
+RUN mkdir /app/data
 
 ARG ZENTARA_ORIGIN=http://localhost:3000
 
