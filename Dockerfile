@@ -3,7 +3,6 @@ FROM node:22-alpine AS builder
 WORKDIR /app
 COPY . .
 RUN npm install --include=dev
-RUN mkdir /app/data
 
 ARG ZENTARA_ORIGIN=http://localhost:3000
 
@@ -11,6 +10,7 @@ ENV NODE_ENV=production
 ENV ORIGIN=${ZENTARA_ORIGIN}
 ENV PUBLIC_APP_NAMESPACE=zentara
 ENV BODY_SIZE_LIMIT=1000000
+RUN npm run build
 RUN npm prune --omit=dev
 
 # step 2: copy sveltekit build output to a new image
@@ -30,5 +30,6 @@ ENV ORIGIN=${ZENTARA_ORIGIN}
 ENV BODY_SIZE_LIMIT=1000000
 
 VOLUME /app/data
+EXPOSE 3000
 
 CMD [ "node", "build" ]
