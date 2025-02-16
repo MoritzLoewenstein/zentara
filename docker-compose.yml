@@ -7,7 +7,7 @@ services:
       dockerfile: 'Dockerfile'
       args:
         ZENTARA_ORIGIN: ${ZENTARA_ORIGIN}
-    image: ghcr.io/moritzloewenstein/zentara:latest
+    image: ghcr.io/moritzloewenstein/zentara/zentara:latest
     ports:
       - '3000:3000'
     volumes:

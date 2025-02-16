@@ -4,9 +4,7 @@ WORKDIR /app
 COPY . .
 RUN npm install --include=dev
 
-ARG ZENTARA_ORIGIN
 ENV NODE_ENV=production
-ENV ORIGIN=${ZENTARA_ORIGIN}
 ENV PUBLIC_APP_NAMESPACE=zentara
 ENV BODY_SIZE_LIMIT=1000000
 RUN npm run build
@@ -20,7 +18,6 @@ COPY --from=builder /app/static static/
 COPY --from=builder /app/node_modules node_modules/
 COPY --from=builder /app/package.json package.json
 
-# needs to be defined again for the second stage
 ARG ZENTARA_ORIGIN
 
 # step 3: start the server
