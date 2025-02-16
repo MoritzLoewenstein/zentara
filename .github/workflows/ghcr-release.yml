@@ -31,7 +31,8 @@ jobs:
         id: build-and-push
         env:
           IMAGE_TAG: ${{ github.event.inputs.tag }}
-          GHCR_IMAGE: ghcr.io/${{ github.repository }}/zentara:${{ github.event.inputs.tag }}
+          # harcoding this because gh actions does not have a sane way to lowercase a string
+          GHCR_IMAGE: ghcr.io/moritzloewenstein/zentara/zentara:${{ github.event.inputs.tag }}
 
         run: |
           docker build -t $GHCR_IMAGE .
