@@ -4,7 +4,10 @@ WORKDIR /app
 COPY . .
 RUN npm install --include=dev
 
+ARG ZENTARA_ORIGIN=http://localhost:3000
+
 ENV NODE_ENV=production
+ENV ORIGIN=${ZENTARA_ORIGIN}
 ENV PUBLIC_APP_NAMESPACE=zentara
 ENV BODY_SIZE_LIMIT=1000000
 RUN npm run build
@@ -18,7 +21,7 @@ COPY --from=builder /app/static static/
 COPY --from=builder /app/node_modules node_modules/
 COPY --from=builder /app/package.json package.json
 
-ARG ZENTARA_ORIGIN
+ARG ZENTARA_ORIGIN=http://localhost:3000
 
 # step 3: start the server
 EXPOSE 3000
