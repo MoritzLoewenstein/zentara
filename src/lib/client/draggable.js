@@ -1,4 +1,4 @@
-import { PUBLIC_APP_NAMESPACE } from "$env/static/public";
+import { PUBLIC_APP_NAMESPACE } from '$env/static/public';
 
 // https://stackoverflow.com/a/6877405
 // x- prefix because not registered with IANA
@@ -7,7 +7,7 @@ export const MOVE_TYPES = {
 	APPLICATION_GROUP: `application/x-${PUBLIC_APP_NAMESPACE}.application_group+json`,
 	APPLICATION: `application/x-${PUBLIC_APP_NAMESPACE}.application+json`,
 	BOOKMARK_GROUP: `application/x-${PUBLIC_APP_NAMESPACE}.bookmark_group+json`,
-	BOOKMARK: `application/x-${PUBLIC_APP_NAMESPACE}.bookmark+json`,
+	BOOKMARK: `application/x-${PUBLIC_APP_NAMESPACE}.bookmark+json`
 };
 
 /**
@@ -20,7 +20,7 @@ export const MOVE_TYPES = {
  */
 export function getInsertIndex(container, clientY) {
 	const items = Array.from(container.children).filter(
-		(el) => !el.classList.contains("movePreview"),
+		(el) => !el.classList.contains('movePreview')
 	);
 
 	for (let i = 0; i < items.length; i++) {
@@ -46,7 +46,7 @@ export function getInsertIndex(container, clientY) {
  */
 export function getClosestItemIndex(container, clientX, clientY) {
 	const items = Array.from(container.children).filter(
-		(el) => !el.classList.contains("movePreview"),
+		(el) => !el.classList.contains('movePreview')
 	);
 
 	let closestIndex = null;
@@ -56,9 +56,7 @@ export function getClosestItemIndex(container, clientX, clientY) {
 		const rect = item.getBoundingClientRect();
 		const centerX = rect.left + rect.width / 2;
 		const centerY = rect.top + rect.height / 2;
-		const distance = Math.sqrt(
-			(clientX - centerX) ** 2 + (clientY - centerY) ** 2,
-		);
+		const distance = Math.sqrt((clientX - centerX) ** 2 + (clientY - centerY) ** 2);
 
 		if (distance < minDistance) {
 			minDistance = distance;

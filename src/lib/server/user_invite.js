@@ -1,4 +1,4 @@
-import { ORIGIN } from '$env/static/private';
+import { ORIGIN } from '$env/dynamic/private';
 import db from './db.js';
 import { ulid } from 'ulid';
 import { unix } from './util/unix.js';
