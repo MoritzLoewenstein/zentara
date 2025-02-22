@@ -39,9 +39,7 @@ export function getRecoveryCodeCount(user_id) {
  * @returns {string|false} user_id
  */
 export function useRecoveryCode(code) {
-	const user_id = db.getColumn('SELECT user_id FROM user_recovery_codes WHERE AND code = ?', [
-		code
-	]);
+	const user_id = db.getColumn('SELECT user_id FROM user_recovery_codes WHERE code = ?', [code]);
 	if (!user_id) {
 		return false;
 	}

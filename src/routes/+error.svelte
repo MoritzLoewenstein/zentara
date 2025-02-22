@@ -4,37 +4,37 @@
 </script>
 
 {#if page?.error?.code === 'unauthorized' || page?.error?.code === 'unauthorized_validation'}
-	<h1>Login</h1>
+	<h1>login</h1>
 	<form method="POST" action="?/login" use:enhance>
 		<label>
-			Email
+			email
 			<input name="email" type="email" placeholder="max.mustermann@example.org" required />
 		</label>
 		<label>
-			Password
+			password
 			<input name="password" type="password" placeholder="********" required />
 		</label>
 		{#if page?.error?.code === 'unauthorized_validation'}
 			<p class="notice-validation">{page.error.message}</p>
 		{/if}
 		<button>Log in</button>
-		<a href="/?recovery_code=">Forgot password?</a>
+		<a href="/?recovery_code=">forgot password?</a>
 	</form>
 {:else if page?.error?.code === 'register' || page?.error?.code === 'register_validation'}
-	<h1>Register</h1>
+	<h1>register</h1>
 	<form method="POST" action="?/register" use:enhance>
 		<label>
-			Email
+			email
 			<input name="email" type="email" placeholder="max.mustermann@example.org" required />
 		</label>
 		<label>
-			Password
+			password
 			<input name="password" type="password" placeholder="********" required />
 		</label>
 		{#if page?.error?.code === 'register_validation'}
 			<p class="notice-validation">{page.error.message}</p>
 		{/if}
-		<button>Register</button>
+		<button>register</button>
 	</form>
 {:else if page?.error?.code === 'recovery_code' || page?.error?.code === 'recovery_code_validation'}
 	<h1>account recovery</h1>
@@ -51,6 +51,7 @@
 			<p class="notice-validation">{page.error.message}</p>
 		{/if}
 		<button>recover account</button>
+		<a href="/">login</a>
 	</form>
 {:else}
 	<h1>Error</h1>

@@ -38,7 +38,8 @@ export function load({ cookies, url }) {
 
 	const user = getSessionUserInfo(session_id);
 	if (!user) {
-		return error(401, { message: 'unauthorized', code: 'unauthorized' });
+		const code = url.searchParams.has('recovery_code') ? 'recovery_code' : 'unauthorized';
+		return error(401, { message: 'unauthorized', code });
 	}
 	updateSession(session_id);
 	return {

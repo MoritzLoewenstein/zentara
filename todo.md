@@ -1,7 +1,5 @@
 # todo first version
 
-- [ ] regenerate recovery codes
-- [ ] test recovery code functionality
 - [ ] finish invite functionality
 - [ ] docker / docker-compose deployment
 - [ ] applications / bookmarks have drag view in non-edit mode? why?
