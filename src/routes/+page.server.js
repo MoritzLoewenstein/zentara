@@ -153,6 +153,40 @@ export const actions = {
 			user_invites: getUserInvites(user_id)
 		};
 	},
+	recovery_codes: async ({ request, cookies }) => {
+		const session_id = cookies.get('session_id');
+		if (!session_id) {
+			return error(401, { message: 'unauthorized', code: 'unauthorized' });
+		}
+
+		const user = getSessionUserInfo(session_id);
+		if (!user) {
+			return error(401, { message: 'unauthorized', code: 'unauthorized' });
+		}
+
+		const formData = await request.formData();
+		const password = formData.get('password');
+		if (!password) {
+			return fail(422, {
+				message: 'missing password',
+				code: 'recovery_codes_validation'
+			});
+		}
+
+		const result = await loginUser(user.email, password);
+		if (!result) {
+			return fail(422, {
+				message: 'invalid password',
+				code: 'recovery_codes_validation'
+			});
+		}
+
+		const recovery_codes = createRecoveryCodes(user.id);
+		return {
+			recovery_codes,
+			recovery_code_count: recovery_codes.length
+		};
+	},
 	invite_create: async ({ request, cookies }) => {
 		const session_id = cookies.get('session_id');
 		if (!session_id) {

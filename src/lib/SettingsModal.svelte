@@ -1,22 +1,29 @@
 <script>
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
+	import { dashboard_view, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
+	import { PUBLIC_APP_NAMESPACE } from '$env/static/public';
+	import { invalidateAll } from '$app/navigation';
 	import AddIcon from './icons/AddIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
-	import CopyIcon from './icons/CopyIcon.svelte';
 	import RefreshIcon from './icons/RefreshIcon.svelte';
-	import { dashboard_view, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
+	import CopyIcon from './icons/CopyIcon.svelte';
+	import SaveIcon from './icons/SaveIcon.svelte';
 
 	let dialog;
-	$effect(() => {
+	$effect(async () => {
 		if (dashboard_view.value === DASHBOARD_VIEW.SETTINGS) {
 			dialog.showModal();
 		} else {
+			// reset page.form to prevent showing recovery codes again
+			await invalidateAll();
 			dialog.close();
 		}
 	});
 
-	const recoveryCodeCount = page.data.recovery_code_count ?? 0;
+	const recoveryCodeCount = $derived(
+		page.form?.recovery_code_count || page.data.recovery_code_count || 0
+	);
 	const openInvites = page.data.user_invites ?? [];
 </script>
 
@@ -45,16 +52,47 @@
 				codes in a safe place.<br />Each code can only be used once.
 			</p>
 			<p>You have {recoveryCodeCount} account recovery codes left.</p>
-			<form action="?/recovery-codes" method="post" use:enhance>
-				<label>
-					password
-					<input type="password" placeholder="********" required />
-				</label>
-				<button type="submit">
-					<span>regenerate recovery codes</span>
-					<RefreshIcon />
-				</button>
-			</form>
+			{#if page.form === null || page.status !== 200}
+				<form action="?/recovery_codes" method="post" use:enhance>
+					{#if page.status != 200}
+						<p class="notice-validation">{page.form.message}</p>
+					{/if}
+					<label>
+						password
+						<input type="password" placeholder="********" name="password" required />
+					</label>
+					<button type="submit">
+						<span>regenerate recovery codes</span>
+						<RefreshIcon />
+					</button>
+				</form>
+			{:else if page.form.recovery_codes.length > 0}
+				<p class="recovery-code-text">
+					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+					{@html page.form.recovery_codes.join('<br>')}
+					<button
+						title="copy recovery codes"
+						class="recover-code-copy"
+						onclick={() => navigator.clipboard.writeText(page.form.recovery_codes.join('\n'))}
+						><CopyIcon />
+					</button>
+					<button
+						title="download recovery codes"
+						class="recovery-code-download"
+						onclick={() => {
+							const blob = new Blob([page.form.recovery_codes.join('\n')], { type: 'text/plain' });
+							const url = URL.createObjectURL(blob);
+							const a = document.createElement('a');
+							a.href = url;
+							a.download = `${PUBLIC_APP_NAMESPACE}-recovery-codes.txt`;
+							a.click();
+							URL.revokeObjectURL(url);
+						}}
+					>
+						<SaveIcon />
+					</button>
+				</p>
+			{/if}
 		</section>
 		{#if page.data.user.is_admin}
 			<section class="user-invites">
@@ -136,6 +174,13 @@
 		font-size: 14px;
 	}
 
+	p.notice-validation {
+		border: 2px solid var(--orange);
+		width: max-content;
+		padding: 0.25rem 0.5rem;
+		background: var(--orange);
+	}
+
 	label {
 		display: flex;
 		flex-direction: column;
@@ -169,5 +214,24 @@
 
 	.recovery-codes p + form {
 		margin-top: 0.5rem;
+	}
+
+	.recovery-code-text {
+		font-family: monospace;
+		letter-spacing: 0.2rem;
+		position: relative;
+		line-height: 1.5rem;
+	}
+
+	.recover-code-copy {
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+
+	.recovery-code-download {
+		position: absolute;
+		top: calc(1rem + 46px);
+		right: 0;
 	}
 </style>
