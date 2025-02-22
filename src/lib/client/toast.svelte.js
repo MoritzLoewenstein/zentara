@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 let activeToasts = $state([]);
 function createToast() {
 	const toast_default_duration = 3000;
