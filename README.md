@@ -42,12 +42,25 @@ Zentara's core intent is to stay simple and focused. If you have an idea for a n
 
 ## installation
 
-Because of the simple architecture, Zentara should be easy to install on any server that supports Node.js. A Dockerfile for easy deployment is also provided.
+Because of the simple architecture, Zentara should be easy to install on any server that supports Node.js. A Dockerfile and a docker compose configuration are also provided.
 
 ### docker
 
-```bash
+Use the `-d` flag to run the container in the background.
 
+```bash
+docker run -p 3000:3000 -e ZENTARA_ORIGIN="https://zentara.example.org" ghcr.io/moritzloewenstein/zentara/zentara:latest
+# Listening on http://0.0.0.0:3000
+```
+
+### docker compose
+
+Copy the provided docker-compose.yml, use the `-d` flag to run the container in the background.
+
+```bash
+# ZENTARA_ORIGIN env var is the domain of your Zentara instance
+docker compose up
+# Listening on http://0.0.0.0:3000
 ```
 
 ### building and running with node

@@ -1,6 +1,6 @@
 import Database from 'better-sqlite3';
-import fs from 'node:fs';
 import { building } from '$app/environment';
+import seedSql from './db_seed.sql?raw';
 
 class DB {
 	constructor(dbPath) {
@@ -8,7 +8,6 @@ class DB {
 		this.db = new Database(dbFile);
 		this.db.pragma('journal_mode = WAL');
 		this.db.pragma('foreign_keys = ON');
-		const seedSql = fs.readFileSync('src/lib/server/db_seed.sql', 'utf-8');
 		this.db.exec(seedSql);
 	}
 
