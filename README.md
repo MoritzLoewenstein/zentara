@@ -5,12 +5,12 @@ It does not seek to offer a lot of features, but rather to offer a few features 
 
 # notice
 
-Zentara is not ready yet and still in development.
+Zentara is in a usable state but still in development.
 
 ## features
 
 There are essentially two types of elements in your dashboard: applications and bookmarks.
-Applications offer the ability to show an icon, a title, and a link, while bookmarks stay simple with just a title and a link. These two types of elements can be organized in application groups and bookmark groups, respectively. There is one application section at the top which contains all application groups, and one bookmark section at the bottom which contains all bookmark groups. It sounds more complicated than it is, trust me. See for yourself:
+Applications consist of an icon (optional), a title, and a link, while bookmarks stay simple with just a title and a link. These two types of elements can be organized in groups, see for yourself:
 
 ![zentara dashboard](./docs/assets/home.png)
 
@@ -25,20 +25,6 @@ When you enter the edit mode, you can move elements around (drag & drop), add ne
 There is a minimal settings page with self-explanatory options.
 
 ![zentara settings](./docs/assets/home_settings.png)
-
-## architecture
-
-Zentara is a SvelteKit application with an SQLite database (`/data` folder). On the client side every unauthenticated request (and the global error state) lands on `+error.svelte`, while the dashboard lives in `+page.svelte`. It uses form actions for more or less everything, which are defined in `+page.server.js`. The filenames in the `$lib/server` folder accurately describe what they do, most handle the logic of the sqlite table with the respective name.
-
-## contributions
-
-Zentara's core intent is to stay simple and focused. If you have an idea for a new feature, please open an issue first to discuss it. If you want to contribute a bugfix, please fork the repository and open a pull request. I will review it as soon as possible (which might not be very soon, but I will try my best). The underlying philosophy can be seen in the following decisions i made:
-
-- Zentara only uses SQLite as a database. This is a simple and lightweight database that is easy to use and understand. It is not as powerful as other databases, but it is more than enough for Zentara.
-- Zentara does not send emails. For user management, Zentara uses invite links and recovery codes. This is a simple and secure way to avoid emails. If you create an invite link, you will have to send it to the new user yourself. If you lose your password, you can use a recovery code to set a new one.
-- Zentara does not offer user defined styles. The design is simple and clear, and I intend to keep it that way. If you want to change the design, you will have to fork the repository and change the code yourself.
-- Zentara does not offer much beyond a simple greeting and the dashboard, and I intend it that way. If you want to add more features, you will have to fork the repository and change the code yourself.
-- Zentara only offers one configuration option: it is recommended to set the `ORIGIN` environment variable to the domain of your Zentara instance.
 
 ## installation
 
@@ -83,3 +69,17 @@ When I went looking for a sleek server dashboard, missing login systems in other
 - **session expiry**: Zentara uses a session inactivity timeout of one day and a session lifetime of one week. This means that you will be logged out after one day of inactivity and after one week of activity. This is longer than most websites, but I think it is a good compromise between security and convenience.
 - **recovery codes**: Zentara offers the possibility to use recovery codes. These codes can be used to set a new password when you have lost your access. They can only be used once. Recovery codes can be regenerated at any time, but only if you have access (re-authentication). You can check how many recovery codes you have left at any time.
 - **invite links**: Zentara offers the possibility to generate invite links for new users. New users will have their own dashboard, they can not watch your dashboard! You can see the open invites at any time. Invite links will expire after 14 days and can only be used once to create an account with the same email that they were created with.
+
+## architecture
+
+Zentara is a SvelteKit application with an SQLite database (`/data` folder). On the client side every unauthenticated request (and the global error state) lands on `+error.svelte`, while the dashboard lives in `+page.svelte`. It uses form actions for more or less everything, which are defined in `+page.server.js`. The filenames in the `$lib/server` folder accurately describe what they do, most handle the logic of the sqlite table with the respective name.
+
+## contributions
+
+Zentara's core intent is to stay simple and focused. If you have an idea for a new feature, please open an issue first to discuss it. If you want to contribute a bugfix, please fork the repository and open a pull request. I will review it as soon as possible (which might not be very soon, but I will try my best). The underlying philosophy can be seen in the following decisions i made:
+
+- Zentara only uses SQLite as a database. This is a simple and lightweight database that is easy to use and understand. It is not as powerful as other databases, but it is more than enough for Zentara.
+- Zentara does not send emails. For user management, Zentara uses invite links and recovery codes. This is a simple and secure way to avoid emails. If you create an invite link, you will have to send it to the new user yourself. If you lose your password, you can use a recovery code to set a new one.
+- Zentara does not offer user defined styles. The design is simple and clear, and I intend to keep it that way. If you want to change the design, you will have to fork the repository and change the code yourself.
+- Zentara does not offer much beyond a simple greeting and the dashboard. If you want to add more features, you will have to fork the repository and change the code yourself.
+- Zentara only offers one configuration option: it is recommended to set the `ZENTARA_ORIGIN` environment variable to the domain of your Zentara instance.
