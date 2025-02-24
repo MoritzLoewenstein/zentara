@@ -9,8 +9,9 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS user_invites (
     user_id TEXT NOT NULL,
     token TEXT NOT NULL UNIQUE,
-    email TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL,
     created_at INTEGER NOT NULL,
+    UNIQUE(user_id, email) ON CONFLICT REPLACE,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 

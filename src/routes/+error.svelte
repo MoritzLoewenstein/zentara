@@ -53,6 +53,26 @@
 		<button>recover account</button>
 		<a href="/">login</a>
 	</form>
+{:else if page?.error?.code === 'invite_token' || page?.error?.code === 'invite_token_validation'}
+	<h1>register (invited)</h1>
+	<form method="POST" action="?/register_invite" use:enhance>
+		<label>
+			invite token
+			<input name="invite_token" type="text" required readonly value={page.error.invite_token} />
+		</label>
+		<label>
+			email
+			<input name="email" type="email" required readonly value={page.error.email} />
+		</label>
+		<label>
+			password
+			<input name="password" type="password" placeholder="********" required />
+		</label>
+		{#if page?.error?.code === 'invite_token_validation'}
+			<p class="notice-validation">{page.error.message}</p>
+		{/if}
+		<button>register</button>
+	</form>
 {:else}
 	<h1>Error</h1>
 	<p>{page.error?.message || 'Something went wrong'}</p>

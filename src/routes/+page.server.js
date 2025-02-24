@@ -10,7 +10,8 @@ import {
 	loginUser,
 	createFirstUser,
 	updateUserPassword,
-	getUser
+	getUser,
+	createUser
 } from '$lib/server/user';
 import {
 	useRecoveryCode,
@@ -18,7 +19,7 @@ import {
 	createRecoveryCodes,
 	getRecoveryCodes
 } from '$lib/server/user_recovery';
-import { getUserInvites, createInvite } from '$lib/server/user_invite';
+import { getUserInvites, createInvite, getInvite, verifyInvite } from '$lib/server/user_invite';
 import { getDashboard } from '$lib/server/dashboard';
 
 /** @type {import('@sveltejs/kit').ServerLoad} */
@@ -32,14 +33,14 @@ export function load({ cookies, url }) {
 	}
 	const session_id = cookies.get('session_id');
 	if (!session_id) {
-		const code = url.searchParams.has('recovery_code') ? 'recovery_code' : 'unauthorized';
-		return error(401, { message: 'unauthorized', code });
+		const data = getUnauthorizedData(url.searchParams);
+		return error(401, { message: 'unauthorized', ...data });
 	}
 
 	const user = getSessionUserInfo(session_id);
 	if (!user) {
-		const code = url.searchParams.has('recovery_code') ? 'recovery_code' : 'unauthorized';
-		return error(401, { message: 'unauthorized', code });
+		const data = getUnauthorizedData(url.searchParams);
+		return error(401, { message: 'unauthorized', ...data });
 	}
 	updateSession(session_id);
 	return {
@@ -50,6 +51,35 @@ export function load({ cookies, url }) {
 		user_invites: getUserInvites(user.id),
 		first_login: user.first_login,
 		recovery_codes: user.first_login ? getRecoveryCodes(user.id) : []
+	};
+}
+
+function getUnauthorizedData(searchParams) {
+	if (searchParams.has('recovery_code')) {
+		return {
+			code: 'recovery_code',
+			recovery_code: searchParams.get('recovery_code')
+		};
+	}
+
+	if (searchParams.has('invite_token')) {
+		const invite_token = searchParams.get('invite_token');
+		const email = getInvite(invite_token);
+		if (!email) {
+			return {
+				code: 'invite_token_validation',
+				message: 'invalid invite token'
+			};
+		}
+		return {
+			code: 'invite_token',
+			invite_token,
+			email
+		};
+	}
+
+	return {
+		code: 'unauthorized'
 	};
 }
 
@@ -116,6 +146,48 @@ export const actions = {
 			dashboard: getDashboard(user.id),
 			recovery_code_count: getRecoveryCodeCount(user.id),
 			user_invites: getUserInvites(user.id),
+			first_login: true,
+			recovery_codes
+		};
+	},
+	register_invite: async ({ request, cookies }) => {
+		const formData = await request.formData();
+		const invite_token = formData.get('invite_token');
+		const password = formData.get('password');
+		if (!password) {
+			return error(422, {
+				message: 'missing email or password',
+				code: 'invite_token_validation'
+			});
+		}
+
+		const email = verifyInvite(invite_token);
+		if (!email) {
+			return error(422, {
+				message: 'invalid invite token',
+				code: 'invite_token_validation'
+			});
+		}
+		let user;
+		try {
+			user = await createUser(email, password);
+		} catch {
+			return error(422, {
+				message: 'failed to register with invite token',
+				code: 'invite_token_validation'
+			});
+		}
+		const recovery_codes = createRecoveryCodes(user.id);
+		const session_id = createSession(user.id);
+		cookies.set('session_id', session_id, {
+			path: '/',
+			maxAge: SESSION_MAX_AGE
+		});
+		return {
+			session_id,
+			user,
+			dashboard: getDashboard(user.id),
+			recovery_code_count: getRecoveryCodeCount(user.id),
 			first_login: true,
 			recovery_codes
 		};

@@ -51,6 +51,20 @@ input {
 	border-radius: 0;
 }
 
+input[type='text']:read-only,
+input[type='email']:read-only,
+input[type='password']:read-only {
+	pointer-events: none;
+	user-select: none;
+	background-color: var(--offwhite);
+}
+
+input[type='text']:read-only:focus,
+input[type='email']:read-only:focus,
+input[type='password']:read-only:focus {
+	outline: none;
+}
+
 dialog {
 	border: 2px solid var(--blue);
 	width: min(100%, 400px);

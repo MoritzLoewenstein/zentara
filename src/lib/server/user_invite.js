@@ -61,6 +61,24 @@ export function getUserInvites(user_id) {
  * @param {string} invite_token
  * @returns {string|false} email if valid
  */
+export function getInvite(invite_token) {
+	const unix_now = unix();
+	const absoluteTimeout = unix_now - INVITE_TOKEN_TIMEOUT;
+	const email = db.getColumn('SELECT email FROM user_invites WHERE token = ? AND created_at > ?', [
+		invite_token,
+		absoluteTimeout
+	]);
+	if (!email) {
+		return false;
+	}
+	return email;
+}
+
+/**
+ * @export
+ * @param {string} invite_token
+ * @returns {string|false} email if valid
+ */
 export function verifyInvite(invite_token) {
 	const unix_now = unix();
 	const absoluteTimeout = unix_now - INVITE_TOKEN_TIMEOUT;
@@ -71,6 +89,6 @@ export function verifyInvite(invite_token) {
 	if (!email) {
 		return false;
 	}
-	db.exec('DELETE FROM user_invites WHERE id = ?', [invite_token]);
+	db.exec('DELETE FROM user_invites WHERE token = ?', [invite_token]);
 	return email;
 }

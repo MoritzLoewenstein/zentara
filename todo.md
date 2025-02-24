@@ -1,7 +1,5 @@
 # todo first version
 
-- [ ] finish invite functionality
-- [ ] docker / docker-compose deployment
 - [ ] applications / bookmarks have drag view in non-edit mode? why?
 
 # ideas for later
