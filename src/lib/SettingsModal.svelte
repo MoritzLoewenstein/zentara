@@ -21,10 +21,11 @@
 		}
 	});
 
+	const recoveryCodes = $derived(page.form?.recovery_codes || []);
 	const recoveryCodeCount = $derived(
 		page.form?.recovery_code_count || page.data.recovery_code_count || 0
 	);
-	const openInvites = page.data.user_invites ?? [];
+	const openInvites = $derived(page.form?.user_invites || page.data.user_invites || []);
 </script>
 
 <dialog bind:this={dialog}>
@@ -52,7 +53,7 @@
 				codes in a safe place.<br />Each code can only be used once.
 			</p>
 			<p>You have {recoveryCodeCount} account recovery codes left.</p>
-			{#if page.form === null || page.status !== 200}
+			{#if page.form === null || (page.status !== 200 && page.form.code === 'recovery_codes_validation')}
 				<form action="?/recovery_codes" method="post" use:enhance>
 					{#if page.status != 200}
 						<p class="notice-validation">{page.form.message}</p>
@@ -66,21 +67,21 @@
 						<RefreshIcon />
 					</button>
 				</form>
-			{:else if page.form.recovery_codes.length > 0}
+			{:else if recoveryCodes.length > 0}
 				<p class="recovery-code-text">
 					<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-					{@html page.form.recovery_codes.join('<br>')}
+					{@html recoveryCodes.join('<br>')}
 					<button
 						title="copy recovery codes"
 						class="recover-code-copy"
-						onclick={() => navigator.clipboard.writeText(page.form.recovery_codes.join('\n'))}
+						onclick={() => navigator.clipboard.writeText(recoveryCodes.join('\n'))}
 						><CopyIcon />
 					</button>
 					<button
 						title="download recovery codes"
 						class="recovery-code-download"
 						onclick={() => {
-							const blob = new Blob([page.form.recovery_codes.join('\n')], { type: 'text/plain' });
+							const blob = new Blob([recoveryCodes.join('\n')], { type: 'text/plain' });
 							const url = URL.createObjectURL(blob);
 							const a = document.createElement('a');
 							a.href = url;
@@ -99,25 +100,23 @@
 				<h3>open user invites</h3>
 				{#if openInvites.length > 0}
 					<table>
-						<caption>open user invites</caption>
 						<thead>
 							<tr>
-								<th>email</th>
-								<th>link</th>
+								<th class="email heading">email</th>
+								<th class="link heading">link</th>
 							</tr>
 						</thead>
 						<tbody>
-							{#each openInvites as invite}
+							{#each openInvites as invite (invite.email)}
 								<tr>
-									<td>{invite.email}</td>
-									<td>
+									<td class="email"><a href="mailto:{invite.email}">{invite.email}</a></td>
+									<td class="link">
 										<button
 											onclick={async () => {
 												await navigator.clipboard.writeText(invite.link);
 											}}
 											title="copy invite link of {invite.email}"
 										>
-											<span>{invite.link}</span>
 											<CopyIcon />
 										</button>
 									</td>
@@ -125,11 +124,6 @@
 							{/each}
 						</tbody>
 					</table>
-					<ul>
-						{#each openInvites as invite}
-							<li>{invite.email}</li>
-						{/each}
-					</ul>
 				{:else}
 					<p>no open invites</p>
 				{/if}
@@ -138,9 +132,12 @@
 				<h3>create invite link</h3>
 				<p>Invitations will expire after 14 days. Invited users only see their own dashboard.</p>
 				<form action="?/invite" method="post" use:enhance>
+					{#if page.status != 200 && page.form.code === 'invite_validation'}
+						<p class="notice-validation">{page.form.message}</p>
+					{/if}
 					<label>
 						email
-						<input type="email" required placeholder="alexius@example.org" />
+						<input type="email" name="email" required placeholder="alexius@example.org" />
 					</label>
 					<button type="submit">
 						<span>create invite</span>
@@ -233,5 +230,22 @@
 		position: absolute;
 		top: calc(1rem + 46px);
 		right: 0;
+	}
+
+	table .email {
+		width: auto;
+	}
+
+	table .link {
+		/* hardcoded button width */
+		width: 58px;
+	}
+
+	table .email a {
+		text-overflow: ellipsis;
+		overflow: hidden;
+		white-space: nowrap;
+		max-width: 100%;
+		display: inline-block;
 	}
 </style>

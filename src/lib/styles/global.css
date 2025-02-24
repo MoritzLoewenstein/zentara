@@ -6,7 +6,6 @@
 	--blue: #1b2560;
 	--offwhite: #f6f5f0;
 	--side-padding: max(2rem, calc((100% - 1200px) / 2));
-	--cube-width: 300px;
 	--color-transition:
 		color 0.2s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
@@ -35,7 +34,9 @@ h6 {
 p,
 label,
 a,
-input {
+input,
+th,
+td {
 	font-family: Verdana, Geneva, Tahoma, sans-serif;
 	color: var(--blue);
 }
@@ -114,4 +115,33 @@ a {
 
 a:hover {
 	text-decoration: underline;
+}
+
+table {
+	width: 100%;
+	margin: 0 auto;
+	border-collapse: collapse;
+	table-layout: fixed;
+}
+
+table th,
+table tr td {
+	text-align: left;
+	border: none;
+}
+
+thead tr {
+	border-bottom: 3px solid var(--blue);
+}
+
+tbody tr {
+	border-bottom: 2px solid var(--blue);
+}
+
+tbody tr:nth-of-type(odd) {
+	border-color: var(--turqoise);
+}
+
+tbody tr:last-of-type {
+	border-bottom: none;
 }

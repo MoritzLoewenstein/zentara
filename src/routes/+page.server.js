@@ -188,7 +188,7 @@ export const actions = {
 			recovery_code_count: recovery_codes.length
 		};
 	},
-	invite_create: async ({ request, cookies }) => {
+	invite: async ({ request, cookies }) => {
 		const session_id = cookies.get('session_id');
 		if (!session_id) {
 			return error(401, { message: 'unauthorized', code: 'unauthorized' });
@@ -215,10 +215,10 @@ export const actions = {
 			});
 		}
 
-		const invite = createInvite(user.id, email);
+		createInvite(user.id, email);
+		const user_invites = getUserInvites(user.id);
 		return {
-			success: true,
-			invite
+			user_invites
 		};
 	}
 };
