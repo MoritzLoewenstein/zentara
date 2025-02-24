@@ -28,7 +28,7 @@ There is a minimal settings page with self-explanatory options.
 
 ## installation
 
-Because of the simple architecture, Zentara should be easy to install on any server that supports Node.js. A Dockerfile and a docker compose configuration are also provided.
+Because of the simple architecture, Zentara should be easy to run on any server. A Dockerfile and a docker compose configuration are also provided. To deploy this with a domain, you will need to configure the reverse proxy to point to the port that Zentara is running on. The default port is 3000.
 
 ### docker
 
@@ -51,7 +51,7 @@ docker compose up
 
 ### building and running with node
 
-To deploy this with a domain, you will need to configure the reverse proxy to point to the port that Zentara is running on. The default port is 3000.
+Expected Node.js version is 22. When running via node, the domain env variable is named `ORIGIN`, not `ZENTARA_ORIGIN`.
 
 ```bash
 export ORIGIN="https://zentara.example.org"
