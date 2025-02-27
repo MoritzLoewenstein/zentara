@@ -8,6 +8,8 @@ on:
         required: true
         default: latest
         type: string
+  push:
+    branches: [main]
 
 jobs:
   release:
