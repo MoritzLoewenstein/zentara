@@ -3,10 +3,6 @@
 Zentara is a simple and intuitive dashboard for your applications and bookmarks. It is designed to be easy to use, understand, and edit, while looking good.
 It does not seek to offer a lot of features, but rather to offer a few features that are well thought out and work well together. Self-hosted, open-source, and privacy-focused.
 
-# notice
-
-Zentara is in a usable state but still in development.
-
 ## features
 
 There are essentially two types of elements in your dashboard: applications and bookmarks.
@@ -35,23 +31,24 @@ Because of the simple architecture, Zentara should be easy to run on any server.
 Use the `-d` flag to run the container in the background.
 
 ```bash
-docker run -p 3000:3000 -e ZENTARA_ORIGIN="https://zentara.example.org" ghcr.io/moritzloewenstein/zentara/zentara:latest
+docker run -p 3000:3000 -e ORIGIN="https://zentara.example.org" ghcr.io/moritzloewenstein/zentara/zentara:latest
 # Listening on http://0.0.0.0:3000
 ```
 
 ### docker compose
 
 Copy the provided docker-compose.yml, use the `-d` flag to run the container in the background.
+You may set the `PORT` environment variable to change the port that is exposed.
 
 ```bash
-# ZENTARA_ORIGIN env var is the domain of your Zentara instance
+# ORIGIN env var is the domain of your Zentara instance
 docker compose up
 # Listening on http://0.0.0.0:3000
 ```
 
 ### building and running with node
 
-Expected Node.js version is 22. When running via node, the domain env variable is named `ORIGIN`, not `ZENTARA_ORIGIN`.
+Expected Node.js version is 22.
 
 ```bash
 export ORIGIN="https://zentara.example.org"
@@ -82,4 +79,4 @@ Zentara's core intent is to stay simple and focused. If you have an idea for a n
 - Zentara does not send emails. For user management, Zentara uses invite links and recovery codes. This is a simple and secure way to avoid emails. If you create an invite link, you will have to send it to the new user yourself. If you lose your password, you can use a recovery code to set a new one.
 - Zentara does not offer user defined styles. The design is simple and clear, and I intend to keep it that way. If you want to change the design, you will have to fork the repository and change the code yourself.
 - Zentara does not offer much beyond a simple greeting and the dashboard. If you want to add more features, you will have to fork the repository and change the code yourself.
-- Zentara only offers one configuration option: it is recommended to set the `ZENTARA_ORIGIN` environment variable to the domain of your Zentara instance.
+- Zentara only offers one configuration option: it is recommended to set the `ORIGIN` environment variable to the domain of your Zentara instance.
