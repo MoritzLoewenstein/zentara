@@ -4,6 +4,15 @@
 	import { dashboard_content, dashboard_view, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
 	import { toast } from './client/toast.svelte';
 
+	let dialog;
+	$effect(() => {
+		if (dashboard_view.value === DASHBOARD_VIEW.EDIT) {
+			dialog.show();
+		} else {
+			dialog.close();
+		}
+	});
+
 	async function saveDashboard() {
 		dashboard_content.commitDashboardEdit();
 		// if the fetch takes longer than 100ms, we'll do optimistic UI
@@ -31,7 +40,7 @@
 	}
 </script>
 
-<dialog open={dashboard_view.value === DASHBOARD_VIEW.EDIT}>
+<dialog bind:this={dialog} onclose={() => dashboard_view.set(DASHBOARD_VIEW.DASHBOARD)}>
 	<button
 		title="cancel dashboard edit"
 		class="btn-secondary"

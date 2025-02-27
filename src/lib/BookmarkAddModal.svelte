@@ -16,23 +16,40 @@
 
 	let titleValue = $state('');
 	let linkValue = $state('');
+	let titleInput;
+	let linkInput;
 
 	function createBookmark() {
 		dashboard_content.addBookmark(titleValue, linkValue);
 		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
+
+	function trySubmit(event) {
+		if (event.key !== 'Enter') {
+			return;
+		}
+		if(!titleValue) {
+			titleInput.reportValidity();
+			return;
+		}
+		if(!linkValue) {
+			linkInput.reportValidity();
+			return;
+		}
+		createBookmark();
+	}
 </script>
 
-<dialog bind:this={dialog}>
+<dialog bind:this={dialog} onclose={() => dashboard_view.set(DASHBOARD_VIEW.EDIT)}>
 	<div class="wrapper">
 		<h4>create bookmark</h4>
 		<label>
 			title
-			<input type="text" bind:value={titleValue} placeholder="r/homelab" />
+			<input type="text" bind:this={titleInput} bind:value={titleValue} placeholder="r/homelab" required  onkeydown={trySubmit}/>
 		</label>
 		<label>
 			link
-			<input type="url" bind:value={linkValue} placeholder="https://reddit.com/r/homelab" />
+			<input type="url" bind:this={linkInput} bind:value={linkValue} placeholder="https://reddit.com/r/homelab" required onkeydown={trySubmit} />
 		</label>
 		<div class="buttons">
 			<button

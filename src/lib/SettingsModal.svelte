@@ -25,7 +25,7 @@
 	);
 </script>
 
-<dialog bind:this={dialog}>
+<dialog bind:this={dialog} onclose={() => dashboard_view.set(DASHBOARD_VIEW.DASHBOARD)}>
 	<div class="wrapper">
 		<button
 			class="close"

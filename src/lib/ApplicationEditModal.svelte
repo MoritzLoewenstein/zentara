@@ -26,6 +26,8 @@
 		nameValue = app.name;
 		linkValue = app.link;
 	});
+	let nameInput;
+	let linkInput;
 
 	function saveApplication() {
 		dashboard_content.saveApplicationEdit(iconValue, nameValue, linkValue);
@@ -55,18 +57,33 @@
 		};
 		reader.readAsDataURL(file);
 	}
+
+	function trySubmit(event) {
+		if (event.key !== 'Enter') {
+			return;
+		}
+		if (!nameValue) {
+			nameInput.reportValidity();
+			return;
+		}
+		if (!linkValue) {
+			linkInput.reportValidity();
+			return;
+		}
+		saveApplication();
+	}
 </script>
 
-<dialog bind:this={dialog}>
+<dialog bind:this={dialog} onclose={() => dashboard_view.set(DASHBOARD_VIEW.EDIT)}>
 	<div class="wrapper">
 		<h4>edit application</h4>
 		<label>
 			name
-			<input type="text" bind:value={nameValue} placeholder="grafana" />
+			<input type="text" bind:this={nameInput} bind:value={nameValue} placeholder="grafana" required onkeydown={trySubmit} />
 		</label>
 		<label>
 			link
-			<input type="url" bind:value={linkValue} placeholder="https://grafana.example.org" />
+			<input type="url" bind:this={linkInput} bind:value={linkValue} placeholder="https://grafana.example.org" onkeydown={trySubmit} />
 		</label>
 		<label>
 			icon
