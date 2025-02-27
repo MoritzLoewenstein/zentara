@@ -32,9 +32,9 @@ jobs:
       - name: Build and Push Docker image
         id: build-and-push
         env:
-          IMAGE_TAG: ${{ github.event.inputs.tag }}
+          IMAGE_TAG: ${{ github.event.inputs.tag || 'latest' }}
           # harcoding this because gh actions does not have a sane way to lowercase a string
-          GHCR_IMAGE: ghcr.io/moritzloewenstein/zentara/zentara:${{ github.event.inputs.tag }}
+          GHCR_IMAGE: ghcr.io/moritzloewenstein/zentara/zentara:${{ github.event.inputs.tag || 'latest' }}
 
         run: |
           docker buildx build -t $GHCR_IMAGE .
