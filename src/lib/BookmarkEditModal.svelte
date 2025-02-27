@@ -16,14 +16,13 @@
 	const bookmark = dashboard_content.getBookmarkEdit();
 	let titleValue = $state(bookmark.title);
 	let linkValue = $state(bookmark.link);
-	let titleInput;
-	let linkInput;
-
 	$effect(() => {
 		const bm = dashboard_content.getBookmarkEdit();
 		titleValue = bm.title;
 		linkValue = bm.link;
 	});
+	let titleInput;
+	let linkInput;
 
 	function saveBookmark() {
 		dashboard_content.saveBookmarkEdit(titleValue, linkValue);

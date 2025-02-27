@@ -95,6 +95,7 @@
 				bind:this={linkInput}
 				bind:value={linkValue}
 				placeholder="https://grafana.example.org"
+				required
 				onkeydown={trySubmit}
 			/>
 		</label>
