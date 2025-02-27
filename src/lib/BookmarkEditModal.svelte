@@ -40,11 +40,11 @@
 		if (event.key !== 'Enter') {
 			return;
 		}
-		if(!titleValue) {
+		if (!titleValue) {
 			titleInput.reportValidity();
 			return;
 		}
-		if(!linkValue) {
+		if (!linkValue) {
 			linkInput.reportValidity();
 			return;
 		}
@@ -57,11 +57,25 @@
 		<h4>edit bookmark</h4>
 		<label>
 			title
-			<input type="text" bind:this={titleInput} bind:value={titleValue} placeholder="r/homelab" required onkeydown={trySubmit} />
+			<input
+				type="text"
+				bind:this={titleInput}
+				bind:value={titleValue}
+				placeholder="r/homelab"
+				required
+				onkeydown={trySubmit}
+			/>
 		</label>
 		<label>
 			link
-			<input type="url" bind:this={linkInput} bind:value={linkValue} placeholder="https://reddit.com/r/homelab" required onkeydown={trySubmit} />
+			<input
+				type="url"
+				bind:this={linkInput}
+				bind:value={linkValue}
+				placeholder="https://reddit.com/r/homelab"
+				required
+				onkeydown={trySubmit}
+			/>
 		</label>
 		<div class="buttons">
 			<button

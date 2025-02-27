@@ -79,11 +79,24 @@
 		<h4>edit application</h4>
 		<label>
 			name
-			<input type="text" bind:this={nameInput} bind:value={nameValue} placeholder="grafana" required onkeydown={trySubmit} />
+			<input
+				type="text"
+				bind:this={nameInput}
+				bind:value={nameValue}
+				placeholder="grafana"
+				required
+				onkeydown={trySubmit}
+			/>
 		</label>
 		<label>
 			link
-			<input type="url" bind:this={linkInput} bind:value={linkValue} placeholder="https://grafana.example.org" onkeydown={trySubmit} />
+			<input
+				type="url"
+				bind:this={linkInput}
+				bind:value={linkValue}
+				placeholder="https://grafana.example.org"
+				onkeydown={trySubmit}
+			/>
 		</label>
 		<label>
 			icon
