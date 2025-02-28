@@ -40,7 +40,7 @@
 	}
 </script>
 
-<dialog bind:this={dialog} onclose={() => dashboard_view.set(DASHBOARD_VIEW.DASHBOARD)}>
+<dialog bind:this={dialog}>
 	<button
 		title="cancel dashboard edit"
 		class="btn-secondary"
