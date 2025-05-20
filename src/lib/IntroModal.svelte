@@ -53,6 +53,7 @@
 		position: absolute;
 		top: 0;
 		right: 0;
+		line-height: 0;
 	}
 
 	h1 {
