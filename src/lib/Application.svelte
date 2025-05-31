@@ -24,6 +24,7 @@
 		class="application-edit"
 		class:movePreview
 		class:moving={isDragging}
+		class:noIcon={!icon}
 		draggable="true"
 		role="listitem"
 		aria-grabbed={isDragging}
@@ -60,7 +61,7 @@
 		>
 	</div>
 {:else}
-	<a href={link} target="_blank" rel="noopener noreferrer">
+	<a href={link} class:noIcon={!icon} target="_blank" rel="noopener noreferrer">
 		{#if icon}
 			<img src={icon} alt={name} />
 		{/if}
@@ -75,6 +76,10 @@
 		grid-template-areas: 'icon name' 'icon url';
 		gap: 0.5rem;
 		height: 50px;
+
+		&.noIcon {
+			grid-template-areas: 'name' 'url';
+		}
 	}
 
 	.application-edit {
@@ -82,6 +87,10 @@
 		display: grid;
 		grid-template-areas: 'icon name btn-move' 'icon url btn-edit';
 		gap: 0.5rem;
+
+		&.noIcon {
+			grid-template-areas: 'name btn-move' 'url btn-edit';
+		}
 	}
 
 	.application-edit.moving:not(.movePreview) {

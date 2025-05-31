@@ -5,14 +5,17 @@
 	import SaveIcon from './icons/SaveIcon.svelte';
 
 	let dialog;
+	let iconInput;
 	$effect(() => {
 		if (dashboard_view.value === DASHBOARD_VIEW.APPLICATION_EDIT) {
+			iconInput.value = '';
 			dialog.showModal();
 		} else {
 			dialog.close();
 			iconValue = '';
 			nameValue = '';
 			linkValue = '';
+			iconInput.value = '';
 		}
 	});
 
@@ -102,13 +105,25 @@
 		<label>
 			icon
 			<input
+				bind:this={iconInput}
 				type="file"
 				accept="image/png, image/jpeg, image/svg+xml"
 				onchange={handleFileSelection}
 			/>
 		</label>
 		{#if iconValue}
-			<img src={iconValue} alt="icon file preview" class="icon-preview" />
+			<div class="icon-preview-wrapper">
+				<img src={iconValue} alt="icon file preview" class="icon-preview" />
+				<button
+					class="btn-small btn-secondary"
+					type="button"
+					title="remove icon"
+					onclick={() => {
+						iconValue = '';
+						iconInput.value = '';
+					}}><CloseIcon /></button
+				>
+			</div>
 		{/if}
 		<div class="buttons">
 			<button
@@ -144,12 +159,23 @@
 		flex-direction: column;
 	}
 
+	.icon-preview-wrapper {
+		position: relative;
+		width: max-content;
+		padding: 1rem;
+	}
 	.icon-preview {
 		max-width: 100px;
 		max-height: 100px;
 		object-fit: contain;
 		object-position: top left;
 		margin-bottom: 2rem;
+	}
+
+	.icon-preview-wrapper button {
+		position: absolute;
+		top: 0;
+		right: 0;
 	}
 
 	.buttons {
