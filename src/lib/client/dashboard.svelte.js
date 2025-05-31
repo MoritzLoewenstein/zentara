@@ -25,7 +25,6 @@ export const DASHBOARD_VIEWS = [
 	DASHBOARD_VIEW.SETTINGS
 ];
 
-// eslint-disable-next-line no-undef
 let dashboard_view_state = $state(DASHBOARD_VIEW.DASHBOARD);
 function createDashboardView() {
 	return {
@@ -49,7 +48,6 @@ export const dashboard_view = createDashboardView();
  */
 
 /** @type {DashboardContentState} */
-// eslint-disable-next-line no-undef
 let dashboard_content_state = $state({
 	move: {
 		type: null,
