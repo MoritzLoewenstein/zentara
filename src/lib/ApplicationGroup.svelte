@@ -6,17 +6,11 @@
 		DASHBOARD_VIEW,
 		EDIT_VIEWS
 	} from './client/dashboard.svelte.js';
-	import { getClosestItemIndex, MOVE_TYPES } from './client/draggable';
 	import DeleteIcon from './icons/DeleteIcon.svelte';
-	import MoveIcon from './icons/MoveIcon.svelte';
 	import Application from './Application.svelte';
 
-	const { title, groupIndex, movePreview, items } = $props();
+	const { title, groupIndex, items } = $props();
 	const uid = $props.id();
-
-	let applications_container;
-
-	let isDragging = $state(false);
 
 	const dashboard_edit = $derived(EDIT_VIEWS.includes(dashboard_view.value));
 	let titleValue = $state(title);
@@ -37,84 +31,12 @@
 		if (!confirmDelete) return;
 		dashboard_content.deleteApplicationGroup(groupIndex);
 	}
-
-	function applicationDragEnter(event) {
-		const isApplication = event.dataTransfer.types.includes(MOVE_TYPES.APPLICATION);
-		if (!isApplication) return;
-		event.preventDefault();
-	}
-
-	function applicationDragOver(event) {
-		const isApplication = event.dataTransfer.types.includes(MOVE_TYPES.APPLICATION);
-		if (!isApplication) return;
-		event.preventDefault();
-		event.dataTransfer.dropEffect = 'move';
-
-		const insertIndex = getClosestItemIndex(applications_container, event.clientX, event.clientY);
-		const hidePreview =
-			insertIndex === null ||
-			(dashboard_content.value.move.group_index === groupIndex &&
-				(dashboard_content.value.move.item_index === insertIndex ||
-					dashboard_content.value.move.item_index === insertIndex - 1));
-		if (hidePreview) {
-			dashboard_content.resetMovePreview();
-		} else {
-			dashboard_content.updateMovePreview(groupIndex, insertIndex);
-		}
-	}
-
-	function applicationDragLeave(event) {
-		const isApplication = event.dataTransfer.types.includes(MOVE_TYPES.APPLICATION);
-		if (!isApplication) return;
-		dashboard_content.resetMovePreview();
-	}
-
-	function applicationDrop(event) {
-		const isApplication = event.dataTransfer.types.includes(MOVE_TYPES.APPLICATION);
-		if (!isApplication) return;
-		event.preventDefault();
-
-		const application_data = JSON.parse(event.dataTransfer.getData(MOVE_TYPES.APPLICATION));
-		const insertIndex = getClosestItemIndex(applications_container, event.clientX, event.clientY);
-		dashboard_content.resetMovePreview();
-		dashboard_content.resetMove();
-		dashboard_content.moveItem(MOVE_TYPES.APPLICATION, application_data, groupIndex, insertIndex);
-	}
 </script>
 
-<section
-	class="group"
-	draggable={dashboard_edit}
-	class:moving={isDragging}
-	class:movePreview
-	role="listitem"
-	aria-grabbed={isDragging}
-	aria-owns="{uid}-list"
-	ondragstart={(event) => {
-		if (!dashboard_edit) return;
-		isDragging = true;
-		dashboard_content.setMove(MOVE_TYPES.APPLICATION_GROUP, groupIndex);
-		event.dataTransfer.effectAllowed = 'move';
-		event.dataTransfer.setData(
-			MOVE_TYPES.APPLICATION_GROUP,
-			JSON.stringify({ groupIndex, title, items })
-		);
-	}}
-	ondragend={() => {
-		if (!dashboard_edit) return;
-		isDragging = false;
-		dashboard_content.resetMovePreview();
-		dashboard_content.resetMove();
-	}}
->
+<section class="group" role="listitem" aria-owns="{uid}-list">
 	{#if dashboard_edit}
 		<div class="group-heading">
 			<input type="text" bind:value={titleValue} class="group-title" />
-			<button
-				type="button"
-				title="move application group '{titleValue}'"
-				class="btn-small btn-secondary move"><MoveIcon /></button
-			>
 			<button
 				type="button"
 				title="delete application group '{titleValue}'"
@@ -126,16 +48,7 @@
 		<h3 class="group-title">{title}</h3>
 	{/if}
 
-	<div
-		id="{uid}-list"
-		class="items"
-		role="group"
-		bind:this={applications_container}
-		ondragenter={(e) => applicationDragEnter(e)}
-		ondragover={(e) => applicationDragOver(e)}
-		ondragleave={(e) => applicationDragLeave(e)}
-		ondrop={(e) => applicationDrop(e)}
-	>
+	<div id="{uid}-list" class="items" role="group">
 		{#each items as application, itemIndex (application)}
 			<Application {...application} {groupIndex} {itemIndex} />
 		{/each}
@@ -153,15 +66,6 @@
 </section>
 
 <style>
-	.group.moving:not(.movePreview) {
-		border: 1px dashed var(--blue);
-		opacity: 0.5;
-	}
-
-	.group.movePreview {
-		opacity: 0.5;
-	}
-
 	.group-heading {
 		display: flex;
 		flex-direction: row;

@@ -5,13 +5,9 @@
 		DASHBOARD_VIEW,
 		EDIT_VIEWS
 	} from './client/dashboard.svelte.js';
-	import { MOVE_TYPES } from './client/draggable.js';
 	import EditIcon from './icons/EditIcon.svelte';
-	import MoveIcon from './icons/MoveIcon.svelte';
-	const { name, icon, link, movePreview, groupIndex, itemIndex } = $props();
+	const { name, icon, link, groupIndex, itemIndex } = $props();
 	const displayUrl = new URL(link).host;
-
-	let isDragging = $state(false);
 
 	function editApplication() {
 		dashboard_content.setApplicationEdit(groupIndex, itemIndex);
@@ -20,39 +16,12 @@
 </script>
 
 {#if EDIT_VIEWS.includes(dashboard_view.value)}
-	<div
-		class="application-edit"
-		class:movePreview
-		class:moving={isDragging}
-		class:noIcon={!icon}
-		draggable="true"
-		role="listitem"
-		aria-grabbed={isDragging}
-		ondragstart={(event) => {
-			// prevent applicationGroup from being dragged
-			event.stopPropagation();
-			isDragging = true;
-			dashboard_content.setMove(MOVE_TYPES.APPLICATION, groupIndex, itemIndex);
-			event.dataTransfer.effectAllowed = 'move';
-			event.dataTransfer.setData(
-				MOVE_TYPES.APPLICATION,
-				JSON.stringify({ groupIndex, itemIndex, name, icon, link })
-			);
-		}}
-		ondragend={() => {
-			isDragging = false;
-			dashboard_content.resetMovePreview();
-			dashboard_content.resetMove();
-		}}
-	>
+	<div class="application-edit" class:noIcon={!icon} role="listitem">
 		{#if icon}
 			<img src={icon} alt={name} />
 		{/if}
 		<p class="name">{name}</p>
 		<p class="url">{displayUrl}</p>
-		<button type="button" title="move application '{name}'" class="btn-small btn-secondary move"
-			><MoveIcon /></button
-		>
 		<button
 			type="button"
 			title="edit application '{name}'"
@@ -83,27 +52,13 @@
 	}
 
 	.application-edit {
-		cursor: move;
 		display: grid;
-		grid-template-areas: 'icon name btn-move' 'icon url btn-edit';
+		grid-template-areas: 'icon name btn-edit' 'icon url btn-edit';
 		gap: 0.5rem;
 
 		&.noIcon {
-			grid-template-areas: 'name btn-move' 'url btn-edit';
+			grid-template-areas: 'name btn-edit' 'url btn-edit';
 		}
-	}
-
-	.application-edit.moving:not(.movePreview) {
-		border: 1px dashed var(--blue);
-		opacity: 0.5;
-	}
-
-	.application-edit.movePreview {
-		opacity: 0.5;
-	}
-
-	.application-edit button.move {
-		grid-area: btn-move;
 	}
 
 	.application-edit button.edit {
