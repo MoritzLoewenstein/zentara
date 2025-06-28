@@ -10,19 +10,20 @@
 	/**@typedef {import('../lib/server/dashboard').Dashboard} Dashboard */
 
 	/**@type {Dashboard} */
-	let dashboard_config = $state(page.data.dashboard);
+	let dashboard_config = $derived.by(() => {
+		if (!browser) {
+			return page.data.dashboard;
+		}
+		return EDIT_VIEWS.includes(dashboard_view.value)
+			? dashboard_content.value.dashboard_edit
+			: dashboard_content.value.dashboard;
+	});
 	if (browser) {
 		dashboard_content.update({
 			dashboard: page.data.dashboard,
 			dashboard_edit: page.data.dashboard
 		});
 	}
-
-	$effect(() => {
-		dashboard_config = EDIT_VIEWS.includes(dashboard_view.value)
-			? dashboard_content.value.dashboard_edit
-			: dashboard_content.value.dashboard;
-	});
 </script>
 
 <Modals />
