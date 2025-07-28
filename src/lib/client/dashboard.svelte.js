@@ -130,6 +130,13 @@ function createDashboardContent() {
 				1
 			);
 		},
+		moveBookmark(fromGroupIndex, fromItemIndex, toGroupIndex, toItemIndex) {
+			const bookmarkGroups = dashboard_content_state.dashboard_edit.bookmarkGroups;
+			const bookmark = bookmarkGroups[fromGroupIndex].items[fromItemIndex];
+
+			bookmarkGroups[fromGroupIndex].items.splice(fromItemIndex, 1);
+			bookmarkGroups[toGroupIndex].items.splice(toItemIndex, 0, bookmark);
+		},
 
 		addApplicationGroup(title = '') {
 			dashboard_content_state.dashboard_edit.applicationGroups.push({
