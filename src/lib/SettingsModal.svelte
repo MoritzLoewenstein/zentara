@@ -7,6 +7,7 @@
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import UserInviteSection from './UserInviteSection.svelte';
 	import RecoveryCodeSection from './RecoveryCodeSection.svelte';
+	import DatabaseBackupSection from './DatabaseBackupSection.svelte';
 
 	let dialog;
 	$effect(async () => {
@@ -50,6 +51,7 @@
 		/>
 		{#if page.data.user.is_admin}
 			<UserInviteSection />
+			<DatabaseBackupSection />
 		{/if}
 	</div>
 </dialog>

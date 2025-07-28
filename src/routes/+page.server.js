@@ -21,6 +21,7 @@ import {
 } from '$lib/server/user_recovery';
 import { getUserInvites, createInvite, getInvite, verifyInvite } from '$lib/server/user_invite';
 import { getDashboard } from '$lib/server/dashboard';
+import db from '$lib/server/db.js';
 
 /** @type {import('@sveltejs/kit').ServerLoad} */
 export function load({ cookies, url }) {
@@ -291,6 +292,35 @@ export const actions = {
 		const user_invites = getUserInvites(user.id);
 		return {
 			user_invites
+		};
+	},
+	db_backup: async ({ cookies }) => {
+		const session_id = cookies.get('session_id');
+		if (!session_id) {
+			return error(401, { message: 'unauthorized', code: 'unauthorized' });
+		}
+
+		const user = getSessionUserInfo(session_id);
+		if (!user) {
+			return error(401, { message: 'unauthorized', code: 'unauthorized' });
+		}
+
+		if (!user.is_admin) {
+			return fail(403, {
+				message: 'unauthorized',
+				code: 'unauthorized'
+			});
+		}
+
+		const backup = db.getBackup();
+		if (!backup) {
+			return fail(500, {
+				message: 'failed to create database backup',
+				code: 'db_backup_validation'
+			});
+		}
+		return {
+			db_backup: backup.toString('base64')
 		};
 	}
 };

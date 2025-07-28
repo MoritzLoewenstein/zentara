@@ -11,6 +11,11 @@ class DB {
 		this.db.exec(seedSql);
 	}
 
+	getBackup() {
+		const buffer = this.db.serialize();
+		return buffer;
+	}
+
 	getAll(sql, params = []) {
 		return this.db.prepare(sql).all(params);
 	}
