@@ -52,7 +52,7 @@ export async function load({ cookies, url }) {
 		user_invites: getUserInvites(user.id),
 		first_login: user.first_login,
 		recovery_codes,
-		recovery_code_count,
+		recovery_code_count
 	};
 }
 

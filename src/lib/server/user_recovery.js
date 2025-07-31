@@ -40,10 +40,13 @@ export async function useRecoveryCode(email, code) {
 		WHERE users.email = ?`,
 		[email]
 	);
-	for(const { user_id, code: hashed_code } of recovery_codes) {
+	for (const { user_id, code: hashed_code } of recovery_codes) {
 		const valid = await argon2.verify(hashed_code, code);
 		if (valid) {
-			db.exec('DELETE FROM user_recovery_codes WHERE user_id = ? AND code = ?', [user_id, hashed_code]);
+			db.exec('DELETE FROM user_recovery_codes WHERE user_id = ? AND code = ?', [
+				user_id,
+				hashed_code
+			]);
 			return user_id;
 		}
 	}
