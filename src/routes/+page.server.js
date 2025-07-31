@@ -16,15 +16,14 @@ import {
 import {
 	useRecoveryCode,
 	getRecoveryCodeCount,
-	createRecoveryCodes,
-	getRecoveryCodes
+	createRecoveryCodes
 } from '$lib/server/user_recovery';
 import { getUserInvites, createInvite, getInvite, verifyInvite } from '$lib/server/user_invite';
 import { getDashboard } from '$lib/server/dashboard';
 import db from '$lib/server/db.js';
 
 /** @type {import('@sveltejs/kit').ServerLoad} */
-export function load({ cookies, url }) {
+export async function load({ cookies, url }) {
 	const firstUser = isFirstUser();
 	if (firstUser) {
 		return error(401, {
@@ -44,14 +43,16 @@ export function load({ cookies, url }) {
 		return error(401, { message: 'unauthorized', ...data });
 	}
 	updateSession(session_id);
+	const recovery_codes = user.first_login ? await createRecoveryCodes(user.id) : [];
+	const recovery_code_count = getRecoveryCodeCount(user.id);
 	return {
 		session_id,
 		user,
 		dashboard: getDashboard(user.id),
-		recovery_code_count: getRecoveryCodeCount(user.id),
 		user_invites: getUserInvites(user.id),
 		first_login: user.first_login,
-		recovery_codes: user.first_login ? getRecoveryCodes(user.id) : []
+		recovery_codes,
+		recovery_code_count,
 	};
 }
 
@@ -135,7 +136,7 @@ export const actions = {
 				code: 'register_validation'
 			});
 		}
-		const recovery_codes = createRecoveryCodes(user.id);
+		const recovery_codes = await createRecoveryCodes(user.id);
 		const session_id = createSession(user.id);
 		cookies.set('session_id', session_id, {
 			path: '/',
@@ -178,7 +179,7 @@ export const actions = {
 				code: 'invite_token_validation'
 			});
 		}
-		const recovery_codes = createRecoveryCodes(user.id);
+		const recovery_codes = await createRecoveryCodes(user.id);
 		const session_id = createSession(user.id);
 		cookies.set('session_id', session_id, {
 			path: '/',
@@ -195,6 +196,13 @@ export const actions = {
 	},
 	recovery_code: async ({ request, cookies }) => {
 		const formData = await request.formData();
+		const email = formData.get('email');
+		if (!email) {
+			return fail(422, {
+				message: 'missing email',
+				code: 'recovery_code_validation'
+			});
+		}
 		const recovery_code = formData.get('recovery_code');
 		const password = formData.get('password');
 		if (!recovery_code || !password) {
@@ -204,7 +212,7 @@ export const actions = {
 			});
 		}
 
-		const user_id = useRecoveryCode(recovery_code);
+		const user_id = await useRecoveryCode(email, recovery_code);
 		if (!user_id) {
 			return fail(422, {
 				message: 'invalid recovery code',
@@ -255,7 +263,7 @@ export const actions = {
 			});
 		}
 
-		const recovery_codes = createRecoveryCodes(user.id);
+		const recovery_codes = await createRecoveryCodes(user.id);
 		return {
 			recovery_codes,
 			recovery_code_count: recovery_codes.length
