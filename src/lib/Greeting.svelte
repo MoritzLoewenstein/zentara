@@ -77,21 +77,20 @@
 		{/if}
 	{/if}
 </div>
-<h1>{greeting}</h1>
+<svelte:element this={page.status === 401 ? 'h2' : 'h1'} class="greeting">{greeting}</svelte:element
+>
 
 <style>
-	h1 {
-		margin-top: 0;
-	}
-
-	p {
-		margin-top: 1rem;
+	hr {
+		margin: 1rem 0;
 	}
 
 	div {
 		display: flex;
 		flex-direction: row;
 		column-gap: 1rem;
+		height: 2.5rem;
+		box-sizing: border-box;
 	}
 
 	div .edit {
@@ -104,7 +103,6 @@
 
 	div button,
 	div a {
-		margin-top: 0.75rem;
 		padding: 0.25rem;
 		height: calc(24px + 0.5rem);
 		width: calc(24px + 0.5rem);
@@ -123,5 +121,10 @@
 		background-color: var(--blue);
 		border: 1px solid var(--blue);
 		background-color: none !important;
+	}
+
+	.greeting {
+		margin-top: 0;
+		font-size: 2.25rem;
 	}
 </style>
