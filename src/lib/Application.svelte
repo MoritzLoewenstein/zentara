@@ -30,6 +30,7 @@
 		>
 	</div>
 {:else}
+	<!-- eslint-disable-next-line svelte/no-navigation-without-resolve is absolute link -->
 	<a href={link} class:noIcon={!icon} target="_blank" rel="noopener noreferrer">
 		{#if icon}
 			<img src={icon} alt={name} />

@@ -25,6 +25,7 @@
 		>
 	</div>
 {:else}
+	<!-- eslint-disable-next-line svelte/no-navigation-without-resolve is absolute link -->
 	<a href={link} target="_blank" rel="noopener noreferrer">
 		{title}
 	</a>

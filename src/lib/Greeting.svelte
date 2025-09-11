@@ -11,6 +11,7 @@
 	import LogoutIcon from './icons/LogoutIcon.svelte';
 	import SettingsIcon from './icons/SettingsIcon.svelte';
 	import EditIcon from './icons/EditIcon.svelte';
+	import { resolve } from '$app/paths';
 
 	let date = $state(new Date());
 	onMount(() => {
@@ -70,7 +71,7 @@
 			>
 				<SettingsIcon />
 			</button>
-			<a href="/logout" title="logout" class="logout">
+			<a href={resolve('/logout')} title="logout" class="logout">
 				<LogoutIcon />
 			</a>
 		{/if}

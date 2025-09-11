@@ -1,6 +1,7 @@
 <script>
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
+	import { resolve } from '$app/paths';
 
 	let email = $state('');
 </script>
@@ -26,7 +27,7 @@
 			<p class="notice-validation">{page.form.message}</p>
 		{/if}
 		<button>Log in</button>
-		<a href="/?recovery_code=">forgot password?</a>
+		<a href={resolve('/?recovery_code=')}>forgot password?</a>
 	</form>
 {:else if page?.error?.code === 'register' || page?.form?.code === 'register_validation'}
 	<h1>register</h1>
@@ -75,7 +76,7 @@
 			<p class="notice-validation">{page.form.message}</p>
 		{/if}
 		<button>recover account</button>
-		<a href="/">login</a>
+		<a href={resolve('/')}>login</a>
 	</form>
 {:else if page?.error?.code === 'invite_token' || page?.error?.code === 'invite_token_validation' || page?.form?.code === 'invite_token_validation'}
 	<h1>register (invited)</h1>
