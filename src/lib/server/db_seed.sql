@@ -35,3 +35,8 @@ CREATE TABLE IF NOT EXISTS dashboards (
     config TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+ALTER TABLE
+    sessions
+ADD
+    COLUMN oauth_state TEXT NULL;

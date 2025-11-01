@@ -41,14 +41,16 @@
 </script>
 
 <dialog bind:this={dialog}>
-	<button
-		title="cancel dashboard edit"
-		class="btn-secondary"
-		onclick={() => dashboard_view.set(DASHBOARD_VIEW.DASHBOARD)}
-	>
-		<CloseIcon />
-	</button>
-	<button title="save dashboard" onclick={saveDashboard}><SaveIcon /></button>
+	<div>
+		<button
+			title="cancel dashboard edit"
+			class="btn-secondary btn-icon"
+			onclick={() => dashboard_view.set(DASHBOARD_VIEW.DASHBOARD)}
+		>
+			<CloseIcon />
+		</button>
+		<button class="btn-icon" title="save dashboard" onclick={saveDashboard}><SaveIcon /></button>
+	</div>
 </dialog>
 
 <style>
@@ -58,5 +60,10 @@
 		bottom: 2rem;
 		margin-right: 0;
 		width: max-content;
+		& > div {
+			display: flex;
+			flex-direction: row;
+			column-gap: 1rem;
+		}
 	}
 </style>

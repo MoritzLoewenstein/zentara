@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import db from './db.js';
 import { token } from './util/token.js';
 import { unix } from './util/unix.js';
@@ -45,6 +46,38 @@ export function getSessionUserInfo(session_id) {
 		return null;
 	}
 	return user;
+}
+
+/**
+ * @export
+ * @param {string} session_id
+ * @param {string} oauth_state
+ */
+export function setSessionOauthState(session_id, oauth_state) {
+	db.exec('UPDATE sessions SET oauth_state = ? WHERE id = ?', [oauth_state, session_id]);
+}
+
+/**
+ * @export
+ * @param {string} session_id
+ * @param {string} oauth_state_expected
+ * @returns {boolean}
+ */
+export function verifySessionOauthState(session_id, oauth_state_expected) {
+	const oauth_state = db.getColumn('SELECT oauth_state FROM sessions WHERE id = ?', [session_id]);
+	if (!oauth_state || !oauth_state_expected) {
+		return false;
+	}
+	if (oauth_state.length !== oauth_state_expected.length) {
+		return false;
+	}
+	const oauth_state_buf = Buffer.from(oauth_state);
+	const oauth_state_expected_buf = Buffer.from(oauth_state_expected);
+	const oauth_state_valid = crypto.timingSafeEqual(oauth_state_buf, oauth_state_expected_buf);
+	if (oauth_state_valid) {
+		db.exec('UPDATE sessions SET oauth_state = NULL WHERE id = ?', [session_id]);
+	}
+	return oauth_state_valid;
 }
 
 /**

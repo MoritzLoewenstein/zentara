@@ -82,10 +82,11 @@
 
 <style>
 	hr {
-		margin: 1rem 0;
+		margin: 1rem var(--side-padding);
 	}
 
 	div {
+		padding: 0 var(--side-padding);
 		display: flex;
 		flex-direction: row;
 		column-gap: 1rem;
@@ -124,7 +125,7 @@
 	}
 
 	.greeting {
-		margin-top: 0;
+		margin: 0 var(--side-padding) 1.5rem var(--side-padding);
 		font-size: 2.25rem;
 	}
 </style>

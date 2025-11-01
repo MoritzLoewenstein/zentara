@@ -8,7 +8,11 @@ class DB {
 		this.db = new Database(dbFile);
 		this.db.pragma('journal_mode = WAL');
 		this.db.pragma('foreign_keys = ON');
-		this.db.exec(seedSql);
+		try {
+			this.db.exec(seedSql);
+		} catch {
+			// ignore seed errors
+		}
 	}
 
 	getBackup() {

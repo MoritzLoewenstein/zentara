@@ -17,7 +17,7 @@ body {
 }
 
 body {
-	padding: 2rem var(--side-padding);
+	padding: 2rem 0;
 }
 
 h1,
@@ -116,6 +116,10 @@ button.btn-small svg {
 	width: 100%;
 	height: auto;
 	display: block;
+}
+
+button.btn-icon {
+	line-height: 0;
 }
 
 button:hover {
