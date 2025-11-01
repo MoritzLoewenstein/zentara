@@ -8,6 +8,7 @@
 	import UserInviteSection from './UserInviteSection.svelte';
 	import RecoveryCodeSection from './RecoveryCodeSection.svelte';
 	import DatabaseBackupSection from './DatabaseBackupSection.svelte';
+	import AccountConnections from './AccountConnections.svelte';
 
 	let dialog;
 	$effect(async () => {
@@ -44,6 +45,7 @@
 			>role (readonly)
 			<input type="text" readonly value={page.data.user.is_admin ? 'admin' : 'user'} disabled />
 		</label>
+		<AccountConnections />
 		<RecoveryCodeSection
 			recovery_codes={recoveryCodes}
 			recovery_code_count={recoveryCodeCount}
