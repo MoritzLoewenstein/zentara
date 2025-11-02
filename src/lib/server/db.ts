@@ -12,8 +12,7 @@ class DB {
 		this.db.pragma('foreign_keys = ON');
 		try {
 			this.db.exec(seedSql);
-		} catch {
-		}
+		} catch {}
 	}
 
 	getBackup(): Buffer {

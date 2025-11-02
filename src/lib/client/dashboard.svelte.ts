@@ -131,11 +131,10 @@ function createDashboardContent() {
 			const group_index = bookmark_edit.group_index;
 			const bookmark_index = bookmark_edit.bookmark_index;
 			if (group_index !== null && bookmark_index !== null) {
-				dashboard_content_state.dashboard_edit.bookmarkGroups[group_index].items[bookmark_index] =
-					{
-						title,
-						link
-					};
+				dashboard_content_state.dashboard_edit.bookmarkGroups[group_index].items[bookmark_index] = {
+					title,
+					link
+				};
 			}
 		},
 		deleteBookmarkEdit() {

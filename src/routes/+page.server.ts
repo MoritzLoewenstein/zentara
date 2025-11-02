@@ -23,7 +23,7 @@ import { getDashboard } from '$lib/server/dashboard';
 import db from '$lib/server/db.js';
 import type { Actions } from './$types';
 
-export const load: ServerLoad = async ({ cookies, url }) =>  {
+export const load: ServerLoad = async ({ cookies, url }) => {
 	const firstUser = isFirstUser();
 	if (firstUser) {
 		return error(401, {
@@ -54,7 +54,7 @@ export const load: ServerLoad = async ({ cookies, url }) =>  {
 		recovery_codes,
 		recovery_code_count
 	};
-}
+};
 
 function getUnauthorizedData(searchParams: URLSearchParams) {
 	if (searchParams.has('recovery_code')) {

@@ -13,9 +13,10 @@ export async function createRecoveryCodes(user_id: string): Promise<string[]> {
 }
 
 export function getRecoveryCodeCount(user_id: string): number {
-	return db.getColumn<number>('SELECT COUNT(*) FROM user_recovery_codes WHERE user_id = ?', [
-		user_id
-	]) || 0;
+	return (
+		db.getColumn<number>('SELECT COUNT(*) FROM user_recovery_codes WHERE user_id = ?', [user_id]) ||
+		0
+	);
 }
 
 export async function useRecoveryCode(email: string, code: string): Promise<string | false> {
