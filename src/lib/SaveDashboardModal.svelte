@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import SaveIcon from './icons/SaveIcon.svelte';
 	import { dashboard_content, dashboard_view, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
 	import { toast } from './client/toast.svelte';
 
-	let dialog;
+	let dialog: HTMLDialogElement;
 	$effect(() => {
 		if (dashboard_view.value === DASHBOARD_VIEW.EDIT) {
 			dialog.show();

@@ -3,17 +3,19 @@ import db from './db.js';
 import { token } from './util/token.js';
 import { unix } from './util/unix.js';
 
-const SESSION_TIMEOUT_ABSOLUTE = 60 * 60 * 24 * 14; // two weeks
-const SESSION_TIMEOUT_INACTIVITY = 60 * 60 * 24; // one day
+const SESSION_TIMEOUT_ABSOLUTE = 60 * 60 * 24 * 14;
+const SESSION_TIMEOUT_INACTIVITY = 60 * 60 * 24;
 
 export const SESSION_MAX_AGE = SESSION_TIMEOUT_ABSOLUTE;
 
-/**
- * @export
- * @param {string} user_id
- * @returns {string} session_id
- */
-export function createSession(user_id) {
+interface SessionUserInfo {
+	id: string;
+	email: string;
+	is_admin: boolean;
+	first_login: boolean;
+}
+
+export function createSession(user_id: string): string {
 	const session_id = token();
 	const unix_now = unix();
 	db.exec('INSERT INTO sessions (id, created_at, updated_at, user_id) VALUES (?, ?, ?, ?)', [
@@ -25,17 +27,12 @@ export function createSession(user_id) {
 	return session_id;
 }
 
-/**
- * @export
- * @param {string} session_id
- * @returns {{id: string, email: string}|null}
- */
-export function getSessionUserInfo(session_id) {
+export function getSessionUserInfo(session_id: string): SessionUserInfo | null {
 	const unix_now = unix();
 	const absoluteTimeout = unix_now - SESSION_TIMEOUT_ABSOLUTE;
 	const inactivityTimeout = unix_now - SESSION_TIMEOUT_INACTIVITY;
-	const firstLoginCutoff = unix_now - 60; // 1 minute
-	const user = db.get(
+	const firstLoginCutoff = unix_now - 60;
+	const user = db.get<SessionUserInfo>(
 		`SELECT users.id AS id, users.email AS email, users.is_admin AS is_admin, (users.created_at > ?) AS first_login
 		FROM sessions
 		LEFT JOIN users ON sessions.user_id = users.id
@@ -48,23 +45,14 @@ export function getSessionUserInfo(session_id) {
 	return user;
 }
 
-/**
- * @export
- * @param {string} session_id
- * @param {string} oauth_state
- */
-export function setSessionOauthState(session_id, oauth_state) {
+export function setSessionOauthState(session_id: string, oauth_state: string): void {
 	db.exec('UPDATE sessions SET oauth_state = ? WHERE id = ?', [oauth_state, session_id]);
 }
 
-/**
- * @export
- * @param {string} session_id
- * @param {string} oauth_state_expected
- * @returns {boolean}
- */
-export function verifySessionOauthState(session_id, oauth_state_expected) {
-	const oauth_state = db.getColumn('SELECT oauth_state FROM sessions WHERE id = ?', [session_id]);
+export function verifySessionOauthState(session_id: string, oauth_state_expected: string): boolean {
+	const oauth_state = db.getColumn<string>('SELECT oauth_state FROM sessions WHERE id = ?', [
+		session_id
+	]);
 	if (!oauth_state || !oauth_state_expected) {
 		return false;
 	}
@@ -80,28 +68,15 @@ export function verifySessionOauthState(session_id, oauth_state_expected) {
 	return oauth_state_valid;
 }
 
-/**
- * @export
- * @param {string} session_id
- */
-export function updateSession(session_id) {
+export function updateSession(session_id: string): void {
 	const unix_now = unix();
 	db.exec('UPDATE sessions SET updated_at = ? WHERE id = ?', [unix_now, session_id]);
 }
 
-/**
- * @export
- * @param {string} session_id
- */
-export function invalidateSession(session_id) {
+export function invalidateSession(session_id: string): void {
 	db.exec('DELETE FROM sessions WHERE id = ?', [session_id]);
 }
 
-/**
- * @export
- * @param {string} user_id
- * @param {string} session_id
- */
-export function invalidateOtherSessions(user_id, session_id) {
+export function invalidateOtherSessions(user_id: string, session_id: string): void {
 	db.exec('DELETE FROM sessions WHERE user_id = ? AND id != ?', [user_id, session_id]);
 }

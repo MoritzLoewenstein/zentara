@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { fade } from 'svelte/transition';
 	import { toast } from './client/toast.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';

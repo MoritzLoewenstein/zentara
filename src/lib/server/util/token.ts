@@ -1,4 +1,4 @@
-export function token() {
+export function token(): string {
 	const rawBytes = crypto.getRandomValues(new Uint8Array(16));
 	const base62Alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 

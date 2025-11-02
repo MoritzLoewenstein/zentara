@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/state';
 
 	import { dashboard_view, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
@@ -10,7 +10,7 @@
 	import DatabaseBackupSection from './DatabaseBackupSection.svelte';
 	import AccountConnections from './AccountConnections.svelte';
 
-	let dialog;
+	let dialog: HTMLDialogElement;
 	$effect(async () => {
 		if (dashboard_view.value === DASHBOARD_VIEW.SETTINGS) {
 			dialog.showModal();

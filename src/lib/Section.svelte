@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { dashboard_view, dashboard_content, EDIT_VIEWS } from './client/dashboard.svelte.js';
 	import AddIcon from './icons/AddIcon.svelte';
 	const { title, children, type } = $props();

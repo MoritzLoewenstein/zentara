@@ -1,42 +1,42 @@
-/**
- * @description data url parser according to https://www.rfc-editor.org/rfc/rfc2397
- *
- * @export
- * @param {string} dataUrlStr
- * @returns {{mimeType: string, mimeParam: {key: string, value: string}|null, encoding: string|null, body: ArrayBufferLike|string} | null}
- */
-export function parseDataUrl(dataUrlStr, options = { asText: true }) {
+interface DataUrlParseResult {
+	mimeType: string | null;
+	mimeParam: { key: string; value: string } | null;
+	encoding: string | null;
+	body: ArrayBufferLike | string;
+}
+
+interface ParseDataUrlOptions {
+	asText?: boolean;
+}
+
+export function parseDataUrl(
+	dataUrlStr: string,
+	options: ParseDataUrlOptions = { asText: true }
+): DataUrlParseResult | null {
 	if (!dataUrlStr.startsWith('data:')) {
 		return null;
 	}
 
 	const metaEnd = dataUrlStr.indexOf(',');
 	const meta = dataUrlStr.slice(5, metaEnd);
-	let body = dataUrlStr.slice(metaEnd + 1);
+	let body: string | ArrayBufferLike = dataUrlStr.slice(metaEnd + 1);
 
 	const parts = meta.split(';');
 	if (parts.length > 3) {
-		// max parts: mimeType, mimeParam, encoding
 		return null;
 	}
 
-	let mimeType = null;
-	let mimeParam = null;
-	let encoding = null;
-
-	// case 1: no parts
+	let mimeType: string | null = null;
+	let mimeParam: { key: string; value: string } | null = null;
+	let encoding: string | null = null;
 
 	if (parts.length === 1) {
-		// case 2: 1 part mimetype
-		// case 3: 1 part encoding
 		if (parts[0].includes('/')) {
 			mimeType = parts[0];
 		} else {
 			encoding = validateEncoding(parts[0]);
 		}
 	} else if (parts.length === 2) {
-		// case 4: 2 parts mimetype, encoding
-		// case 5: 2 parts mimetype, mimeParam
 		if (parts[0].includes('/')) {
 			mimeType = parts[0];
 			if (parts[1].includes('=')) {
@@ -50,7 +50,6 @@ export function parseDataUrl(dataUrlStr, options = { asText: true }) {
 			}
 		}
 	} else {
-		// case 6: 3 parts mimetype, mimeParam, encoding
 		if (parts[0].includes('/')) {
 			mimeType = parts[0];
 			if (parts[1].includes('=')) {
@@ -66,38 +65,30 @@ export function parseDataUrl(dataUrlStr, options = { asText: true }) {
 
 	if (options.asText) {
 		if (encoding === 'base64') {
-			body = Buffer.from(body, encoding).toString('utf8');
+			body = Buffer.from(body as string, encoding).toString('utf8');
 		} else {
-			body = decodeURIComponent(body);
+			body = decodeURIComponent(body as string);
 		}
 	} else {
-		body = Buffer.from(body, encoding);
+		body = Buffer.from(body as string, encoding as BufferEncoding);
 	}
 
 	return { mimeType, mimeParam, encoding, body };
 }
 
-/**
- *
- * @export
- * @param {string} mimeType
- * @param {ArrayBufferLike|string} data
- * @returns {string}
- */
-export function formatDataUrl(mimeType, data) {
+export function formatDataUrl(mimeType: string, data: ArrayBuffer | string): string {
 	const encoding = data instanceof ArrayBuffer ? 'base64' : 'utf8';
-	let body;
+	let body: string;
 	if (data instanceof ArrayBuffer) {
 		body = Buffer.from(data).toString(encoding);
-	}
-	if (encoding === 'utf8') {
+	} else {
 		body = encodeURIComponent(data);
 	}
 
 	return `data:${mimeType};${encoding},${body}`;
 }
 
-function validateEncoding(encodingStr) {
+function validateEncoding(encodingStr: string): string | null {
 	const encoding = encodingStr.toLowerCase();
 	if (encoding !== 'base64' && encoding !== 'utf8' && encoding !== 'utf-8') {
 		return null;

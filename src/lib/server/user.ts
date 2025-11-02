@@ -3,26 +3,22 @@ import argon2 from 'argon2';
 import db from './db.js';
 import { unix } from './util/unix.js';
 
-/** @typedef {{ id: string, email: string, is_admin: boolean}} User */
+export interface User {
+	id: string;
+	email: string;
+	is_admin?: boolean;
+}
 
-/**
- * @export
- * @returns {boolean}
- */
-export function isFirstUser() {
-	const user_count = db.getColumn('SELECT count(*) FROM users');
+interface UserWithFirstLogin extends User {
+	first_login: boolean;
+}
+
+export function isFirstUser(): boolean {
+	const user_count = db.getColumn<number>('SELECT count(*) FROM users');
 	return user_count === 0;
 }
 
-/**
- * Safely create first user as adnin in transaction
- *
- * @export
- * @param {string} email
- * @param {string} password
- * @returns {User}
- */
-export async function createFirstUser(email, password) {
+export async function createFirstUser(email: string, password: string): Promise<User> {
 	const insertUser = db.prepare(
 		'INSERT INTO users (id, email, password, created_at, is_admin) VALUES (?, ?, ?, ?, 1)'
 	);
@@ -30,7 +26,7 @@ export async function createFirstUser(email, password) {
 	const hashed_password = await argon2.hash(password);
 	const unix_now = unix();
 	db.transaction(() => {
-		const user_count = db.getColumn('SELECT count(*) FROM users');
+		const user_count = db.getColumn<number>('SELECT count(*) FROM users');
 		if (user_count !== 0) {
 			throw new Error('First user already exists');
 		}
@@ -43,13 +39,7 @@ export async function createFirstUser(email, password) {
 	};
 }
 
-/**
- * @export
- * @param {string} email
- * @param {string} password
- * @returns {string} user_id
- */
-export async function createUser(email, password) {
+export async function createUser(email: string, password: string): Promise<User> {
 	const user_id = ulid();
 	const hashed_password = await argon2.hash(password);
 	const unix_now = unix();
@@ -65,39 +55,22 @@ export async function createUser(email, password) {
 	};
 }
 
-/**
- * Description placeholder
- *
- * @export
- * @param {string} user_id
- * @returns {User|undefined}
- */
-export function getUser(user_id) {
-	return db.get('SELECT id, email, is_admin FROM users WHERE id = ?', [user_id]);
+export function getUser(user_id: string): User | undefined {
+	return db.get<User>('SELECT id, email, is_admin FROM users WHERE id = ?', [user_id]);
 }
 
-/**
- * @export
- * @async
- * @param {string} user_id
- * @param {string} password
- */
-export async function updateUserPassword(user_id, password) {
+export async function updateUserPassword(user_id: string, password: string): Promise<void> {
 	const hashed_password = await argon2.hash(password);
 	db.exec('UPDATE users SET password = ? WHERE id = ?', [hashed_password, user_id]);
 }
 
-/**
- * @export
- * @async
- * @param {string} email
- * @param {string} password
- * @returns {User|false}
- */
-export async function loginUser(email, password) {
+export async function loginUser(
+	email: string,
+	password: string
+): Promise<UserWithFirstLogin | false> {
 	const unix_now = unix();
-	const firstLoginCutoff = unix_now - 60; // 1 minute
-	const user = db.get(
+	const firstLoginCutoff = unix_now - 60;
+	const user = db.get<any>(
 		'SELECT *, (users.created_at > ?) AS first_login FROM users WHERE email = ?',
 		[firstLoginCutoff, email]
 	);

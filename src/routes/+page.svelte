@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Dashboard from '$lib/Dashboard.svelte';
 	import Modals from '$lib/Modals.svelte';
 	import Page from '$lib/Page.svelte';

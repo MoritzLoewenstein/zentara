@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import CopyIcon from './icons/CopyIcon.svelte';
 	import RefreshIcon from './icons/RefreshIcon.svelte';
 	import SaveIcon from './icons/SaveIcon.svelte';

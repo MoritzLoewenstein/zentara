@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import AddIcon from './icons/AddIcon.svelte';
 	import {
 		dashboard_view,

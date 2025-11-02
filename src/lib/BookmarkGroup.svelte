@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Bookmark from './Bookmark.svelte';
 	import {
 		dashboard_view,

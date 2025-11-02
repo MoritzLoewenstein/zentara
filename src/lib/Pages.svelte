@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { setContext } from 'svelte';
 	import { dashboard_view, EDIT_VIEWS } from './client/dashboard.svelte.js';
 	import ArrowIcon from './icons/ArrowIcon.svelte';
@@ -7,7 +7,7 @@
 
 	let clientwidth = $state(0);
 	let pagecount = $state(0);
-	let sliderEl = $state();
+	let sliderEl = $state<HTMLDivElement>();
 	const PAGER_API = {
 		register: () => pagecount++,
 		unregister: () => pagecount--
@@ -16,12 +16,12 @@
 
 	let page = $state(0);
 	$effect(() => {
-		sliderEl.scroll({
+		sliderEl?.scroll({
 			left: clientwidth * page
 		});
 	});
 
-	function handleKeydown(ev) {
+	function handleKeydown(ev: KeyboardEvent) {
 		if (ev.key === 'ArrowLeft') {
 			ev.preventDefault();
 			if (page > 0) {
@@ -39,19 +39,16 @@
 		}
 	}
 
-	/**
-	 * @param {'left' | 'right'} direction
-	 */
-	function triggerBounce(direction) {
+	function triggerBounce(direction: 'left' | 'right') {
 		const OVERSCROLL_PX = 50;
-		if (sliderEl.style.transform !== '') return;
+		if (!sliderEl || sliderEl.style.transform !== '') return;
 
 		const transformValue =
 			direction === 'left' ? `translateX(${OVERSCROLL_PX}px)` : `translateX(-${OVERSCROLL_PX}px)`;
 
 		sliderEl.style.transform = transformValue;
 		setTimeout(() => {
-			sliderEl.style.transform = '';
+			if (sliderEl) sliderEl.style.transform = '';
 		}, 100);
 	}
 </script>

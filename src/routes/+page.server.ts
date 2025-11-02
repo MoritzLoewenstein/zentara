@@ -1,4 +1,4 @@
-import { error, fail } from '@sveltejs/kit';
+import { error, fail, type ServerLoad } from '@sveltejs/kit';
 import {
 	createSession,
 	getSessionUserInfo,
@@ -21,9 +21,9 @@ import {
 import { getUserInvites, createInvite, getInvite, verifyInvite } from '$lib/server/user_invite';
 import { getDashboard } from '$lib/server/dashboard';
 import db from '$lib/server/db.js';
+import type { Actions } from './$types';
 
-/** @type {import('@sveltejs/kit').ServerLoad} */
-export async function load({ cookies, url }) {
+export const load: ServerLoad = async ({ cookies, url }) =>  {
 	const firstUser = isFirstUser();
 	if (firstUser) {
 		return error(401, {
@@ -56,7 +56,7 @@ export async function load({ cookies, url }) {
 	};
 }
 
-function getUnauthorizedData(searchParams) {
+function getUnauthorizedData(searchParams: URLSearchParams) {
 	if (searchParams.has('recovery_code')) {
 		return {
 			code: 'recovery_code',
@@ -66,7 +66,7 @@ function getUnauthorizedData(searchParams) {
 
 	if (searchParams.has('invite_token')) {
 		const invite_token = searchParams.get('invite_token');
-		const email = getInvite(invite_token);
+		const email = getInvite(invite_token!);
 		if (!email) {
 			return {
 				code: 'invite_token_validation',
@@ -85,8 +85,7 @@ function getUnauthorizedData(searchParams) {
 	};
 }
 
-/** @satisfies {import('./$types').Actions} */
-export const actions = {
+export const actions: Actions = {
 	login: async ({ request, cookies }) => {
 		const formData = await request.formData();
 		const email = formData.get('email');
@@ -97,7 +96,7 @@ export const actions = {
 				code: 'unauthorized_validation'
 			});
 		}
-		const user = await loginUser(email, password);
+		const user = await loginUser(email as string, password as string);
 		if (!user) {
 			return error(422, {
 				message: 'invalid login',
@@ -129,7 +128,7 @@ export const actions = {
 		}
 		let user;
 		try {
-			user = await createFirstUser(email, password);
+			user = await createFirstUser(email as string, password as string);
 		} catch {
 			return error(422, {
 				message: 'invalid action',
@@ -163,7 +162,7 @@ export const actions = {
 			});
 		}
 
-		const email = verifyInvite(invite_token);
+		const email = verifyInvite(invite_token as string);
 		if (!email) {
 			return error(422, {
 				message: 'invalid invite token',
@@ -172,7 +171,7 @@ export const actions = {
 		}
 		let user;
 		try {
-			user = await createUser(email, password);
+			user = await createUser(email, password as string);
 		} catch {
 			return error(422, {
 				message: 'failed to register with invite token',
@@ -212,7 +211,7 @@ export const actions = {
 			});
 		}
 
-		const user_id = await useRecoveryCode(email, recovery_code);
+		const user_id = await useRecoveryCode(email as string, recovery_code as string);
 		if (!user_id) {
 			return fail(422, {
 				message: 'invalid recovery code',
@@ -220,7 +219,7 @@ export const actions = {
 			});
 		}
 
-		await updateUserPassword(user_id, password);
+		await updateUserPassword(user_id, password as string);
 		const user = getUser(user_id);
 		const session_id = createSession(user_id);
 		cookies.set('session_id', session_id, {
@@ -230,7 +229,7 @@ export const actions = {
 		return {
 			session_id,
 			user,
-			dashboard: getDashboard(user.id),
+			dashboard: getDashboard(user!.id),
 			recovery_code_count: getRecoveryCodeCount(user_id),
 			user_invites: getUserInvites(user_id)
 		};
@@ -255,7 +254,7 @@ export const actions = {
 			});
 		}
 
-		const result = await loginUser(user.email, password);
+		const result = await loginUser(user.email, password as string);
 		if (!result) {
 			return fail(422, {
 				message: 'invalid password',
@@ -296,7 +295,7 @@ export const actions = {
 			});
 		}
 
-		createInvite(user.id, email);
+		createInvite(user.id, email as string);
 		const user_invites = getUserInvites(user.id);
 		return {
 			user_invites

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
 	import { resolve } from '$app/paths';

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { page } from '$app/state';
 	import { dashboard_view, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
 	import CloseIcon from './icons/CloseIcon.svelte';
@@ -6,7 +6,7 @@
 	import UserInviteSection from './UserInviteSection.svelte';
 	import RecoveryCodeSection from './RecoveryCodeSection.svelte';
 
-	let dialog;
+	let dialog: HTMLDialogElement;
 	$effect(() => {
 		if (dashboard_view.value === DASHBOARD_VIEW.INTRO) {
 			dialog.showModal();

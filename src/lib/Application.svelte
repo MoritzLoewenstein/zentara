@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import {
 		dashboard_view,
 		dashboard_content,

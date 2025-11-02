@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 	import { dashboard_view, dashboard_content, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
 	import AddIcon from './icons/AddIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 
-	let dialog;
-	let iconInput;
+	let dialog: HTMLDialogElement;
+	let iconInput: HTMLInputElement;
 	$effect(() => {
 		if (dashboard_view.value === DASHBOARD_VIEW.APPLICATION_CREATE) {
 			iconInput.value = '';
@@ -21,11 +21,11 @@
 	let iconValue = $state('');
 	let nameValue = $state('');
 	let linkValue = $state('');
-	let nameInput;
-	let linkInput;
+	let nameInput: HTMLInputElement;
+	let linkInput: HTMLInputElement;
 
-	function handleFileSelection(event) {
-		const file = event.target.files[0];
+	function handleFileSelection(event: Event) {
+		const file = (event.target as HTMLInputElement).files?.[0];
 		iconValue = '';
 
 		if (!file) {
@@ -34,9 +34,9 @@
 
 		const reader = new FileReader();
 		reader.onload = () => {
-			iconValue = reader.result;
+			iconValue = reader.result as string;
 		};
-		reader.onerror = (err) => {
+		reader.onerror = (err: ProgressEvent<FileReader>) => {
 			console.error(err);
 		};
 		reader.readAsDataURL(file);
@@ -47,7 +47,7 @@
 		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
 
-	function trySubmit(event) {
+	function trySubmit(event: KeyboardEvent) {
 		if (event.key !== 'Enter') {
 			return;
 		}

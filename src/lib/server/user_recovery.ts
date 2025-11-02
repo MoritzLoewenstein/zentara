@@ -2,12 +2,7 @@ import db from './db.js';
 import { token } from './util/token.js';
 import argon2 from 'argon2';
 
-/**
- * @export
- * @param {string} user_id
- * @returns {string[]}
- */
-export async function createRecoveryCodes(user_id) {
+export async function createRecoveryCodes(user_id: string): Promise<string[]> {
 	db.exec('DELETE FROM user_recovery_codes WHERE user_id = ?', [user_id]);
 	const recovery_codes = Array.from({ length: 5 }, () => token());
 	const recovery_codes_hash = await Promise.all(recovery_codes.map((code) => argon2.hash(code)));
@@ -17,23 +12,14 @@ export async function createRecoveryCodes(user_id) {
 	return recovery_codes;
 }
 
-/**
- * @export
- * @param {string} user_id
- * @returns {number}
- */
-export function getRecoveryCodeCount(user_id) {
-	return db.getColumn('SELECT COUNT(*) FROM user_recovery_codes WHERE user_id = ?', [user_id]);
+export function getRecoveryCodeCount(user_id: string): number {
+	return db.getColumn<number>('SELECT COUNT(*) FROM user_recovery_codes WHERE user_id = ?', [
+		user_id
+	]) || 0;
 }
 
-/**
- * @export
- * @param {string} email
- * @param {string} code
- * @returns {string|false} user_id or false if the code is invalid
- */
-export async function useRecoveryCode(email, code) {
-	const recovery_codes = db.getAll(
+export async function useRecoveryCode(email: string, code: string): Promise<string | false> {
+	const recovery_codes = db.getAll<{ user_id: string; code: string }>(
 		`SELECT user_id, code
 		FROM user_recovery_codes
 		LEFT JOIN users ON users.id = user_recovery_codes.user_id

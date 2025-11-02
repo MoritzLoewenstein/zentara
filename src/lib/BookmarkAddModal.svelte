@@ -1,9 +1,9 @@
-<script>
+<script lang="ts">
 	import { dashboard_view, dashboard_content, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
 	import AddIcon from './icons/AddIcon.svelte';
 	import CloseIcon from './icons/CloseIcon.svelte';
 
-	let dialog;
+	let dialog: HTMLDialogElement;
 	$effect(() => {
 		if (dashboard_view.value === DASHBOARD_VIEW.BOOKMARK_CREATE) {
 			dialog.showModal();
@@ -16,15 +16,15 @@
 
 	let titleValue = $state('');
 	let linkValue = $state('');
-	let titleInput;
-	let linkInput;
+	let titleInput: HTMLInputElement;
+	let linkInput: HTMLInputElement;
 
 	function createBookmark() {
 		dashboard_content.addBookmark(titleValue, linkValue);
 		dashboard_view.set(DASHBOARD_VIEW.EDIT);
 	}
 
-	function trySubmit(event) {
+	function trySubmit(event: KeyboardEvent) {
 		if (event.key !== 'Enter') {
 			return;
 		}

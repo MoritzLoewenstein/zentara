@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import ApplicationAddModal from '$lib/ApplicationAddModal.svelte';
 	import BookmarkAddModal from '$lib/BookmarkAddModal.svelte';
 	import BookmarkEditModal from '$lib/BookmarkEditModal.svelte';

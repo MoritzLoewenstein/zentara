@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import { downloadB64 } from './client/download_b64';

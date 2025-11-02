@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import ExternalLink from './icons/ExternalLink.svelte';
 	import polarflow from './brands/polar_flow.svg';
 	import strava from './brands/strava.svg';
