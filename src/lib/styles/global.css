@@ -7,7 +7,7 @@
 	--offwhite: #f6f5f0;
 	--side-padding: max(2rem, calc((100% - 1200px) / 2));
 	--color-transition:
-		color 0.2s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+		color 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out, opacity 0.2s ease-out;
 }
 
 html,

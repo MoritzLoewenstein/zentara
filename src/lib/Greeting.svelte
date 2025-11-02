@@ -12,6 +12,7 @@
 	import SettingsIcon from './icons/SettingsIcon.svelte';
 	import EditIcon from './icons/EditIcon.svelte';
 	import { resolve } from '$app/paths';
+	import { page_idx } from './client/page.svelte.js';
 
 	let date = $state(new Date());
 	onMount(() => {
@@ -58,6 +59,7 @@
 			onclick={setDashboardEdit}
 			title="edit dashboard"
 			class="edit"
+			class:hidden={page_idx.value !== 0}
 			class:active={EDIT_VIEWS.includes(dashboard_view.value)}
 		>
 			<EditIcon />
@@ -94,7 +96,7 @@
 		box-sizing: border-box;
 	}
 
-	div .edit {
+	div button:first-of-type {
 		margin-left: auto;
 	}
 
@@ -122,6 +124,11 @@
 		background-color: var(--blue);
 		border: 1px solid var(--blue);
 		background-color: none !important;
+	}
+
+	div button.hidden {
+		opacity: 0;
+		pointer-events: none;
 	}
 
 	.greeting {

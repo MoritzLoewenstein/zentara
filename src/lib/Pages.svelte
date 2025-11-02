@@ -2,6 +2,7 @@
 	import { setContext } from 'svelte';
 	import { dashboard_view, EDIT_VIEWS } from './client/dashboard.svelte.js';
 	import ArrowIcon from './icons/ArrowIcon.svelte';
+	import { page_idx } from './client/page.svelte.js';
 
 	let { children } = $props();
 
@@ -14,25 +15,24 @@
 	};
 	setContext('PAGER_API', PAGER_API);
 
-	let page = $state(0);
 	$effect(() => {
 		sliderEl?.scroll({
-			left: clientwidth * page
+			left: clientwidth * page_idx.value
 		});
 	});
 
 	function handleKeydown(ev: KeyboardEvent) {
 		if (ev.key === 'ArrowLeft') {
 			ev.preventDefault();
-			if (page > 0) {
-				page -= 1;
+			if (page_idx.value > 0) {
+				page_idx.set(page_idx.value - 1);
 			} else {
 				triggerBounce('left');
 			}
 		} else if (ev.key === 'ArrowRight') {
 			ev.preventDefault();
-			if (page < pagecount - 1) {
-				page += 1;
+			if (page_idx.value < pagecount - 1) {
+				page_idx.set(page_idx.value + 1);
 			} else {
 				triggerBounce('right');
 			}
@@ -64,8 +64,8 @@
 		<button
 			aria-label="Previous Page"
 			onclick={() => {
-				if (page > 0) {
-					page -= 1;
+				if (page_idx.value > 0) {
+					page_idx.set(page_idx.value - 1);
 				} else {
 					triggerBounce('left');
 				}
@@ -74,8 +74,8 @@
 		<button
 			aria-label="Next Page"
 			onclick={() => {
-				if (page < pagecount - 1) {
-					page += 1;
+				if (page_idx.value < pagecount - 1) {
+					page_idx.set(page_idx.value + 1);
 				} else {
 					triggerBounce('right');
 				}
