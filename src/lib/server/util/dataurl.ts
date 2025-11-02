@@ -70,7 +70,7 @@ export function parseDataUrl(
 			body = decodeURIComponent(body as string);
 		}
 	} else {
-		body = Buffer.from(body as string, encoding as BufferEncoding);
+		body = Buffer.from(body as string, encoding as BufferEncoding).buffer;
 	}
 
 	return { mimeType, mimeParam, encoding, body };

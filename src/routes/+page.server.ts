@@ -20,11 +20,11 @@ import {
 } from '$lib/server/user_recovery';
 import { getUserInvites, createInvite, getInvite, verifyInvite } from '$lib/server/user_invite';
 import { getDashboard } from '$lib/server/dashboard';
-import db from '$lib/server/db.js';
+import { getDbBackup } from '$lib/server/db';
 import type { Actions } from './$types';
 
 export const load: ServerLoad = async ({ cookies, url }) => {
-	const firstUser = isFirstUser();
+	const firstUser = await isFirstUser();
 	if (firstUser) {
 		return error(401, {
 			message: 'unauthorized',
@@ -33,30 +33,30 @@ export const load: ServerLoad = async ({ cookies, url }) => {
 	}
 	const session_id = cookies.get('session_id');
 	if (!session_id) {
-		const data = getUnauthorizedData(url.searchParams);
-		return error(401, { message: 'unauthorized', ...data });
+		const data = await getUnauthorizedData(url.searchParams);
+		return error(401, { message: 'unauthorized', ...data } as App.Error);
 	}
 
-	const user = getSessionUserInfo(session_id);
+	const user = await getSessionUserInfo(session_id);
 	if (!user) {
-		const data = getUnauthorizedData(url.searchParams);
-		return error(401, { message: 'unauthorized', ...data });
+		const data = await getUnauthorizedData(url.searchParams);
+		return error(401, { message: 'unauthorized', ...data } as App.Error);
 	}
-	updateSession(session_id);
+	await updateSession(session_id);
 	const recovery_codes = user.first_login ? await createRecoveryCodes(user.id) : [];
-	const recovery_code_count = getRecoveryCodeCount(user.id);
+	const recovery_code_count = await getRecoveryCodeCount(user.id);
 	return {
 		session_id,
 		user,
-		dashboard: getDashboard(user.id),
-		user_invites: getUserInvites(user.id),
+		dashboard: await getDashboard(user.id),
+		user_invites: await getUserInvites(user.id),
 		first_login: user.first_login,
 		recovery_codes,
 		recovery_code_count
 	};
 };
 
-function getUnauthorizedData(searchParams: URLSearchParams) {
+async function getUnauthorizedData(searchParams: URLSearchParams) {
 	if (searchParams.has('recovery_code')) {
 		return {
 			code: 'recovery_code',
@@ -66,7 +66,7 @@ function getUnauthorizedData(searchParams: URLSearchParams) {
 
 	if (searchParams.has('invite_token')) {
 		const invite_token = searchParams.get('invite_token');
-		const email = getInvite(invite_token!);
+		const email = await getInvite(invite_token!);
 		if (!email) {
 			return {
 				code: 'invite_token_validation',
@@ -103,7 +103,7 @@ export const actions: Actions = {
 				code: 'unauthorized_validation'
 			});
 		}
-		const session_id = createSession(user.id);
+		const session_id = await createSession(user.id);
 		cookies.set('session_id', session_id, {
 			path: '/',
 			maxAge: SESSION_MAX_AGE
@@ -111,9 +111,9 @@ export const actions: Actions = {
 		return {
 			session_id,
 			user,
-			dashboard: getDashboard(user.id),
-			recovery_code_count: getRecoveryCodeCount(user.id),
-			user_invites: getUserInvites(user.id)
+			dashboard: await getDashboard(user.id),
+			recovery_code_count: await getRecoveryCodeCount(user.id),
+			user_invites: await getUserInvites(user.id)
 		};
 	},
 	register: async ({ request, cookies }) => {
@@ -136,7 +136,7 @@ export const actions: Actions = {
 			});
 		}
 		const recovery_codes = await createRecoveryCodes(user.id);
-		const session_id = createSession(user.id);
+		const session_id = await createSession(user.id);
 		cookies.set('session_id', session_id, {
 			path: '/',
 			maxAge: SESSION_MAX_AGE
@@ -144,9 +144,9 @@ export const actions: Actions = {
 		return {
 			session_id,
 			user,
-			dashboard: getDashboard(user.id),
-			recovery_code_count: getRecoveryCodeCount(user.id),
-			user_invites: getUserInvites(user.id),
+			dashboard: await getDashboard(user.id),
+			recovery_code_count: await getRecoveryCodeCount(user.id),
+			user_invites: await getUserInvites(user.id),
 			first_login: true,
 			recovery_codes
 		};
@@ -162,7 +162,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const email = verifyInvite(invite_token as string);
+		const email = await verifyInvite(invite_token as string);
 		if (!email) {
 			return error(422, {
 				message: 'invalid invite token',
@@ -179,7 +179,7 @@ export const actions: Actions = {
 			});
 		}
 		const recovery_codes = await createRecoveryCodes(user.id);
-		const session_id = createSession(user.id);
+		const session_id = await createSession(user.id);
 		cookies.set('session_id', session_id, {
 			path: '/',
 			maxAge: SESSION_MAX_AGE
@@ -187,8 +187,8 @@ export const actions: Actions = {
 		return {
 			session_id,
 			user,
-			dashboard: getDashboard(user.id),
-			recovery_code_count: getRecoveryCodeCount(user.id),
+			dashboard: await getDashboard(user.id),
+			recovery_code_count: await getRecoveryCodeCount(user.id),
 			first_login: true,
 			recovery_codes
 		};
@@ -220,8 +220,8 @@ export const actions: Actions = {
 		}
 
 		await updateUserPassword(user_id, password as string);
-		const user = getUser(user_id);
-		const session_id = createSession(user_id);
+		const user = await getUser(user_id);
+		const session_id = await createSession(user_id);
 		cookies.set('session_id', session_id, {
 			path: '/',
 			maxAge: SESSION_MAX_AGE
@@ -229,9 +229,9 @@ export const actions: Actions = {
 		return {
 			session_id,
 			user,
-			dashboard: getDashboard(user!.id),
-			recovery_code_count: getRecoveryCodeCount(user_id),
-			user_invites: getUserInvites(user_id)
+			dashboard: await getDashboard(user!.id),
+			recovery_code_count: await getRecoveryCodeCount(user_id),
+			user_invites: await getUserInvites(user_id)
 		};
 	},
 	recovery_codes: async ({ request, cookies }) => {
@@ -240,7 +240,7 @@ export const actions: Actions = {
 			return error(401, { message: 'unauthorized', code: 'unauthorized' });
 		}
 
-		const user = getSessionUserInfo(session_id);
+		const user = await getSessionUserInfo(session_id);
 		if (!user) {
 			return error(401, { message: 'unauthorized', code: 'unauthorized' });
 		}
@@ -274,7 +274,7 @@ export const actions: Actions = {
 			return error(401, { message: 'unauthorized', code: 'unauthorized' });
 		}
 
-		const user = getSessionUserInfo(session_id);
+		const user = await getSessionUserInfo(session_id);
 		if (!user) {
 			return error(401, { message: 'unauthorized', code: 'unauthorized' });
 		}
@@ -295,8 +295,8 @@ export const actions: Actions = {
 			});
 		}
 
-		createInvite(user.id, email as string);
-		const user_invites = getUserInvites(user.id);
+		await createInvite(user.id, email as string);
+		const user_invites = await getUserInvites(user.id);
 		return {
 			user_invites
 		};
@@ -307,7 +307,7 @@ export const actions: Actions = {
 			return error(401, { message: 'unauthorized', code: 'unauthorized' });
 		}
 
-		const user = getSessionUserInfo(session_id);
+		const user = await getSessionUserInfo(session_id);
 		if (!user) {
 			return error(401, { message: 'unauthorized', code: 'unauthorized' });
 		}
@@ -319,7 +319,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const backup = db.getBackup();
+		const backup = await getDbBackup();
 		if (!backup) {
 			return fail(500, {
 				message: 'failed to create database backup',

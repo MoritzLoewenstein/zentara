@@ -11,27 +11,27 @@ export const DASHBOARD_VIEW = {
 	BOOKMARK_EDIT: 'bookmark_edit'
 } as const;
 
-export const EDIT_VIEWS = [
+type DashboardViewType = (typeof DASHBOARD_VIEW)[keyof typeof DASHBOARD_VIEW];
+
+export const EDIT_VIEWS: readonly DashboardViewType[] = [
 	DASHBOARD_VIEW.EDIT,
 	DASHBOARD_VIEW.APPLICATION_CREATE,
 	DASHBOARD_VIEW.APPLICATION_EDIT,
 	DASHBOARD_VIEW.BOOKMARK_CREATE,
 	DASHBOARD_VIEW.BOOKMARK_EDIT
-];
+] as const;
 
-export const DASHBOARD_VIEWS = [
+export const DASHBOARD_VIEWS: readonly DashboardViewType[] = [
 	DASHBOARD_VIEW.DASHBOARD,
 	DASHBOARD_VIEW.INTRO,
 	DASHBOARD_VIEW.SETTINGS
-];
-
-type DashboardViewType = (typeof DASHBOARD_VIEW)[keyof typeof DASHBOARD_VIEW];
+] as const;
 
 let dashboard_view_state = $state<DashboardViewType>(DASHBOARD_VIEW.DASHBOARD);
 
 function createDashboardView() {
 	return {
-		get value() {
+		get value(): DashboardViewType {
 			return dashboard_view_state;
 		},
 		set: (mode: DashboardViewType) => {

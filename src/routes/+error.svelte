@@ -27,7 +27,8 @@
 			<p class="notice-validation">{page.form.message}</p>
 		{/if}
 		<button>Log in</button>
-		<a href={resolve('/?recovery_code=')}>forgot password?</a>
+		<!-- eslint-disable-next-line svelte/no-navigation-without-resolve cant use here because of search param -->
+		<a href="/?recovery_code=">forgot password?</a>
 	</form>
 {:else if page?.error?.code === 'register' || page?.form?.code === 'register_validation'}
 	<h1>register</h1>
@@ -83,11 +84,17 @@
 	<form method="POST" action="?/register_invite" use:enhance>
 		<label>
 			invite token
-			<input name="invite_token" type="text" required readonly value={page.error.invite_token} />
+			<input
+				name="invite_token"
+				type="text"
+				required
+				readonly
+				value={page.error?.invite_token ?? ''}
+			/>
 		</label>
 		<label>
 			email
-			<input name="email" type="email" required readonly value={page.error.email} />
+			<input name="email" type="email" required readonly value={page.error?.email ?? ''} />
 		</label>
 		<label>
 			password
@@ -106,6 +113,10 @@
 {/if}
 
 <style>
+	h1,
+	form {
+		margin: 0 var(--side-padding);
+	}
 	form {
 		display: grid;
 		gap: 1em;

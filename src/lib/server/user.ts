@@ -1,7 +1,6 @@
 import { ulid } from 'ulid';
 import argon2 from 'argon2';
-import db from './db.js';
-import { unix } from './util/unix.js';
+import { prisma } from './db.js';
 
 export interface User {
 	id: string;
@@ -13,25 +12,29 @@ interface UserWithFirstLogin extends User {
 	first_login: boolean;
 }
 
-export function isFirstUser(): boolean {
-	const user_count = db.getColumn<number>('SELECT count(*) FROM users');
+export async function isFirstUser(): Promise<boolean> {
+	const user_count = await prisma.user.count();
 	return user_count === 0;
 }
 
 export async function createFirstUser(email: string, password: string): Promise<User> {
-	const insertUser = db.prepare(
-		'INSERT INTO users (id, email, password, created_at, is_admin) VALUES (?, ?, ?, ?, 1)'
-	);
 	const user_id = ulid();
 	const hashed_password = await argon2.hash(password);
-	const unix_now = unix();
-	db.transaction(() => {
-		const user_count = db.getColumn<number>('SELECT count(*) FROM users');
-		if (user_count !== 0) {
-			throw new Error('First user already exists');
+
+	const user_count = await prisma.user.count();
+	if (user_count !== 0) {
+		throw new Error('First user already exists');
+	}
+
+	await prisma.user.create({
+		data: {
+			id: user_id,
+			email,
+			password: hashed_password,
+			isAdmin: true
 		}
-		insertUser.run(user_id, email, hashed_password, unix_now);
 	});
+
 	return {
 		id: user_id,
 		email,
@@ -42,49 +45,67 @@ export async function createFirstUser(email: string, password: string): Promise<
 export async function createUser(email: string, password: string): Promise<User> {
 	const user_id = ulid();
 	const hashed_password = await argon2.hash(password);
-	const unix_now = unix();
-	db.exec('INSERT INTO users (id, email, password, created_at) VALUES (?, ?, ?, ?)', [
-		user_id,
-		email,
-		hashed_password,
-		unix_now
-	]);
+
+	await prisma.user.create({
+		data: {
+			id: user_id,
+			email,
+			password: hashed_password
+		}
+	});
+
 	return {
 		id: user_id,
 		email
 	};
 }
 
-export function getUser(user_id: string): User | undefined {
-	return db.get<User>('SELECT id, email, is_admin FROM users WHERE id = ?', [user_id]);
+export async function getUser(user_id: string): Promise<User | null> {
+	const user = await prisma.user.findUnique({
+		where: { id: user_id },
+		select: { id: true, email: true, isAdmin: true }
+	});
+
+	if (!user) return null;
+
+	return {
+		id: user.id,
+		email: user.email,
+		is_admin: user.isAdmin
+	};
 }
 
 export async function updateUserPassword(user_id: string, password: string): Promise<void> {
 	const hashed_password = await argon2.hash(password);
-	db.exec('UPDATE users SET password = ? WHERE id = ?', [hashed_password, user_id]);
+	await prisma.user.update({
+		where: { id: user_id },
+		data: { password: hashed_password }
+	});
 }
 
 export async function loginUser(
 	email: string,
 	password: string
 ): Promise<UserWithFirstLogin | false> {
-	const unix_now = unix();
-	const firstLoginCutoff = unix_now - 60;
-	const user = db.get<any>(
-		'SELECT *, (users.created_at > ?) AS first_login FROM users WHERE email = ?',
-		[firstLoginCutoff, email]
-	);
+	const firstLoginCutoff = new Date(Date.now() - 60 * 1000);
+
+	const user = await prisma.user.findUnique({
+		where: { email }
+	});
+
 	if (!user) {
 		return false;
 	}
+
 	const valid = await argon2.verify(user.password, password);
 	if (!valid) {
 		return false;
 	}
+
 	return {
 		id: user.id,
 		email: user.email,
-		is_admin: user.is_admin,
-		first_login: user.first_login
+		is_admin: user.isAdmin,
+		first_login: user.createdAt > firstLoginCutoff
 	};
 }

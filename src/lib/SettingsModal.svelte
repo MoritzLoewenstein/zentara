@@ -11,13 +11,14 @@
 	import AccountConnections from './AccountConnections.svelte';
 
 	let dialog: HTMLDialogElement;
-	$effect(async () => {
+	$effect(() => {
 		if (dashboard_view.value === DASHBOARD_VIEW.SETTINGS) {
 			dialog.showModal();
 		} else {
 			// reset page.form to prevent showing recovery codes again
-			await invalidateAll();
-			dialog.close();
+			invalidateAll().then(() => {
+				dialog.close();
+			});
 		}
 	});
 

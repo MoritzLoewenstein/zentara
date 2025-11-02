@@ -30,7 +30,7 @@
 			return;
 		}
 		if (used_optimistic_ui) {
-			toast.add('Failed to save dashboard, reverting to edit mode', 'error');
+			toast.add('Failed to save dashboard, reverting to edit mode');
 			dashboard_view.set(DASHBOARD_VIEW.EDIT);
 		} else {
 			// still in edit mode

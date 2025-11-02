@@ -5,9 +5,9 @@
 	import SaveIcon from './icons/SaveIcon.svelte';
 
 	const dbBackup = $derived(page.form?.db_backup ?? null);
-	$effect(async () => {
+	$effect(() => {
 		if (dbBackup) {
-			await downloadB64(
+			downloadB64(
 				'application/octet-stream',
 				`zentara_backup_${new Date().toISOString()}.db`,
 				dbBackup

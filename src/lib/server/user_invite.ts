@@ -1,7 +1,6 @@
 import { env } from '$env/dynamic/private';
-import db from './db.js';
+import { prisma } from './db.js';
 import { ulid } from 'ulid';
-import { unix } from './util/unix.js';
 
 const INVITE_TOKEN_TIMEOUT = 60 * 60 * 24 * 14;
 
@@ -16,16 +15,19 @@ function inviteLink(invite_token: string): string {
 	return `${env.ORIGIN}/?invite_token=${invite_token}`;
 }
 
-export function createInvite(user_id: string, email: string): UserInvite {
+export async function createInvite(user_id: string, email: string): Promise<UserInvite> {
 	const invite_token = ulid();
-	const unix_now = unix();
-	const valid_until = unix_now + INVITE_TOKEN_TIMEOUT;
-	db.exec('INSERT INTO user_invites (user_id, token, email, created_at) VALUES (?, ?, ?, ?)', [
-		user_id,
-		invite_token,
-		email,
-		unix_now
-	]);
+	const now = new Date();
+	const valid_until = Math.floor(now.getTime() / 1000) + INVITE_TOKEN_TIMEOUT;
+
+	await prisma.userInvite.create({
+		data: {
+			userId: user_id,
+			token: invite_token,
+			email
+		}
+	});
+
 	return {
 		token: invite_token,
 		link: inviteLink(invite_token),
@@ -34,42 +36,60 @@ export function createInvite(user_id: string, email: string): UserInvite {
 	};
 }
 
-export function getUserInvites(user_id: string): UserInvite[] {
-	const unix_now = unix();
-	const absoluteTimeout = unix_now - INVITE_TOKEN_TIMEOUT;
-	const invites = db.getAll<{ token: string; email: string; valid_until: number }>(
-		'SELECT token, email, (created_at + ?) AS valid_until FROM user_invites WHERE user_id = ? AND created_at > ?',
-		[INVITE_TOKEN_TIMEOUT, user_id, absoluteTimeout]
-	);
+export async function getUserInvites(user_id: string): Promise<UserInvite[]> {
+	const absoluteTimeout = new Date(Date.now() - INVITE_TOKEN_TIMEOUT * 1000);
+
+	const invites = await prisma.userInvite.findMany({
+		where: {
+			userId: user_id,
+			createdAt: { gt: absoluteTimeout }
+		},
+		select: { token: true, email: true, createdAt: true }
+	});
+
 	return invites.map((invite) => ({
-		...invite,
-		link: inviteLink(invite.token)
+		token: invite.token,
+		email: invite.email,
+		link: inviteLink(invite.token),
+		valid_until: Math.floor((invite.createdAt.getTime() + INVITE_TOKEN_TIMEOUT * 1000) / 1000)
 	}));
 }
 
-export function getInvite(invite_token: string): string | false {
-	const unix_now = unix();
-	const absoluteTimeout = unix_now - INVITE_TOKEN_TIMEOUT;
-	const email = db.getColumn<string>(
-		'SELECT email FROM user_invites WHERE token = ? AND created_at > ?',
-		[invite_token, absoluteTimeout]
-	);
-	if (!email) {
+export async function getInvite(invite_token: string): Promise<string | false> {
+	const absoluteTimeout = new Date(Date.now() - INVITE_TOKEN_TIMEOUT * 1000);
+
+	const invite = await prisma.userInvite.findUnique({
+		where: {
+			token: invite_token,
+			createdAt: { gt: absoluteTimeout }
+		},
+		select: { email: true }
+	});
+
+	if (!invite) {
 		return false;
 	}
-	return email;
+	return invite.email;
 }
 
-export function verifyInvite(invite_token: string): string | false {
-	const unix_now = unix();
-	const absoluteTimeout = unix_now - INVITE_TOKEN_TIMEOUT;
-	const email = db.getColumn<string>(
-		'SELECT email FROM user_invites WHERE token = ? AND created_at > ?',
-		[invite_token, absoluteTimeout]
-	);
-	if (!email) {
+export async function verifyInvite(invite_token: string): Promise<string | false> {
+	const absoluteTimeout = new Date(Date.now() - INVITE_TOKEN_TIMEOUT * 1000);
+
+	const invite = await prisma.userInvite.findUnique({
+		where: {
+			token: invite_token,
+			createdAt: { gt: absoluteTimeout }
+		},
+		select: { email: true }
+	});
+
+	if (!invite) {
 		return false;
 	}
-	db.exec('DELETE FROM user_invites WHERE token = ?', [invite_token]);
-	return email;
+
+	await prisma.userInvite.delete({
+		where: { token: invite_token }
+	});
+
+	return invite.email;
 }

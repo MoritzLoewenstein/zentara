@@ -2,7 +2,7 @@
 	import { getContext, onMount } from 'svelte';
 	let { children } = $props();
 
-	const PAGER_API = getContext('PAGER_API');
+	const PAGER_API = getContext<{ register: () => void; unregister: () => void }>('PAGER_API')!;
 	if (!PAGER_API) {
 		throw new Error('<Page> must be used inside a <Pages> component.');
 	}

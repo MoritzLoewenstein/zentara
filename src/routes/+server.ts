@@ -16,13 +16,13 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
 	if (!session_id) {
 		return error(401, { message: 'unauthorized', code: 'unauthorized' });
 	}
-	const user = getSessionUserInfo(session_id);
+	const user = await getSessionUserInfo(session_id);
 	if (!user) {
 		return error(401, { message: 'unauthorized', code: 'unauthorized' });
 	}
 	const dashboard = (await request.json()) as Dashboard;
 	sanitizeDashboard(dashboard);
-	saveDashboard(user.id, dashboard);
+	await saveDashboard(user.id, dashboard);
 	return new Response(null, { status: 204 });
 };
 

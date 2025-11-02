@@ -8,7 +8,7 @@ export const GET: RequestHandler = async ({ cookies }) => {
 		return redirect(303, '/');
 	}
 
-	invalidateSession(session_id);
+	await invalidateSession(session_id);
 	cookies.delete('session_id', { path: '/' });
 	return redirect(303, '/');
 };

@@ -1,4 +1,4 @@
-import db from './db.js';
+import { prisma } from './db.js';
 
 export interface Application {
 	icon: string | null;
@@ -30,22 +30,24 @@ export interface Dashboard {
 	bookmarkGroups: BookmarkGroup[];
 }
 
-export function saveDashboard(user_id: string, dashboard_config: Dashboard): void {
+export async function saveDashboard(user_id: string, dashboard_config: Dashboard): Promise<void> {
 	const config = JSON.stringify(dashboard_config);
-	db.exec(
-		'INSERT INTO dashboards (user_id, config) VALUES (?, ?) ON CONFLICT (user_id) DO UPDATE SET config = ?',
-		[user_id, config, config]
-	);
+	await prisma.dashboard.upsert({
+		where: { userId: user_id },
+		update: { config },
+		create: { userId: user_id, config }
+	});
 }
 
-export function getDashboard(user_id: string): Dashboard {
-	const dashboard_config = db.getColumn<string>('SELECT config FROM dashboards WHERE user_id = ?', [
-		user_id
-	]);
-	if (!dashboard_config) {
+export async function getDashboard(user_id: string): Promise<Dashboard> {
+	const dashboard = await prisma.dashboard.findUnique({
+		where: { userId: user_id },
+		select: { config: true }
+	});
+	if (!dashboard) {
 		return DASHBOARD_DEFAULT;
 	}
-	return JSON.parse(dashboard_config);
+	return JSON.parse(dashboard.config);
 }
 
 const DASHBOARD_DEFAULT: Dashboard = {

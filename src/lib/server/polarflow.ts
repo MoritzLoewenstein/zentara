@@ -1,16 +1,16 @@
 import { env } from '$env/dynamic/private';
 import { token } from './util/token';
-import { setSessionOauthState, verifySessionOauthState } from './session';
+import { setSessionOauthState } from './session';
 
 class PolarFlow {
-	getAuthUrl(session_id: string): string {
+	async getAuthUrl(session_id: string): Promise<string> {
 		const url = new URL('https://flow.polar.com/oauth2/authorization');
 		url.searchParams.append('response_type', 'code');
 		url.searchParams.append('client_id', env.POLARFLOW_CLIENT_ID as string);
 		url.searchParams.append('redirect_uri', `${env.ORIGIN}/oauth/polarflow`);
 		const state = token();
 		url.searchParams.append('state', state);
-		setSessionOauthState(session_id, state);
+		await setSessionOauthState(session_id, state);
 		return url.toString();
 	}
 
