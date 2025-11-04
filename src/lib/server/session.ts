@@ -1,4 +1,3 @@
-import crypto from 'node:crypto';
 import { prisma } from './db.js';
 import { token } from './util/token.js';
 
@@ -51,41 +50,6 @@ export async function getSessionUserInfo(session_id: string): Promise<SessionUse
 		is_admin: session.user.isAdmin,
 		first_login: session.user.createdAt > firstLoginCutoff
 	};
-}
-
-export async function setSessionOauthState(session_id: string, oauth_state: string): Promise<void> {
-	await prisma.session.update({
-		where: { id: session_id },
-		data: { oauthState: oauth_state }
-	});
-}
-
-export async function verifySessionOauthState(
-	session_id: string,
-	oauth_state_expected: string
-): Promise<boolean> {
-	const session = await prisma.session.findUnique({
-		where: { id: session_id },
-		select: { oauthState: true }
-	});
-
-	const oauth_state = session?.oauthState;
-	if (!oauth_state || !oauth_state_expected) {
-		return false;
-	}
-	if (oauth_state.length !== oauth_state_expected.length) {
-		return false;
-	}
-	const oauth_state_buf = Buffer.from(oauth_state);
-	const oauth_state_expected_buf = Buffer.from(oauth_state_expected);
-	const oauth_state_valid = crypto.timingSafeEqual(oauth_state_buf, oauth_state_expected_buf);
-	if (oauth_state_valid) {
-		await prisma.session.update({
-			where: { id: session_id },
-			data: { oauthState: null }
-		});
-	}
-	return oauth_state_valid;
 }
 
 export async function updateSession(session_id: string): Promise<void> {

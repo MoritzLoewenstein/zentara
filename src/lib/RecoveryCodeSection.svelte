@@ -5,6 +5,7 @@
 	import { enhance } from '$app/forms';
 	import { PUBLIC_APP_NAMESPACE } from '$env/static/public';
 	import { page } from '$app/state';
+	import HttpStatusCode from './shared/HttpStatusCode';
 
 	const { recovery_codes, recovery_code_count, with_creation = false } = $props();
 </script>
@@ -16,9 +17,9 @@
 		in a safe place.<br />Each code can only be used once.
 	</p>
 	<p>You have {recovery_code_count} account recovery codes left.</p>
-	{#if with_creation && (page.form === null || (page.status !== 200 && page.form.code === 'recovery_codes_validation'))}
+	{#if with_creation && (page.form === null || (page.status !== HttpStatusCode.OK && page.form.code === 'recovery_codes_validation'))}
 		<form action="?/recovery_codes" method="post" use:enhance>
-			{#if page.status != 200}
+			{#if page.status != HttpStatusCode.OK}
 				<p class="notice-validation">{page.form.message}</p>
 			{/if}
 			<label>

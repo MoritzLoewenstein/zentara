@@ -19,10 +19,11 @@ model User {
   isAdmin   Boolean  @default(false) @map("is_admin")
   createdAt DateTime @default(now()) @map("created_at")
 
-  invites       UserInvite[]
-  recoveryCodes UserRecoveryCode[]
-  sessions      Session[]
-  dashboard     Dashboard?
+  invites          UserInvite[]
+  recoveryCodes    UserRecoveryCode[]
+  sessions         Session[]
+  dashboard        Dashboard?
+  oauthConnections OAuthConnection[]
 
   @@map("users")
 }
@@ -50,11 +51,10 @@ model UserRecoveryCode {
 }
 
 model Session {
-  id         String   @id
-  userId     String   @map("user_id")
-  oauthState String?  @map("oauth_state")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id        String   @id
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -68,4 +68,18 @@ model Dashboard {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("dashboards")
+}
+
+model OAuthConnection {
+  userId      String   @map("user_id")
+  provider    String
+  oauthState  String?  @map("oauth_state")
+  accessToken String?  @map("access_token")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, provider])
+  @@map("oauth_connections")
 }

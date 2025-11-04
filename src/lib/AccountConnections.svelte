@@ -11,7 +11,7 @@
 	<a
 		aria-label="connect polarflow"
 		class="btn-secondary btn-icon"
-		href={resolve('/oauth/polarflow')}><ExternalLink /></a
+		href={resolve('/oauth/polarflow/authorize')}><ExternalLink /></a
 	>
 	<img src={strava} alt="" />
 	<a aria-label="connect strava" class="btn-secondary btn-icon" href={resolve('/oauth/strava')}

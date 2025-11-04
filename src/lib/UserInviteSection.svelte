@@ -3,6 +3,7 @@
 	import { enhance } from '$app/forms';
 	import AddIcon from './icons/AddIcon.svelte';
 	import CopyIcon from './icons/CopyIcon.svelte';
+	import HttpStatusCode from './shared/HttpStatusCode';
 
 	const openInvites = $derived(page.form?.user_invites || page.data.user_invites || []);
 </script>
@@ -46,7 +47,7 @@
 		to send the created invite link to your friend, Zentara will not send any emails.
 	</p>
 	<form action="?/invite" method="post" use:enhance>
-		{#if page.status != 200 && page.form.code === 'invite_validation'}
+		{#if page.status != HttpStatusCode.OK && page.form.code === 'invite_validation'}
 			<p class="notice-validation">{page.form.message}</p>
 		{/if}
 		<label>

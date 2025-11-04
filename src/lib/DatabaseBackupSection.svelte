@@ -3,6 +3,7 @@
 	import { page } from '$app/state';
 	import { downloadB64 } from './client/download_b64';
 	import SaveIcon from './icons/SaveIcon.svelte';
+	import HttpStatusCode from './shared/HttpStatusCode';
 
 	const dbBackup = $derived(page.form?.db_backup ?? null);
 	$effect(() => {
@@ -24,7 +25,7 @@
 		server.
 	</p>
 	<form action="?/db_backup" method="post" use:enhance>
-		{#if page.status != 200 && page.form.code === 'db_backup_validation'}
+		{#if page.status != HttpStatusCode.OK && page.form.code === 'db_backup_validation'}
 			<p class="notice-validation">{page.form.message}</p>
 		{/if}
 		<button type="submit"><span>download backup</span><SaveIcon /></button>

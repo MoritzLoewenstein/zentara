@@ -1,17 +1,17 @@
 import { env } from '$env/dynamic/private';
 import { token } from './util/token';
-import { setSessionOauthState } from './session';
+import { setOauthState, setAccessToken } from './oauth_connection';
 import HttpStatusCode from '$lib/shared/HttpStatusCode';
 
 class PolarFlow {
-	async getAuthUrl(session_id: string): Promise<string> {
+	async getAuthUrl(user_id: string): Promise<string> {
 		const url = new URL('https://flow.polar.com/oauth2/authorization');
 		url.searchParams.append('response_type', 'code');
 		url.searchParams.append('client_id', env.POLARFLOW_CLIENT_ID as string);
-		url.searchParams.append('redirect_uri', `${env.ORIGIN}/oauth/polarflow`);
+		url.searchParams.append('redirect_uri', `${env.ORIGIN}/oauth/polarflow/callback`);
 		const state = token();
 		url.searchParams.append('state', state);
-		await setSessionOauthState(session_id, state);
+		await setOauthState(user_id, 'polarflow', state);
 		return url.toString();
 	}
 
@@ -19,7 +19,7 @@ class PolarFlow {
 		const searchParams = new URLSearchParams();
 		searchParams.append('grant_type', 'authorization_code');
 		searchParams.append('code', oauth_code);
-		searchParams.append('redirect_uri', `${env.ORIGIN}/oauth/polarflow`);
+		searchParams.append('redirect_uri', `${env.ORIGIN}/oauth/polarflow/callback`);
 		const res = await fetch('https://polarremote.com/v2/oauth2/token', {
 			method: 'POST',
 			headers: {
@@ -34,11 +34,12 @@ class PolarFlow {
 			return false;
 		}
 
+		await setAccessToken(user_id, 'polarflow', res.access_token);
 		return true;
 	}
 
 
-	async fetch(path: string, options): Promise<unknown> {
+	async fetch(path: string, options: RequestInit): Promise<unknown> {
 		const base_url = 'https://www.polaraccesslink.com/v3/';
 		const url = new URL(base_url + path);
 		const res = await fetch(url, {
