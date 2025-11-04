@@ -7,6 +7,7 @@ import DomPurify from 'dompurify';
 import { optimize } from 'svgo';
 import type { RequestHandler } from './$types';
 import type { Dashboard } from '$lib/server/dashboard';
+import HttpStatusCode from '$lib/shared/HttpStatusCode';
 
 const window = new JSDOM().window;
 const purify = DomPurify(window);
@@ -14,11 +15,11 @@ const purify = DomPurify(window);
 export const POST: RequestHandler = async ({ request, cookies }) => {
 	const session_id = cookies.get('session_id');
 	if (!session_id) {
-		return error(401, { message: 'unauthorized', code: 'unauthorized' });
+		return error(HttpStatusCode.UNAUTHORIZED, { message: 'unauthorized', code: 'unauthorized' });
 	}
 	const user = await getSessionUserInfo(session_id);
 	if (!user) {
-		return error(401, { message: 'unauthorized', code: 'unauthorized' });
+		return error(HttpStatusCode.UNAUTHORIZED, { message: 'unauthorized', code: 'unauthorized' });
 	}
 	const dashboard = (await request.json()) as Dashboard;
 	sanitizeDashboard(dashboard);

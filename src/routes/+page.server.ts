@@ -22,11 +22,12 @@ import { getUserInvites, createInvite, getInvite, verifyInvite } from '$lib/serv
 import { getDashboard } from '$lib/server/dashboard';
 import { getDbBackup } from '$lib/server/db';
 import type { Actions } from './$types';
+import HttpStatusCode from '$lib/shared/HttpStatusCode';
 
 export const load: ServerLoad = async ({ cookies, url }) => {
 	const firstUser = await isFirstUser();
 	if (firstUser) {
-		return error(401, {
+		return error(HttpStatusCode.UNAUTHORIZED, {
 			message: 'unauthorized',
 			code: 'register'
 		});
@@ -34,13 +35,13 @@ export const load: ServerLoad = async ({ cookies, url }) => {
 	const session_id = cookies.get('session_id');
 	if (!session_id) {
 		const data = await getUnauthorizedData(url.searchParams);
-		return error(401, { message: 'unauthorized', ...data } as App.Error);
+		return error(HttpStatusCode.UNAUTHORIZED, { message: 'unauthorized', ...data } as App.Error);
 	}
 
 	const user = await getSessionUserInfo(session_id);
 	if (!user) {
 		const data = await getUnauthorizedData(url.searchParams);
-		return error(401, { message: 'unauthorized', ...data } as App.Error);
+		return error(HttpStatusCode.UNAUTHORIZED, { message: 'unauthorized', ...data } as App.Error);
 	}
 	await updateSession(session_id);
 	const recovery_codes = user.first_login ? await createRecoveryCodes(user.id) : [];
@@ -91,14 +92,14 @@ export const actions: Actions = {
 		const email = formData.get('email');
 		const password = formData.get('password');
 		if (!email || !password) {
-			return fail(422, {
+			return fail(HttpStatusCode.UNPROCESSABLE_ENTITY, {
 				message: 'missing email or password',
 				code: 'unauthorized_validation'
 			});
 		}
 		const user = await loginUser(email as string, password as string);
 		if (!user) {
-			return fail(401, {
+			return fail(HttpStatusCode.UNAUTHORIZED, {
 				message: 'invalid login',
 				code: 'unauthorized_validation'
 			});
@@ -121,7 +122,7 @@ export const actions: Actions = {
 		const email = formData.get('email');
 		const password = formData.get('password');
 		if (!email || !password) {
-			return fail(422, {
+			return fail(HttpStatusCode.UNPROCESSABLE_ENTITY, {
 				message: 'missing email or password',
 				code: 'register_validation'
 			});
@@ -130,7 +131,7 @@ export const actions: Actions = {
 		try {
 			user = await createFirstUser(email as string, password as string);
 		} catch {
-			return fail(409, {
+			return fail(HttpStatusCode.CONFLICT, {
 				message: 'invalid action',
 				code: 'register_validation'
 			});
@@ -156,7 +157,7 @@ export const actions: Actions = {
 		const invite_token = formData.get('invite_token');
 		const password = formData.get('password');
 		if (!password) {
-			return fail(422, {
+			return fail(HttpStatusCode.UNPROCESSABLE_ENTITY, {
 				message: 'missing email or password',
 				code: 'invite_token_validation'
 			});
@@ -164,7 +165,7 @@ export const actions: Actions = {
 
 		const email = await verifyInvite(invite_token as string);
 		if (!email) {
-			return fail(403, {
+			return fail(HttpStatusCode.FORBIDDEN, {
 				message: 'invalid invite token',
 				code: 'invite_token_validation'
 			});
@@ -173,7 +174,7 @@ export const actions: Actions = {
 		try {
 			user = await createUser(email, password as string);
 		} catch {
-			return fail(500, {
+			return fail(HttpStatusCode.INTERNAL_SERVER_ERROR, {
 				message: 'failed to register with invite token',
 				code: 'invite_token_validation'
 			});
@@ -197,7 +198,7 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const email = formData.get('email');
 		if (!email) {
-			return fail(422, {
+			return fail(HttpStatusCode.UNPROCESSABLE_ENTITY, {
 				message: 'missing email',
 				code: 'recovery_code_validation'
 			});
@@ -205,7 +206,7 @@ export const actions: Actions = {
 		const recovery_code = formData.get('recovery_code');
 		const password = formData.get('password');
 		if (!recovery_code || !password) {
-			return fail(422, {
+			return fail(HttpStatusCode.UNPROCESSABLE_ENTITY, {
 				message: 'missing recovery_code or password',
 				code: 'recovery_code_validation'
 			});
@@ -213,7 +214,7 @@ export const actions: Actions = {
 
 		const user_id = await useRecoveryCode(email as string, recovery_code as string);
 		if (!user_id) {
-			return fail(401, {
+			return fail(HttpStatusCode.UNAUTHORIZED, {
 				message: 'invalid recovery code',
 				code: 'recovery_code_validation'
 			});
@@ -237,18 +238,18 @@ export const actions: Actions = {
 	recovery_codes: async ({ request, cookies }) => {
 		const session_id = cookies.get('session_id');
 		if (!session_id) {
-			return error(401, { message: 'unauthorized', code: 'unauthorized' });
+			return error(HttpStatusCode.UNAUTHORIZED, { message: 'unauthorized', code: 'unauthorized' });
 		}
 
 		const user = await getSessionUserInfo(session_id);
 		if (!user) {
-			return error(401, { message: 'unauthorized', code: 'unauthorized' });
+			return error(HttpStatusCode.UNAUTHORIZED, { message: 'unauthorized', code: 'unauthorized' });
 		}
 
 		const formData = await request.formData();
 		const password = formData.get('password');
 		if (!password) {
-			return fail(422, {
+			return fail(HttpStatusCode.UNPROCESSABLE_ENTITY, {
 				message: 'missing password',
 				code: 'recovery_codes_validation'
 			});
@@ -256,7 +257,7 @@ export const actions: Actions = {
 
 		const result = await loginUser(user.email, password as string);
 		if (!result) {
-			return fail(403, {
+			return fail(HttpStatusCode.FORBIDDEN, {
 				message: 'invalid password',
 				code: 'recovery_codes_validation'
 			});
@@ -271,16 +272,16 @@ export const actions: Actions = {
 	invite: async ({ request, cookies }) => {
 		const session_id = cookies.get('session_id');
 		if (!session_id) {
-			return error(401, { message: 'unauthorized', code: 'unauthorized' });
+			return error(HttpStatusCode.UNAUTHORIZED, { message: 'unauthorized', code: 'unauthorized' });
 		}
 
 		const user = await getSessionUserInfo(session_id);
 		if (!user) {
-			return error(401, { message: 'unauthorized', code: 'unauthorized' });
+			return error(HttpStatusCode.UNAUTHORIZED, { message: 'unauthorized', code: 'unauthorized' });
 		}
 
 		if (!user.is_admin) {
-			return fail(403, {
+			return fail(HttpStatusCode.FORBIDDEN, {
 				message: 'unauthorized',
 				code: 'unauthorized'
 			});
@@ -289,7 +290,7 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const email = formData.get('email');
 		if (!email) {
-			return fail(422, {
+			return fail(HttpStatusCode.UNPROCESSABLE_ENTITY, {
 				message: 'missing email',
 				code: 'invite_validation'
 			});
@@ -304,16 +305,16 @@ export const actions: Actions = {
 	db_backup: async ({ cookies }) => {
 		const session_id = cookies.get('session_id');
 		if (!session_id) {
-			return error(401, { message: 'unauthorized', code: 'unauthorized' });
+			return error(HttpStatusCode.UNAUTHORIZED, { message: 'unauthorized', code: 'unauthorized' });
 		}
 
 		const user = await getSessionUserInfo(session_id);
 		if (!user) {
-			return error(401, { message: 'unauthorized', code: 'unauthorized' });
+			return error(HttpStatusCode.UNAUTHORIZED, { message: 'unauthorized', code: 'unauthorized' });
 		}
 
 		if (!user.is_admin) {
-			return fail(403, {
+			return fail(HttpStatusCode.FORBIDDEN, {
 				message: 'unauthorized',
 				code: 'unauthorized'
 			});
@@ -321,7 +322,7 @@ export const actions: Actions = {
 
 		const backup = await getDbBackup();
 		if (!backup) {
-			return fail(500, {
+			return fail(HttpStatusCode.INTERNAL_SERVER_ERROR, {
 				message: 'failed to create database backup',
 				code: 'db_backup_validation'
 			});
