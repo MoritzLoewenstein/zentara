@@ -4,6 +4,4 @@
 </script>
 
 <Greeting />
-<main>
-	<slot />
-</main>
+<slot />

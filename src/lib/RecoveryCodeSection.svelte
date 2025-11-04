@@ -23,7 +23,13 @@
 			{/if}
 			<label>
 				password
-				<input type="password" placeholder="********" name="password" required />
+				<input
+					type="password"
+					placeholder="********"
+					name="password"
+					autocomplete="current-password"
+					required
+				/>
 			</label>
 			<button type="submit">
 				<span>regenerate recovery codes</span>

@@ -98,7 +98,7 @@ export const actions: Actions = {
 		}
 		const user = await loginUser(email as string, password as string);
 		if (!user) {
-			return error(422, {
+			return fail(401, {
 				message: 'invalid login',
 				code: 'unauthorized_validation'
 			});
@@ -121,7 +121,7 @@ export const actions: Actions = {
 		const email = formData.get('email');
 		const password = formData.get('password');
 		if (!email || !password) {
-			return error(422, {
+			return fail(422, {
 				message: 'missing email or password',
 				code: 'register_validation'
 			});
@@ -130,7 +130,7 @@ export const actions: Actions = {
 		try {
 			user = await createFirstUser(email as string, password as string);
 		} catch {
-			return error(422, {
+			return fail(409, {
 				message: 'invalid action',
 				code: 'register_validation'
 			});
@@ -156,7 +156,7 @@ export const actions: Actions = {
 		const invite_token = formData.get('invite_token');
 		const password = formData.get('password');
 		if (!password) {
-			return error(422, {
+			return fail(422, {
 				message: 'missing email or password',
 				code: 'invite_token_validation'
 			});
@@ -164,7 +164,7 @@ export const actions: Actions = {
 
 		const email = await verifyInvite(invite_token as string);
 		if (!email) {
-			return error(422, {
+			return fail(403, {
 				message: 'invalid invite token',
 				code: 'invite_token_validation'
 			});
@@ -173,7 +173,7 @@ export const actions: Actions = {
 		try {
 			user = await createUser(email, password as string);
 		} catch {
-			return error(422, {
+			return fail(500, {
 				message: 'failed to register with invite token',
 				code: 'invite_token_validation'
 			});
@@ -213,7 +213,7 @@ export const actions: Actions = {
 
 		const user_id = await useRecoveryCode(email as string, recovery_code as string);
 		if (!user_id) {
-			return fail(422, {
+			return fail(401, {
 				message: 'invalid recovery code',
 				code: 'recovery_code_validation'
 			});
@@ -256,7 +256,7 @@ export const actions: Actions = {
 
 		const result = await loginUser(user.email, password as string);
 		if (!result) {
-			return fail(422, {
+			return fail(403, {
 				message: 'invalid password',
 				code: 'recovery_codes_validation'
 			});

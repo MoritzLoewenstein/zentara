@@ -51,7 +51,13 @@
 		{/if}
 		<label>
 			email
-			<input type="email" name="email" required placeholder="alexius@example.org" />
+			<input
+				type="email"
+				name="email"
+				placeholder="alexius@example.org"
+				autocomplete="email"
+				required
+			/>
 		</label>
 		<button type="submit">
 			<span>create invite</span>
