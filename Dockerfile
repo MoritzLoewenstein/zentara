@@ -32,4 +32,4 @@ ENV BODY_SIZE_LIMIT=1000000
 VOLUME /app/data
 EXPOSE 3000
 
-CMD [ "node", "build" ]
+CMD [ "npm", "run", "start:prod" ]

@@ -38,25 +38,24 @@ class PolarFlow {
 		return true;
 	}
 
-
 	async fetch(path: string, options: RequestInit): Promise<unknown> {
 		const base_url = 'https://www.polaraccesslink.com/v3/';
 		const url = new URL(base_url + path);
 		const res = await fetch(url, {
 			headers: {
-				"Accept": "application/json",
-				"Authorization": `Bearer ${'stub'}`
+				Accept: 'application/json',
+				Authorization: `Bearer ${'stub'}`
 			},
 			...options
 		});
 
-		if(!res.ok) {
+		if (!res.ok) {
 			const data = await res.text();
-			console.error("polarflow: failed request", data);
+			console.error('polarflow: failed request', data);
 			return null;
 		}
 
-		if(res.status === HttpStatusCode.NO_CONTENT) {
+		if (res.status === HttpStatusCode.NO_CONTENT) {
 			return null;
 		}
 
