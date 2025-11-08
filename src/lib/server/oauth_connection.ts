@@ -64,10 +64,11 @@ export async function verifyOauthState(
 	return oauth_state_valid;
 }
 
-export async function setAccessToken(
+export async function updateOauthConnection(
 	user_id: string,
 	provider: OAuthProvider,
-	access_token: string
+	access_token: string,
+	external_account_id: string
 ): Promise<void> {
 	await prisma.oAuthConnection.upsert({
 		where: {
@@ -77,12 +78,14 @@ export async function setAccessToken(
 			}
 		},
 		update: {
-			accessToken: access_token
+			accessToken: access_token,
+			externalAccountId: external_account_id
 		},
 		create: {
 			userId: user_id,
 			provider,
-			accessToken: access_token
+			accessToken: access_token,
+			externalAccountId: external_account_id
 		}
 	});
 }
@@ -102,6 +105,34 @@ export async function getAccessToken(
 	});
 
 	return connection?.accessToken || null;
+}
+
+export async function getOauthConnections(user_id: string): Promise<unknown> {
+	const connections = await prisma.oAuthConnection.findMany({
+		where: {
+			userId: user_id,
+		},
+		select: {
+			provider: true,
+			externalAccountId: true
+		}
+	});
+	return connections;
+}
+
+export async function getOauthAccountId(user_id: string, provider: OAuthProvider): Promise<string|null> {
+	const connection = await prisma.oAuthConnection.findUnique({
+		where: {
+			userId_provider: {
+				userId: user_id,
+				provider
+			},
+		},
+		select: {
+			externalAccountId: true
+		}
+	});
+	return connection?.externalAccountId ?? null;
 }
 
 export async function getConnectionStatus(

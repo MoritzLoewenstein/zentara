@@ -23,6 +23,8 @@ import { getDashboard } from '$lib/server/dashboard';
 import { getDbBackup } from '$lib/server/db';
 import type { Actions } from './$types';
 import HttpStatusCode from '$lib/shared/HttpStatusCode';
+import { getOauthConnections } from '$lib/server/oauth_connection';
+import polarflow from '$lib/server/polarflow';
 
 export const load: ServerLoad = async ({ cookies, url }) => {
 	const firstUser = await isFirstUser();
@@ -45,19 +47,28 @@ export const load: ServerLoad = async ({ cookies, url }) => {
 	}
 	await updateSession(session_id);
 	const recovery_codes = user.first_login ? await createRecoveryCodes(user.id) : [];
-	const recovery_code_count = await getRecoveryCodeCount(user.id);
+	const [recovery_code_count, dashboard, user_invites, oauth_connections] = await Promise.all([
+		getRecoveryCodeCount(user.id),
+		getDashboard(user.id),
+		getUserInvites(user.id),
+		getOauthConnections(user.id)
+	]);
+
+	const polarUser = await polarflow.registerUser(user.id);
+	console.log(polarUser);
 	return {
 		session_id,
 		user,
-		dashboard: await getDashboard(user.id),
-		user_invites: await getUserInvites(user.id),
+		dashboard,
+		user_invites,
+		oauth_connections,
 		first_login: user.first_login,
 		recovery_codes,
 		recovery_code_count
 	};
 };
 
-async function getUnauthorizedData(searchParams: URLSearchParams) {
+export async function getUnauthorizedData(searchParams: URLSearchParams) {
 	if (searchParams.has('recovery_code')) {
 		return {
 			code: 'recovery_code',
