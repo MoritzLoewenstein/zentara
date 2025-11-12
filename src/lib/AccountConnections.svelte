@@ -15,11 +15,13 @@
 
 	let oauth_success = $state('');
 	onMount(() => {
-		const searchParams = new URLSearchParams(window.location.search);
-		const oauth_success_search = searchParams.get('oauth_success');
+		const url = new URL(window.location.toString());
+		const oauth_success_search = url.searchParams.get('oauth_success');
 		if (oauth_success_search && ['polarflow', 'strava'].includes(oauth_success_search)) {
 			oauth_success = oauth_success_search;
 			dashboard_view.set(DASHBOARD_VIEW.SETTINGS);
+			url.searchParams.delete('oauth_success');
+			history.pushState(null, '', url);
 		}
 	});
 
