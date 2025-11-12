@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { prisma } from './db.js';
+import type { JsonObject } from '@prisma/client/runtime/library';
 
 export type OAuthProvider = 'polarflow' | 'strava';
 
@@ -90,6 +91,24 @@ export async function updateOauthConnection(
 	});
 }
 
+export async function updateOauthAccountInfo(
+	user_id: string,
+	provider: OAuthProvider,
+	external_account_info: JsonObject
+): Promise<void> {
+	await prisma.oAuthConnection.update({
+		where: {
+			userId_provider: {
+				userId: user_id,
+				provider: provider
+			}
+		},
+		data: {
+			externalAccountInfo: external_account_info
+		}
+	})
+}
+
 export async function getAccessToken(
 	user_id: string,
 	provider: OAuthProvider
@@ -114,7 +133,8 @@ export async function getOauthConnections(user_id: string): Promise<unknown> {
 		},
 		select: {
 			provider: true,
-			externalAccountId: true
+			externalAccountId: true,
+			externalAccountInfo: true
 		}
 	});
 	return connections;

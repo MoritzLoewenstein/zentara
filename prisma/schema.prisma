@@ -71,13 +71,14 @@ model Dashboard {
 }
 
 model OAuthConnection {
-  userId            String   @map("user_id")
-  provider          String
-  oauthState        String?  @map("oauth_state")
-  accessToken       String?  @map("access_token")
-  externalAccountId String?  @map("external_account_id")
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+  userId              String   @map("user_id")
+  provider            String
+  oauthState          String?  @map("oauth_state")
+  accessToken         String?  @map("access_token")
+  externalAccountId   String?  @map("external_account_id")
+  externalAccountInfo Json?    @map("external_account_info")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

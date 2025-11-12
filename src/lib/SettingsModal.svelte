@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-
 	import { dashboard_view, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
-
 	import { invalidateAll } from '$app/navigation';
 	import CloseIcon from './icons/CloseIcon.svelte';
 	import UserInviteSection from './UserInviteSection.svelte';

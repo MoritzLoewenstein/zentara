@@ -33,5 +33,5 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		return redirect(HttpStatusCode.SEE_OTHER, '/?error=token_exchange_failed');
 	}
 
-	return redirect(HttpStatusCode.SEE_OTHER, '/');
+	return redirect(HttpStatusCode.SEE_OTHER, '/?oauth_success=polarflow');
 };

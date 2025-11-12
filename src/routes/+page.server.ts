@@ -54,8 +54,8 @@ export const load: ServerLoad = async ({ cookies, url }) => {
 		getOauthConnections(user.id)
 	]);
 
-	const polarUser = await polarflow.registerUser(user.id);
-	console.log(polarUser);
+	//const data = await polarflow.getExercises(user.id);
+	//console.log(data);
 	return {
 		session_id,
 		user,

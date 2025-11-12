@@ -5,7 +5,8 @@ import {
 	updateOauthConnection,
 	getAccessToken,
 	getOauthAccountId,
-	deleteConnection
+	deleteConnection,
+	updateOauthAccountInfo
 } from './oauth_connection';
 import HttpStatusCode from '$lib/shared/HttpStatusCode';
 import { dev } from '$app/environment';
@@ -54,11 +55,12 @@ class PolarFlow {
 
 		const body = await res.json();
 		await updateOauthConnection(user_id, 'polarflow', body.access_token, body.x_user_id.toString());
-		const registered = await this.registerUser(user_id);
-		if(!registered) {
+		const userInfo = await this.registerUser(user_id);
+		if(!userInfo) {
 			console.error("PolarFlow UserRegister failed");
 			return false;
 		}
+		await updateOauthAccountInfo(user_id, "polarflow", userInfo)
 		return true;
 	}
 
@@ -120,11 +122,6 @@ class PolarFlow {
 	}
 
 	async registerUser(user_id: string): Promise<unknown> {
-		const polar_user_id = await getOauthAccountId(user_id, 'polarflow');
-		if (!polar_user_id) {
-			return null;
-		}
-
 		const body = await this.fetchUser(user_id, '/users', {
 			method: 'POST',
 			body: JSON.stringify({ 'member-id': user_id  })
@@ -157,6 +154,11 @@ class PolarFlow {
 
 		const user = await this.fetchUser(user_id, `/users/${polar_user_id}`);
 		return user;
+	}
+
+	async getExercises(user_id: string): Promise<unknown> {
+		const exercises = await this.fetchUser(user_id, '/exercises');
+		return exercises;
 	}
 }
 
