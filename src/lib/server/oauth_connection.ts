@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import { prisma } from './db.js';
-import type { JsonObject } from '@prisma/client/runtime/library';
+import type { JsonObject } from '../../../generated/prisma/internal/prismaNamespace.js';
 
 export type OAuthProvider = 'polarflow' | 'strava';
 
@@ -106,7 +106,7 @@ export async function updateOauthAccountInfo(
 		data: {
 			externalAccountInfo: external_account_info
 		}
-	})
+	});
 }
 
 export async function getAccessToken(
@@ -129,7 +129,7 @@ export async function getAccessToken(
 export async function getOauthConnections(user_id: string): Promise<unknown> {
 	const connections = await prisma.oAuthConnection.findMany({
 		where: {
-			userId: user_id,
+			userId: user_id
 		},
 		select: {
 			provider: true,
@@ -140,13 +140,16 @@ export async function getOauthConnections(user_id: string): Promise<unknown> {
 	return connections;
 }
 
-export async function getOauthAccountId(user_id: string, provider: OAuthProvider): Promise<string|null> {
+export async function getOauthAccountId(
+	user_id: string,
+	provider: OAuthProvider
+): Promise<string | null> {
 	const connection = await prisma.oAuthConnection.findUnique({
 		where: {
 			userId_provider: {
 				userId: user_id,
 				provider
-			},
+			}
 		},
 		select: {
 			externalAccountId: true

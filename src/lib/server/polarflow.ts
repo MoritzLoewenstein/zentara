@@ -56,11 +56,11 @@ class PolarFlow {
 		const body = await res.json();
 		await updateOauthConnection(user_id, 'polarflow', body.access_token, body.x_user_id.toString());
 		const userInfo = await this.registerUser(user_id);
-		if(!userInfo) {
-			console.error("PolarFlow UserRegister failed");
+		if (!userInfo) {
+			console.error('PolarFlow UserRegister failed');
 			return false;
 		}
-		await updateOauthAccountInfo(user_id, "polarflow", userInfo)
+		await updateOauthAccountInfo(user_id, 'polarflow', userInfo);
 		return true;
 	}
 
@@ -73,7 +73,7 @@ class PolarFlow {
 		const res = await fetch(url, {
 			headers: {
 				Accept: 'application/json',
-				"Content-Type": "application/json",
+				'Content-Type': 'application/json',
 				Authorization: `Basic ${polarClientAuth}`
 			},
 			...options
@@ -100,7 +100,7 @@ class PolarFlow {
 		const res = await fetch(url, {
 			headers: {
 				Accept: 'application/json',
-				"Content-Type": "application/json",
+				'Content-Type': 'application/json',
 				Authorization: `Bearer ${access_token}`,
 				...options.headers
 			},
@@ -124,7 +124,7 @@ class PolarFlow {
 	async registerUser(user_id: string): Promise<unknown> {
 		const body = await this.fetchUser(user_id, '/users', {
 			method: 'POST',
-			body: JSON.stringify({ 'member-id': user_id  })
+			body: JSON.stringify({ 'member-id': user_id })
 		});
 		return body;
 	}
@@ -138,11 +138,11 @@ class PolarFlow {
 		const result = await this.fetchUser(user_id, `/users/${polar_user_id}`, {
 			method: 'DELETE'
 		});
-		if(result !== true) {
+		if (result !== true) {
 			return false;
 		}
 
-		await deleteConnection(user_id, "polarflow");
+		await deleteConnection(user_id, 'polarflow');
 		return true;
 	}
 
@@ -159,6 +159,23 @@ class PolarFlow {
 	async getExercises(user_id: string): Promise<unknown> {
 		const exercises = await this.fetchUser(user_id, '/exercises');
 		return exercises;
+	}
+
+	async getActivities(user_id: string): Promise<unknown> {
+		const startDate = new Date();
+		startDate.setMonth(10);
+		startDate.setDate(1);
+		const endDate = new Date();
+		endDate.setMonth(10);
+		endDate.setDate(28);
+		const searchParams = new URLSearchParams();
+		searchParams.append('from', startDate.toISOString().split('T')[0]);
+		searchParams.append('to', endDate.toISOString().split('T')[0]);
+		const activities = await this.fetchUser(
+			user_id,
+			'/users/activities?' + searchParams.toString()
+		);
+		return activities;
 	}
 }
 

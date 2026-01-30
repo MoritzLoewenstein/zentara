@@ -10,6 +10,7 @@ ENV NODE_ENV=production
 ENV ORIGIN=${ORIGIN}
 ENV PUBLIC_APP_NAMESPACE=zentara
 ENV BODY_SIZE_LIMIT=1000000
+RUN npm run prisma:generate
 RUN npm run build
 RUN npm prune --omit=dev
 
@@ -18,6 +19,9 @@ FROM node:22-alpine
 WORKDIR /app
 COPY --from=builder /app/build build/
 COPY --from=builder /app/static static/
+COPY --from=builder /app/generated/prisma generated/prisma/
+COPY --from=builder /app/prisma.config.ts prisma.config.ts
+COPY --from=builder /app/prisma prisma/
 COPY --from=builder /app/node_modules node_modules/
 COPY --from=builder /app/package.json package.json
 

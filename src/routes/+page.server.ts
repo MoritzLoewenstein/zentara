@@ -20,11 +20,10 @@ import {
 } from '$lib/server/user_recovery';
 import { getUserInvites, createInvite, getInvite, verifyInvite } from '$lib/server/user_invite';
 import { getDashboard } from '$lib/server/dashboard';
-import { getDbBackup } from '$lib/server/db';
 import type { Actions } from './$types';
 import HttpStatusCode from '$lib/shared/HttpStatusCode';
 import { getOauthConnections } from '$lib/server/oauth_connection';
-import polarflow from '$lib/server/polarflow';
+import { db } from '$lib/server/db';
 
 export const load: ServerLoad = async ({ cookies, url }) => {
 	const firstUser = await isFirstUser();
@@ -54,10 +53,9 @@ export const load: ServerLoad = async ({ cookies, url }) => {
 		getOauthConnections(user.id)
 	]);
 
-	//const data = await polarflow.getExercises(user.id);
+	//const data = await polarflow.getActivities(user.id);
 	//console.log(data);
 	return {
-		session_id,
 		user,
 		dashboard,
 		user_invites,
@@ -121,7 +119,6 @@ export const actions: Actions = {
 			maxAge: SESSION_MAX_AGE
 		});
 		return {
-			session_id,
 			user,
 			dashboard: await getDashboard(user.id),
 			recovery_code_count: await getRecoveryCodeCount(user.id),
@@ -154,7 +151,6 @@ export const actions: Actions = {
 			maxAge: SESSION_MAX_AGE
 		});
 		return {
-			session_id,
 			user,
 			dashboard: await getDashboard(user.id),
 			recovery_code_count: await getRecoveryCodeCount(user.id),
@@ -197,7 +193,6 @@ export const actions: Actions = {
 			maxAge: SESSION_MAX_AGE
 		});
 		return {
-			session_id,
 			user,
 			dashboard: await getDashboard(user.id),
 			recovery_code_count: await getRecoveryCodeCount(user.id),
@@ -239,7 +234,6 @@ export const actions: Actions = {
 			maxAge: SESSION_MAX_AGE
 		});
 		return {
-			session_id,
 			user,
 			dashboard: await getDashboard(user!.id),
 			recovery_code_count: await getRecoveryCodeCount(user_id),
@@ -331,7 +325,7 @@ export const actions: Actions = {
 			});
 		}
 
-		const backup = await getDbBackup();
+		const backup = await db.getBackup();
 		if (!backup) {
 			return fail(HttpStatusCode.INTERNAL_SERVER_ERROR, {
 				message: 'failed to create database backup',

@@ -11,7 +11,7 @@ export const disconnectProvider = command(z.literal(['polarflow', 'strava']), as
 	const user = await getUser();
 	if (provider === 'polarflow') {
 		const result = polarflow.deleteUser(user.id);
-        return result;
+		return result;
 	} else {
 		return error(HttpStatusCode.NOT_IMPLEMENTED);
 	}

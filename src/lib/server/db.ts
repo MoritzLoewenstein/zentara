@@ -1,19 +1,24 @@
 import { PrismaClient } from '../../../generated/prisma/client';
-import { PrismaBetterSQLite3 } from '@prisma/adapter-better-sqlite3';
-import { building } from '$app/environment';
 import { env } from '$env/dynamic/private';
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import Database from 'better-sqlite3';
 
-const dbUrl = building ? ':memory:' : env.DATABASE_URL;
-const adapter = new PrismaBetterSQLite3({
-	url: dbUrl
-});
-const prisma = new PrismaClient({
-	adapter,
-	log: ['error']
+const adapter = new PrismaBetterSqlite3({
+	url: env.DATABASE_URL
 });
 
-async function getDbBackup(): Promise<Buffer | null> {
-	return Promise.resolve(null);
+export const prisma = new PrismaClient({
+	adapter
+});
+
+class Db {
+	#db: InstanceType<typeof Database> | null = null;
+	init() {
+		this.#db = new Database(env.DATABASE_URL.replace('file:', ''));
+		this.#db.pragma('journal_mode = WAL');
+	}
+	getBackup() {
+		return this.#db!.serialize();
+	}
 }
-
-export { prisma, getDbBackup };
+export const db = new Db();
