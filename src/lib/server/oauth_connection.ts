@@ -75,7 +75,7 @@ export async function updateOauthConnection(
 ): Promise<void> {
 	// expiration as unix with 60s buffer
 	const expiresAt = Math.floor(Date.now() / 1000) + expires_in - 60;
-	const expiresAtDate = new Date(expiresAt * 1000)
+	const expiresAtDate = new Date(expiresAt * 1000);
 	await prisma.oAuthConnection.upsert({
 		where: {
 			userId_provider: {
@@ -127,12 +127,32 @@ export async function getAccessToken(
 			userId_provider: {
 				userId: user_id,
 				provider
+			},
+			expiresAt: {
+				lt: new Date()
 			}
 		},
 		select: { accessToken: true }
 	});
 
 	return connection?.accessToken || null;
+}
+
+export async function getRefreshToken(
+	user_id: string,
+	provider: OAuthProvider
+): Promise<string | null> {
+	const connection = await prisma.oAuthConnection.findUnique({
+		where: {
+			userId_provider: {
+				userId: user_id,
+				provider
+			}
+		},
+		select: { refreshToken: true }
+	});
+
+	return connection?.refreshToken || null;
 }
 
 export async function getOauthConnections(user_id: string): Promise<unknown> {

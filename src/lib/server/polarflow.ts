@@ -5,7 +5,8 @@ import {
 	updateOauthConnection,
 	getAccessToken,
 	deleteConnection,
-	updateOauthAccountInfo
+	updateOauthAccountInfo,
+	getRefreshToken
 } from './oauth_connection';
 import HttpStatusCode from '$lib/shared/HttpStatusCode';
 import { dev } from '$app/environment';
@@ -32,7 +33,7 @@ class PolarFlow {
 		return url.toString();
 	}
 
-	async getAccessToken(user_id: string, oauth_code: string): Promise<boolean> {
+	async receiveAccessToken(user_id: string, oauth_code: string): Promise<boolean> {
 		const searchParams = new URLSearchParams();
 		searchParams.append('grant_type', 'authorization_code');
 		searchParams.append('code', oauth_code);
@@ -52,14 +53,21 @@ class PolarFlow {
 
 		if (!res.ok) {
 			const body = await res.json();
-			console.error('PolarFlow getAccessToken failed', res.status, body);
+			console.error('PolarFlow receiveAccessToken failed', res.status, body);
 			return false;
 		}
 
 		const body = await res.json();
-		await updateOauthConnection(user_id, 'polarflow', '', body.access_token, body.refresh_token, body.expires_in);
+		await updateOauthConnection(
+			user_id,
+			'polarflow',
+			'',
+			body.access_token,
+			body.refresh_token,
+			body.expires_in
+		);
 		const profile = await this.fetchProfile(user_id);
-		if(profile === null) {
+		if (profile === null) {
 			console.error('PolarFlow profile failed');
 			// rollback oauth connection, we require a successfull fetchProfile call
 			await this.delete(user_id);
@@ -67,6 +75,50 @@ class PolarFlow {
 		}
 		await updateOauthAccountInfo(user_id, 'polarflow', profile);
 		return true;
+	}
+
+	async getAccessToken(user_id: string): Promise<string | null> {
+		const access_token = await getAccessToken(user_id, 'polarflow');
+		if (access_token) {
+			return access_token;
+		}
+
+		const refresh_token = await getRefreshToken(user_id, 'polarflow');
+		if (refresh_token === null) {
+			// not connected or no refresh token in the db
+			return null;
+		}
+		const searchParams = new URLSearchParams();
+		searchParams.append('grant_type', 'refresh_token');
+		const polarClientAuth = Buffer.from(
+			`${env.POLARFLOW_CLIENT_ID}:${env.POLARFLOW_CLIENT_SECRET}`
+		).toString('base64');
+		const res = await fetch('https://auth.polar.com/oauth/token', {
+			method: 'POST',
+			headers: {
+				Accept: 'application/json',
+				Authorization: `Basic ${polarClientAuth}`,
+				'Content-Type': 'application/x-www-form-urlencoded'
+			},
+			body: searchParams
+		});
+
+		if (!res.ok) {
+			const body = await res.json();
+			console.error('PolarFlow getAccessToken failed', res.status, body);
+			return null;
+		}
+
+		const body = await res.json();
+		await updateOauthConnection(
+			user_id,
+			'polarflow',
+			'',
+			body.access_token,
+			body.refresh_token,
+			body.expires_in
+		);
+		return body.access_token;
 	}
 
 	async fetch<T>(
@@ -106,7 +158,7 @@ class PolarFlow {
 		return true;
 	}
 
-	async fetchProfile(user_id: string): Promise<JsonObject|null> {
+	async fetchProfile(user_id: string): Promise<JsonObject | null> {
 		const [_, user] = await this.fetch<JsonObject>(user_id, `/user/account-data`);
 		return user;
 	}

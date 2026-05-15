@@ -30,7 +30,7 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 		return redirect(HttpStatusCode.SEE_OTHER, '/?error=invalid_state');
 	}
 
-	const success = await polarflow.getAccessToken(user.id, code);
+	const success = await polarflow.receiveAccessToken(user.id, code);
 	if (!success) {
 		return redirect(HttpStatusCode.SEE_OTHER, '/?error=token_exchange_failed');
 	}
