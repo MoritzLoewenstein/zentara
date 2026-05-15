@@ -10,7 +10,7 @@ import { getUnauthorizedData } from '../../routes/+page.server';
 export const disconnectProvider = command(z.literal(['polarflow', 'strava']), async (provider) => {
 	const user = await getUser();
 	if (provider === 'polarflow') {
-		const result = polarflow.deleteUser(user.id);
+		const result = polarflow.delete(user.id);
 		return result;
 	} else {
 		return error(HttpStatusCode.NOT_IMPLEMENTED);

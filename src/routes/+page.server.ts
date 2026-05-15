@@ -53,8 +53,6 @@ export const load: ServerLoad = async ({ cookies, url }) => {
 		getOauthConnections(user.id)
 	]);
 
-	//const data = await polarflow.getActivities(user.id);
-	//console.log(data);
 	return {
 		user,
 		dashboard,

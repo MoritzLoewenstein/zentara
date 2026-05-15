@@ -42,11 +42,16 @@
 			return { name: '', birthday: '' };
 		}
 
-		const firstName = polar_connection.externalAccountInfo['first-name'];
+		return {
+			name: 'John Doe',
+			birthday: '01-01-1970'
+		};
+
+		/* const firstName = polar_connection.externalAccountInfo['first-name'];
 		const lastName = polar_connection.externalAccountInfo['last-name'];
 		const name = `${firstName.slice(0, 1)}. ${lastName}`;
 		const birthday = polar_connection.externalAccountInfo.birthdate.split('-').reverse().join('-');
-		return { name, birthday };
+		return { name, birthday }; */
 	});
 </script>
 

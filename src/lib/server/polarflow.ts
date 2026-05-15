@@ -10,6 +10,7 @@ import {
 } from './oauth_connection';
 import HttpStatusCode from '$lib/shared/HttpStatusCode';
 import { dev } from '$app/environment';
+import type { JsonObject } from '@prisma/client/runtime/client';
 
 class PolarFlow {
 	#getRedirectUrl() {
@@ -19,8 +20,11 @@ class PolarFlow {
 	}
 
 	async getAuthUrl(user_id: string): Promise<string> {
-		const url = new URL('https://flow.polar.com/oauth2/authorization');
+		const url = new URL('https://auth.polar.com/oauth/authorize');
 		url.searchParams.append('response_type', 'code');
+		// https://www.polar.com/polar-api-v4/#scopes
+		const SCOPES = ['profile:read', 'activity:read'];
+		url.searchParams.append('scope', SCOPES.join(' '));
 		url.searchParams.append('client_id', env.POLARFLOW_CLIENT_ID as string);
 		url.searchParams.append('redirect_uri', this.#getRedirectUrl());
 		const state = token();
@@ -37,7 +41,7 @@ class PolarFlow {
 		const polarClientAuth = Buffer.from(
 			`${env.POLARFLOW_CLIENT_ID}:${env.POLARFLOW_CLIENT_SECRET}`
 		).toString('base64');
-		const res = await fetch('https://polarremote.com/v2/oauth2/token', {
+		const res = await fetch('https://auth.polar.com/oauth/token', {
 			method: 'POST',
 			headers: {
 				Accept: 'application/json',
@@ -54,48 +58,23 @@ class PolarFlow {
 		}
 
 		const body = await res.json();
-		await updateOauthConnection(user_id, 'polarflow', body.access_token, body.x_user_id.toString());
-		const userInfo = await this.registerUser(user_id);
-		if (!userInfo) {
-			console.error('PolarFlow UserRegister failed');
+		await updateOauthConnection(user_id, 'polarflow', '', body.access_token, body.refresh_token, body.expires_in);
+		const profile = await this.profile(user_id);
+		if(profile === null) {
+			console.error('PolarFlow profile failed');
 			return false;
 		}
-		await updateOauthAccountInfo(user_id, 'polarflow', userInfo);
+		await updateOauthAccountInfo(user_id, 'polarflow', profile);
 		return true;
 	}
 
-	async fetchPartner(path: string, options: RequestInit = {}): Promise<unknown> {
-		const base_url = 'https://www.polaraccesslink.com/v3';
-		const url = new URL(base_url + path);
-		const polarClientAuth = Buffer.from(
-			`${env.POLARFLOW_CLIENT_ID}:${env.POLARFLOW_CLIENT_SECRET}`
-		).toString('base64');
-		const res = await fetch(url, {
-			headers: {
-				Accept: 'application/json',
-				'Content-Type': 'application/json',
-				Authorization: `Basic ${polarClientAuth}`
-			},
-			...options
-		});
-
-		if (!res.ok) {
-			const data = await res.text();
-			console.error('polarflow: failed request', res.status, data);
-			return null;
-		}
-
-		if (res.status === HttpStatusCode.NO_CONTENT) {
-			return null;
-		}
-
-		const data = await res.json();
-		return data;
-	}
-
-	async fetchUser(user_id: string, path: string, options: RequestInit = {}): Promise<unknown> {
+	async fetch<T>(
+		user_id: string,
+		path: string,
+		options: RequestInit = {}
+	): Promise<[boolean, T | null]> {
 		const access_token = await getAccessToken(user_id, 'polarflow');
-		const base_url = 'https://www.polaraccesslink.com/v3';
+		const base_url = 'https://www.polaraccesslink.com/v4/data';
 		const url = new URL(base_url + path);
 		const res = await fetch(url, {
 			headers: {
@@ -110,58 +89,33 @@ class PolarFlow {
 		if (!res.ok) {
 			const data = await res.text();
 			console.error('polarflow: failed request', res.status, data);
-			return null;
+			return [false, null];
 		}
 
 		if (res.status === HttpStatusCode.NO_CONTENT) {
-			return true;
+			return [true, null];
 		}
 
 		const data = await res.json();
-		return data;
+		return [true, data];
 	}
 
-	async registerUser(user_id: string): Promise<unknown> {
-		const body = await this.fetchUser(user_id, '/users', {
-			method: 'POST',
-			body: JSON.stringify({ 'member-id': user_id })
-		});
-		return body;
-	}
-
-	async deleteUser(user_id: string): Promise<boolean> {
-		const polar_user_id = await getOauthAccountId(user_id, 'polarflow');
-		if (!polar_user_id) {
-			return false;
-		}
-
-		const result = await this.fetchUser(user_id, `/users/${polar_user_id}`, {
-			method: 'DELETE'
-		});
-		if (result !== true) {
-			return false;
-		}
-
+	async delete(user_id: string): Promise<boolean> {
 		await deleteConnection(user_id, 'polarflow');
 		return true;
 	}
 
-	async getUser(user_id: string): Promise<unknown> {
+	async profile(user_id: string): Promise<JsonObject|null> {
 		const polar_user_id = await getOauthAccountId(user_id, 'polarflow');
 		if (!polar_user_id) {
 			return null;
 		}
 
-		const user = await this.fetchUser(user_id, `/users/${polar_user_id}`);
+		const [_, user] = await this.fetch<JsonObject>(user_id, `/user/account-data`);
 		return user;
 	}
 
-	async getExercises(user_id: string): Promise<unknown> {
-		const exercises = await this.fetchUser(user_id, '/exercises');
-		return exercises;
-	}
-
-	async getActivities(user_id: string): Promise<unknown> {
+	async activities(user_id: string): Promise<JsonObject[]> {
 		const startDate = new Date();
 		startDate.setMonth(10);
 		startDate.setDate(1);
@@ -171,10 +125,13 @@ class PolarFlow {
 		const searchParams = new URLSearchParams();
 		searchParams.append('from', startDate.toISOString().split('T')[0]);
 		searchParams.append('to', endDate.toISOString().split('T')[0]);
-		const activities = await this.fetchUser(
+		const [success, activities] = await this.fetch<JsonObject[]>(
 			user_id,
-			'/users/activities?' + searchParams.toString()
+			'/activity/list?' + searchParams.toString()
 		);
+		if (!success || activities === null) {
+			return [];
+		}
 		return activities;
 	}
 }

@@ -68,9 +68,14 @@ export async function verifyOauthState(
 export async function updateOauthConnection(
 	user_id: string,
 	provider: OAuthProvider,
+	external_account_id: string,
 	access_token: string,
-	external_account_id: string
+	refresh_token: string,
+	expires_in: number
 ): Promise<void> {
+	// expiration as unix with 60s buffer
+	const expiresAt = Math.floor(Date.now() / 1000) + expires_in - 60;
+	const expiresAtDate = new Date(expiresAt * 1000)
 	await prisma.oAuthConnection.upsert({
 		where: {
 			userId_provider: {
@@ -79,14 +84,18 @@ export async function updateOauthConnection(
 			}
 		},
 		update: {
+			externalAccountId: external_account_id,
 			accessToken: access_token,
-			externalAccountId: external_account_id
+			refreshToken: refresh_token,
+			expiresAt: expiresAtDate
 		},
 		create: {
 			userId: user_id,
 			provider,
+			externalAccountId: external_account_id,
 			accessToken: access_token,
-			externalAccountId: external_account_id
+			refreshToken: refresh_token,
+			expiresAt: expiresAtDate
 		}
 	});
 }
