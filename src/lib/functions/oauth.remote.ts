@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { command } from '$app/server';
 import polarflow from '$lib/server/polarflow';
+import strava from '$lib/server/strava';
 import { getRequestEvent, query } from '$app/server';
 import { error } from '@sveltejs/kit';
 import HttpStatusCode from '$lib/shared/HttpStatusCode';
@@ -11,6 +12,9 @@ export const disconnectProvider = command(z.literal(['polarflow', 'strava']), as
 	const user = await getUser();
 	if (provider === 'polarflow') {
 		const result = polarflow.delete(user.id);
+		return result;
+	} else if (provider === 'strava') {
+		const result = strava.delete(user.id);
 		return result;
 	} else {
 		return error(HttpStatusCode.NOT_IMPLEMENTED);

@@ -1,7 +1,4 @@
-type OauthProfileBasic = {
-	name: string;
-	birthday: string; // DD-MM-YYYY
-};
+import type { OauthProfileBasic } from "$lib/shared/types";
 
 type PolarFlowProfile = {
 	basicInfo: {
@@ -21,15 +18,15 @@ class PolarFlow {
 
 		if (!(firstName && lastName && birthday)) {
 			return {
-				name: 'no name',
-				birthday: 'no birthday'
+				primary: 'no_name',
+				secondary: ''
 			};
 		}
 
 		const name = `${firstName.slice(0, 1)}. ${lastName}`.trim();
 		return {
-			name,
-			birthday: birthday.split('-').reverse().join('-')
+			primary: name,
+			secondary: birthday.split('-').reverse().join('-') // YYYY-MM-DD to DD-MM-YYYY
 		};
 	}
 }

@@ -2,7 +2,7 @@
 	import { dashboard_view, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
 	import ExternalLink from './icons/ExternalLink.svelte';
 	import polarflowLogo from './brands/polar_flow.svg';
-	import strava from './brands/strava.svg';
+	import stravaLogo from './brands/strava.svg';
 	import { resolve } from '$app/paths';
 	import type { OAuthProvider } from './server/oauth_connection';
 	import { page } from '$app/state';
@@ -13,6 +13,7 @@
 	import { onMount } from 'svelte';
 	import InfoDismissible from './InfoDismissible.svelte';
 	import polarflow from '$lib/client/polarflow.js';
+	import strava from '$lib/client/strava.js';
 
 	let oauth_success = $state('');
 	onMount(() => {
@@ -40,10 +41,18 @@
 
 	let polarUser = $derived.by(() => {
 		if (!polar_connection) {
-			return { name: '', birthday: '' };
+			return { primary: '', secondary: '' };
 		}
 
 		return polarflow.profileToBasic(polar_connection.externalAccountInfo);
+	});
+
+	let stravaUser = $derived.by(() => {
+		if (!strava_connection) {
+			return { primary: '', secondary: '' };
+		}
+
+		return strava.profileToBasic(strava_connection.externalAccountInfo);
 	});
 </script>
 
@@ -53,7 +62,7 @@
 	<img src={polarflowLogo} alt="" />
 	{#if polar_connection}
 		<div class="account">
-			<p>{polarUser.name}<br />{polarUser.birthday}</p>
+			<p>{polarUser.primary}<br />{polarUser.secondary}</p>
 			<button
 				class="btn-secondary btn-icon"
 				aria-label="disconnect polarflow"
@@ -75,14 +84,31 @@
 			href={resolve('/oauth/polarflow/authorize')}><ExternalLink /></a
 		>
 	{/if}
-	<img src={strava} alt="" />
+	<img src={stravaLogo} alt="" />
 	{#if strava_connection}
-		<p>strava connected</p>
+		<div class="account">
+			<p>
+				{stravaUser.primary}{#if stravaUser.secondary}<br />{stravaUser.secondary}{/if}
+			</p>
+			<button
+				class="btn-secondary btn-icon"
+				aria-label="disconnect strava"
+				onclick={async () => {
+					try {
+						await disconnectProvider('strava');
+						await invalidateAll();
+					} catch (error) {
+						console.error(error);
+						toast.add('Something went wrong!');
+					}
+				}}><CloseIcon /></button
+			>
+		</div>
 	{:else}
 		<a
 			aria-label="connect strava"
 			class="btn btn-secondary btn-icon"
-			href={resolve('/oauth/strava')}><ExternalLink /></a
+			href={resolve('/oauth/strava/authorize')}><ExternalLink /></a
 		>
 	{/if}
 </section>
@@ -90,9 +116,9 @@
 <style>
 	section {
 		display: grid;
-		grid-template-columns: 2fr 1.5fr;
+		grid-template-columns: 2fr 1.75fr;
 		flex-direction: column;
-		row-gap: 0.5rem;
+		row-gap: 1rem;
 		align-items: center;
 
 		& h3 {
@@ -120,8 +146,8 @@
 		& .account {
 			display: flex;
 			flex-direction: row;
-			justify-content: end;
-			align-items: top;
+			justify-content: space-between;
+			align-items: center;
 			column-gap: 1rem;
 			width: 100%;
 

@@ -129,7 +129,7 @@ export async function getAccessToken(
 				provider
 			},
 			expiresAt: {
-				lt: new Date()
+				gt: new Date()
 			}
 		},
 		select: { accessToken: true }
