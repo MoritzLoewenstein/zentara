@@ -4,7 +4,6 @@ import {
 	setOauthState,
 	updateOauthConnection,
 	getAccessToken,
-	getOauthAccountId,
 	deleteConnection,
 	updateOauthAccountInfo
 } from './oauth_connection';
@@ -59,9 +58,11 @@ class PolarFlow {
 
 		const body = await res.json();
 		await updateOauthConnection(user_id, 'polarflow', '', body.access_token, body.refresh_token, body.expires_in);
-		const profile = await this.profile(user_id);
+		const profile = await this.fetchProfile(user_id);
 		if(profile === null) {
 			console.error('PolarFlow profile failed');
+			// rollback oauth connection, we require a successfull fetchProfile call
+			await this.delete(user_id);
 			return false;
 		}
 		await updateOauthAccountInfo(user_id, 'polarflow', profile);
@@ -105,17 +106,12 @@ class PolarFlow {
 		return true;
 	}
 
-	async profile(user_id: string): Promise<JsonObject|null> {
-		const polar_user_id = await getOauthAccountId(user_id, 'polarflow');
-		if (!polar_user_id) {
-			return null;
-		}
-
+	async fetchProfile(user_id: string): Promise<JsonObject|null> {
 		const [_, user] = await this.fetch<JsonObject>(user_id, `/user/account-data`);
 		return user;
 	}
 
-	async activities(user_id: string): Promise<JsonObject[]> {
+	async fetchActivities(user_id: string): Promise<JsonObject[]> {
 		const startDate = new Date();
 		startDate.setMonth(10);
 		startDate.setDate(1);

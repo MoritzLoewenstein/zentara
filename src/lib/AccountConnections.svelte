@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { dashboard_view, DASHBOARD_VIEW } from './client/dashboard.svelte.js';
 	import ExternalLink from './icons/ExternalLink.svelte';
-	import polarflow from './brands/polar_flow.svg';
+	import polarflowLogo from './brands/polar_flow.svg';
 	import strava from './brands/strava.svg';
 	import { resolve } from '$app/paths';
 	import type { OAuthProvider } from './server/oauth_connection';
@@ -12,6 +12,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import InfoDismissible from './InfoDismissible.svelte';
+	import polarflow from '$lib/client/polarflow.js';
 
 	let oauth_success = $state('');
 	onMount(() => {
@@ -42,23 +43,14 @@
 			return { name: '', birthday: '' };
 		}
 
-		return {
-			name: 'John Doe',
-			birthday: '01-01-1970'
-		};
-
-		/* const firstName = polar_connection.externalAccountInfo['first-name'];
-		const lastName = polar_connection.externalAccountInfo['last-name'];
-		const name = `${firstName.slice(0, 1)}. ${lastName}`;
-		const birthday = polar_connection.externalAccountInfo.birthdate.split('-').reverse().join('-');
-		return { name, birthday }; */
+		return polarflow.profileToBasic(polar_connection.externalAccountInfo);
 	});
 </script>
 
 <section class="account-connections">
 	<h3>connect accounts</h3>
 	<InfoDismissible title={`${oauth_success} connection successful!`} show={!!oauth_success} />
-	<img src={polarflow} alt="" />
+	<img src={polarflowLogo} alt="" />
 	{#if polar_connection}
 		<div class="account">
 			<p>{polarUser.name}<br />{polarUser.birthday}</p>
