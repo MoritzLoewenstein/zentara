@@ -23,7 +23,7 @@ class PolarFlow {
 		const url = new URL('https://auth.polar.com/oauth/authorize');
 		url.searchParams.append('response_type', 'code');
 		// https://www.polar.com/polar-api-v4/#scopes
-		const SCOPES = ['profile:read', 'activity:read'];
+		const SCOPES = ['profile:read', 'training_sessions:read'];
 		url.searchParams.append('scope', SCOPES.join(' '));
 		url.searchParams.append('client_id', env.POLARFLOW_CLIENT_ID as string);
 		url.searchParams.append('redirect_uri', this.#getRedirectUrl());
@@ -77,7 +77,7 @@ class PolarFlow {
 		return true;
 	}
 
-	async getAccessToken(user_id: string): Promise<string | null> {
+	async #getAccessToken(user_id: string): Promise<string | null> {
 		const access_token = await getAccessToken(user_id, 'polarflow');
 		if (access_token) {
 			return access_token;
@@ -90,6 +90,7 @@ class PolarFlow {
 		}
 		const searchParams = new URLSearchParams();
 		searchParams.append('grant_type', 'refresh_token');
+		searchParams.append('refresh_token', refresh_token);
 		const polarClientAuth = Buffer.from(
 			`${env.POLARFLOW_CLIENT_ID}:${env.POLARFLOW_CLIENT_SECRET}`
 		).toString('base64');
@@ -121,12 +122,12 @@ class PolarFlow {
 		return body.access_token;
 	}
 
-	async fetch<T>(
+	async #fetch<T>(
 		user_id: string,
 		path: string,
 		options: RequestInit = {}
 	): Promise<[boolean, T | null]> {
-		const access_token = await getAccessToken(user_id, 'polarflow');
+		const access_token = await this.#getAccessToken(user_id);
 		if (access_token === null) {
 			console.error('PolarFlow fetch no access_token');
 			return [false, null];
@@ -163,23 +164,20 @@ class PolarFlow {
 	}
 
 	async fetchProfile(user_id: string): Promise<JsonObject | null> {
-		const [_, user] = await this.fetch<JsonObject>(user_id, `/user/account-data`);
+		const [_, user] = await this.#fetch<JsonObject>(user_id, `/user/account-data`);
 		return user;
 	}
 
 	async fetchActivities(user_id: string): Promise<JsonObject[]> {
 		const startDate = new Date();
-		startDate.setMonth(10);
-		startDate.setDate(1);
+		startDate.setDate(startDate.getDate() - 7);
 		const endDate = new Date();
-		endDate.setMonth(10);
-		endDate.setDate(28);
 		const searchParams = new URLSearchParams();
-		searchParams.append('from', startDate.toISOString().split('T')[0]);
-		searchParams.append('to', endDate.toISOString().split('T')[0]);
-		const [success, activities] = await this.fetch<JsonObject[]>(
+		searchParams.append('from', startDate.toISOString().split('.')[0] );
+		searchParams.append('to', endDate.toISOString().split('.')[0]);
+		const [success, activities] = await this.#fetch<JsonObject[]>(
 			user_id,
-			'/activity/list?' + searchParams.toString()
+			'/training-sessions/list?' + searchParams.toString()
 		);
 		if (!success || activities === null) {
 			return [];

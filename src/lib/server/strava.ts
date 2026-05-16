@@ -23,7 +23,7 @@ class Strava {
 		const url = new URL('https://www.strava.com/oauth/authorize');
 		url.searchParams.append('response_type', 'code');
 		// https://developers.strava.com/docs/authentication/#detailsaboutrequestingaccess
-		const SCOPES = ['read', 'activity:read', 'profile:read_all'];
+		const SCOPES = ['read', 'activity:read_all', 'profile:read_all'];
 		url.searchParams.append('scope', SCOPES.join(','));
 		url.searchParams.append('client_id', env.STRAVA_CLIENT_ID);
 		url.searchParams.append('redirect_uri', this.#getRedirectUrl());
@@ -75,7 +75,7 @@ class Strava {
 		return true;
 	}
 
-	async getAccessToken(user_id: string): Promise<string | null> {
+	async #getAccessToken(user_id: string): Promise<string | null> {
 		const access_token = await getAccessToken(user_id, 'strava');
 		if (access_token) {
 			return access_token;
@@ -118,12 +118,12 @@ class Strava {
 		return body.access_token;
 	}
 
-	async fetch<T>(
+	async #fetch<T>(
 		user_id: string,
 		path: string,
 		options: RequestInit = {}
 	): Promise<[boolean, T | null]> {
-		const access_token = await getAccessToken(user_id, 'strava');
+		const access_token = await this.#getAccessToken(user_id);
 		if (access_token === null) {
 			console.error('Strava fetch no access_token');
 			return [false, null];
@@ -160,8 +160,25 @@ class Strava {
 	}
 
 	async fetchProfile(user_id: string): Promise<JsonObject | null> {
-		const [_, athlete] = await this.fetch<JsonObject>(user_id, '/athlete');
+		const [_, athlete] = await this.#fetch<JsonObject>(user_id, '/athlete');
 		return athlete;
+	}
+
+	async fetchActivities(user_id: string): Promise<JsonObject[] | null> {
+		const startDate = new Date();
+		startDate.setMonth(startDate.getMonth() - 1);
+		const endDate = new Date();
+		const searchParams = new URLSearchParams();
+		searchParams.append('after', (startDate.getTime() / 1000).toFixed(0));
+		searchParams.append('before', (endDate.getTime() / 1000).toFixed(0));
+		const [success, activities] = await this.#fetch<JsonObject[]>(
+			user_id,
+			'/athlete/activities?' + searchParams.toString()
+		);
+		if (!success || activities === null) {
+			return [];
+		}
+		return activities;
 	}
 }
 
