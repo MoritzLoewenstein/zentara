@@ -1,4 +1,4 @@
-import type { OauthProfileBasic } from "$lib/shared/types";
+import type { OauthProfileBasic } from '$lib/shared/types';
 
 type StravaProfile = {
 	firstname: string;
@@ -11,9 +11,10 @@ class Strava {
 	profileToBasic(profile: StravaProfile): OauthProfileBasic {
 		const { firstname, lastname, state, country } = profile;
 
-		const primary = firstname && lastname ? `${firstname.slice(0, 1)}. ${lastname}`.trim() : 'no_name';
+		const primary =
+			firstname && lastname ? `${firstname.slice(0, 1)}. ${lastname}`.trim() : 'no_name';
 		const secondary = state && country ? `${state}, ${country}` : 'no_location';
-		return { primary, secondary}
+		return { primary, secondary };
 	}
 }
 

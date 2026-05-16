@@ -127,8 +127,8 @@ class PolarFlow {
 		options: RequestInit = {}
 	): Promise<[boolean, T | null]> {
 		const access_token = await getAccessToken(user_id, 'polarflow');
-		if(access_token === null) {
-			console.error("PolarFlow fetch no access_token");
+		if (access_token === null) {
+			console.error('PolarFlow fetch no access_token');
 			return [false, null];
 		}
 		const base_url = 'https://www.polaraccesslink.com/v4/data';

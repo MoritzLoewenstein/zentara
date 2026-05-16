@@ -1,4 +1,4 @@
-import type { OauthProfileBasic } from "$lib/shared/types";
+import type { OauthProfileBasic } from '$lib/shared/types';
 
 type PolarFlowProfile = {
 	basicInfo: {

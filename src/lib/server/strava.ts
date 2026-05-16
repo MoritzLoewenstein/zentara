@@ -64,7 +64,6 @@ class Strava {
 			body.refresh_token,
 			body.expires_in
 		);
-		console.log(body);
 		const profile = await this.fetchProfile(user_id);
 		if (profile === null) {
 			console.error('Strava profile failed');
@@ -78,13 +77,11 @@ class Strava {
 
 	async getAccessToken(user_id: string): Promise<string | null> {
 		const access_token = await getAccessToken(user_id, 'strava');
-		console.log("here", access_token);
 		if (access_token) {
 			return access_token;
 		}
 
 		const refresh_token = await getRefreshToken(user_id, 'strava');
-		console.log("here2", refresh_token);
 		if (refresh_token === null) {
 			// not connected or no refresh token in the db
 			return null;
@@ -110,7 +107,6 @@ class Strava {
 		}
 
 		const body = await res.json();
-		console.log(body);
 		await updateOauthConnection(
 			user_id,
 			'strava',
@@ -128,8 +124,8 @@ class Strava {
 		options: RequestInit = {}
 	): Promise<[boolean, T | null]> {
 		const access_token = await getAccessToken(user_id, 'strava');
-		if(access_token === null) {
-			console.error("Strava fetch no access_token");
+		if (access_token === null) {
+			console.error('Strava fetch no access_token');
 			return [false, null];
 		}
 		const base_url = 'https://www.strava.com/api/v3';

@@ -19,8 +19,6 @@ export const GET: RequestHandler = async ({ url, cookies }) => {
 	const code = url.searchParams.get('code');
 	const state = url.searchParams.get('state');
 
-	console.log(code, state);
-
 	//TODO error state display in AccountConnections.svelte
 
 	if (!code || !state) {
