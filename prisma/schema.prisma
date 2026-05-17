@@ -82,3 +82,11 @@ model OAuthConnection {
   @@id([userId, provider])
   @@map("oauth_connections")
 }
+
+model Option {
+  key   String @unique
+  value Json?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
