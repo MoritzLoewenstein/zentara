@@ -158,7 +158,13 @@ export async function getRefreshToken(
 export async function getOauthConnections(user_id: string): Promise<unknown> {
 	const connections = await prisma.oAuthConnection.findMany({
 		where: {
-			userId: user_id
+			userId: user_id,
+			accessToken: {
+				not: null
+			},
+			refreshToken: {
+				not: null
+			}
 		},
 		select: {
 			provider: true,
