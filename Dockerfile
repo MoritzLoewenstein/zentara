@@ -5,10 +5,11 @@ COPY . .
 RUN npm install --include=dev
 
 ARG ORIGIN=http://localhost:3000
+ARG PUBLIC_APP_NAMESPACE=zentara
 
 ENV NODE_ENV=production
 ENV ORIGIN=${ORIGIN}
-ENV PUBLIC_APP_NAMESPACE=zentara
+ENV PUBLIC_APP_NAMESPACE=${PUBLIC_APP_NAMESPACE}
 ENV BODY_SIZE_LIMIT=1000000
 RUN npm run prisma:generate
 RUN npm run build
@@ -32,6 +33,7 @@ EXPOSE 3000
 ENV NODE_ENV=production
 ENV ORIGIN=${ORIGIN}
 ENV BODY_SIZE_LIMIT=1000000
+ENV DATABASE_URL=file:./data/db.sqlite
 
 VOLUME /app/data
 EXPOSE 3000

@@ -1,15 +1,22 @@
-name: 'zentara'
+name: "zentara"
 
 services:
   sveltekit:
     build:
       context: .
-      dockerfile: 'Dockerfile'
+      dockerfile: "Dockerfile"
       args:
         ORIGIN: ${ORIGIN}
-    image: ghcr.io/moritzloewenstein/zentara:latest
+        PUBLIC_APP_NAMESPACE: ${PUBLIC_APP_NAMESPACE:-zentara}
+    image: ghcr.io/moritzloewenstein/zentara:staging
     ports:
-      - '${PORT}:3000'
+      - "${PORT}:3000"
+    environment:
+      ORIGIN: ${ORIGIN}
+      POLARFLOW_CLIENT_ID: ${POLARFLOW_CLIENT_ID}
+      POLARFLOW_CLIENT_SECRET: ${POLARFLOW_CLIENT_SECRET}
+      STRAVA_CLIENT_ID: ${STRAVA_CLIENT_ID}
+      STRAVA_CLIENT_SECRET: ${STRAVA_CLIENT_SECRET}
     volumes:
       - zentara_data:/app/data
 
