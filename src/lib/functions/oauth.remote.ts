@@ -6,7 +6,7 @@ import { getRequestEvent, query } from '$app/server';
 import { error } from '@sveltejs/kit';
 import HttpStatusCode from '$lib/shared/HttpStatusCode';
 import { getSessionUserInfo, updateSession } from '$lib/server/session';
-import { getUnauthorizedData } from '../../routes/+page.server';
+import { getUnauthorizedData } from '$lib/server/unauthorized';
 
 export const disconnectProvider = command(z.literal(['polarflow', 'strava']), async (provider) => {
 	const user = await getUser();
