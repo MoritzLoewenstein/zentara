@@ -27,6 +27,12 @@
 		}
 	});
 
+	$effect(() => {
+		if (dashboard_view.value !== DASHBOARD_VIEW.SETTINGS) {
+			oauth_success = '';
+		}
+	});
+
 	let polar_connection = $derived(
 		page.data.oauth_connections.find(
 			(conn: { provider: OAuthProvider }) => conn.provider === 'polarflow'
