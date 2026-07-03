@@ -27,7 +27,8 @@ class OptionClass {
 	}
 
 	async delete(key: string): Promise<void> {
-		await prisma.option.delete({
+		// deleteMany: do not error if option does not exist
+		await prisma.option.deleteMany({
 			where: {
 				key
 			}
