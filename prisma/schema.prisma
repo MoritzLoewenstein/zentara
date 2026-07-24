@@ -19,6 +19,7 @@ model User {
   sessions         Session[]
   dashboard        Dashboard?
   oauthConnections OAuthConnection[]
+  userOptions       UserOption[]
 
   @@map("users")
 }
@@ -89,4 +90,16 @@ model Option {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model UserOption {
+  userId String @map("user_id")
+  key    String
+  value  Json?
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@id([userId, key])
 }
