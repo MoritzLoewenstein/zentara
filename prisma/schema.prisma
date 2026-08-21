@@ -19,7 +19,8 @@ model User {
   sessions         Session[]
   dashboard        Dashboard?
   oauthConnections OAuthConnection[]
-  userOptions       UserOption[]
+  userOptions      UserOption[]
+  userRecords       UserRecord[]
 
   @@map("users")
 }
@@ -102,4 +103,18 @@ model UserOption {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@id([userId, key])
+}
+
+model UserRecord {
+  id         String  @id @default(cuid())
+  userId     String  @map("user_id")
+  recordType String  @map("record_type")
+  value      Json
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, recordType])
 }
