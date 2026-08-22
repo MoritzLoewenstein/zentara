@@ -23,7 +23,7 @@ class OptionClass {
 	async get<T = JsonValue>(key: string): Promise<T | null> {
 		const row = await prisma.option.findUnique({
 			select: {
-				value: true,
+				value: true
 			},
 			where: {
 				key

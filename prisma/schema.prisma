@@ -20,7 +20,7 @@ model User {
   dashboard        Dashboard?
   oauthConnections OAuthConnection[]
   userOptions      UserOption[]
-  userRecords       UserRecord[]
+  userRecords      UserRecord[]
 
   @@map("users")
 }
@@ -106,9 +106,9 @@ model UserOption {
 }
 
 model UserRecord {
-  id         String  @id @default(cuid())
-  userId     String  @map("user_id")
-  recordType String  @map("record_type")
+  id         String @id @default(cuid())
+  userId     String @map("user_id")
+  recordType String @map("record_type")
   value      Json
 
   createdAt DateTime @default(now()) @map("created_at")
