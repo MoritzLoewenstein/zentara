@@ -22,7 +22,7 @@ export async function createInvite(user_id: string, email: string): Promise<User
 
 	await prisma.userInvite.create({
 		select: {
-			token: true,
+			token: true
 		},
 		data: {
 			userId: user_id,
@@ -91,6 +91,7 @@ export async function verifyInvite(invite_token: string): Promise<string | false
 	}
 
 	await prisma.userInvite.delete({
+		select: { token: true },
 		where: { token: invite_token }
 	});
 

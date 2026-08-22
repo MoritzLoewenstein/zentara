@@ -33,6 +33,7 @@ export interface Dashboard {
 export async function saveDashboard(user_id: string, dashboard_config: Dashboard): Promise<void> {
 	const config = JSON.stringify(dashboard_config);
 	await prisma.dashboard.upsert({
+		select: { userId: true },
 		where: { userId: user_id },
 		update: { config },
 		create: { userId: user_id, config }

@@ -10,6 +10,7 @@ export async function setOauthState(
 	oauth_state: string
 ): Promise<void> {
 	await prisma.oAuthConnection.upsert({
+		select: { userId: true },
 		where: {
 			userId_provider: {
 				userId: user_id,
@@ -53,6 +54,7 @@ export async function verifyOauthState(
 	const oauth_state_valid = crypto.timingSafeEqual(oauth_state_buf, oauth_state_expected_buf);
 	if (oauth_state_valid) {
 		await prisma.oAuthConnection.update({
+			select: { userId: true },
 			where: {
 				userId_provider: {
 					userId: user_id,
@@ -77,6 +79,7 @@ export async function updateOauthConnection(
 	const expiresAt = Math.floor(Date.now() / 1000) + expires_in - 60;
 	const expiresAtDate = new Date(expiresAt * 1000);
 	await prisma.oAuthConnection.upsert({
+		select: { userId: true },
 		where: {
 			userId_provider: {
 				userId: user_id,
@@ -106,6 +109,7 @@ export async function updateOauthAccountInfo(
 	external_account_info: JsonObject
 ): Promise<void> {
 	await prisma.oAuthConnection.update({
+		select: { userId: true },
 		where: {
 			userId_provider: {
 				userId: user_id,
@@ -168,7 +172,6 @@ export async function getOauthConnections(user_id: string): Promise<unknown> {
 		},
 		select: {
 			provider: true,
-			externalAccountId: true,
 			externalAccountInfo: true
 		}
 	});
@@ -212,6 +215,7 @@ export async function getConnectionStatus(
 
 export async function deleteConnection(user_id: string, provider: OAuthProvider): Promise<void> {
 	await prisma.oAuthConnection.delete({
+		select: { userId: true },
 		where: {
 			userId_provider: {
 				userId: user_id,

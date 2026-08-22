@@ -16,6 +16,7 @@ interface SessionUserInfo {
 export async function createSession(user_id: string): Promise<string> {
 	const session_id = token();
 	await prisma.session.create({
+		select: { id: true },
 		data: {
 			id: session_id,
 			userId: user_id
@@ -32,7 +33,18 @@ export async function getSessionUserInfo(session_id: string): Promise<SessionUse
 
 	const session = await prisma.session.findUnique({
 		where: { id: session_id },
-		include: { user: true }
+		select: {
+			createdAt: true,
+			updatedAt: true,
+			user: {
+				select: {
+					id: true,
+					email: true,
+					isAdmin: true,
+					createdAt: true
+				}
+			}
+		}
 	});
 
 	if (
@@ -54,6 +66,7 @@ export async function getSessionUserInfo(session_id: string): Promise<SessionUse
 
 export async function updateSession(session_id: string): Promise<void> {
 	await prisma.session.update({
+		select: { id: true },
 		where: { id: session_id },
 		data: { updatedAt: new Date() }
 	});
@@ -61,6 +74,7 @@ export async function updateSession(session_id: string): Promise<void> {
 
 export async function invalidateSession(session_id: string): Promise<void> {
 	await prisma.session.delete({
+		select: { id: true },
 		where: { id: session_id }
 	});
 }

@@ -38,6 +38,7 @@ export async function useRecoveryCode(email: string, code: string): Promise<stri
 		const valid = await argon2.verify(hashed_code, code);
 		if (valid) {
 			await prisma.userRecoveryCode.delete({
+				select: { code: true },
 				where: {
 					userId_code: {
 						userId,

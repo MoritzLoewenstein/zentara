@@ -27,6 +27,7 @@ export async function createFirstUser(email: string, password: string): Promise<
 	}
 
 	await prisma.user.create({
+		select: { id: true },
 		data: {
 			id: user_id,
 			email,
@@ -47,6 +48,7 @@ export async function createUser(email: string, password: string): Promise<User>
 	const hashed_password = await argon2.hash(password);
 
 	await prisma.user.create({
+		select: { id: true },
 		data: {
 			id: user_id,
 			email,
@@ -78,6 +80,7 @@ export async function getUser(user_id: string): Promise<User | null> {
 export async function updateUserPassword(user_id: string, password: string): Promise<void> {
 	const hashed_password = await argon2.hash(password);
 	await prisma.user.update({
+		select: { id: true },
 		where: { id: user_id },
 		data: { password: hashed_password }
 	});
