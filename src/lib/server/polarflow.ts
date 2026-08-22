@@ -13,10 +13,13 @@ import { dev } from '$app/environment';
 import type { JsonObject } from '@prisma/client/runtime/client';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import option from './option';
+import { cuid } from './util/cuid';
 
 const POLARFLOW_WEBHOOK_SECRET_KEY = 'polarflow.webhook.signature_secret';
 
 class PolarFlow {
+	#recordType: string | null = null;
+
 	#getRedirectUrl() {
 		return dev
 			? 'https://redir.monilo.org/http://localhost:5173/oauth/polarflow/callback'
@@ -32,6 +35,14 @@ class PolarFlow {
 			'Basic ' +
 			Buffer.from(`${env.POLARFLOW_CLIENT_ID}:${env.POLARFLOW_CLIENT_SECRET}`).toString('base64')
 		);
+	}
+
+	async init(): Promise<void> {
+		const [recordType] = await Promise.all([
+			option.getOrInsert<string>('POLARFLOW_RECORD_TYPE', cuid()),
+			this.#registerWebhook()
+		]);
+		this.#recordType = recordType;
 	}
 
 	async getAuthUrl(user_id: string): Promise<string> {
@@ -192,7 +203,7 @@ class PolarFlow {
 	 * verify incoming webhook payloads. This key cannot be retrieved later,
 	 * so it is persisted in the Option store.
 	 */
-	async registerWebhook(): Promise<void> {
+	async #registerWebhook(): Promise<void> {
 		if (dev) {
 			console.info('polarflow: skipping webhook registration in dev');
 			return;

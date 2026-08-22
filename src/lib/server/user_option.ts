@@ -4,6 +4,9 @@ import { prisma } from './db';
 class UserOptionClass {
 	async set(userId: string, key: string, value: JsonValue): Promise<void> {
 		await prisma.userOption.upsert({
+			select: {
+				userId: true
+			},
 			create: {
 				userId,
 				key,
@@ -21,8 +24,11 @@ class UserOptionClass {
 		});
 	}
 
-	async get(userId: string, key: string): Promise<JsonValue> {
+	async get<T = JsonValue>(userId: string, key: string): Promise<T | null> {
 		const row = await prisma.userOption.findUnique({
+			select: {
+				value: true
+			},
 			where: {
 				userId_key: {
 					userId,
@@ -30,7 +36,7 @@ class UserOptionClass {
 				}
 			}
 		});
-		return row?.value || null;
+		return (row?.value as T) || null;
 	}
 
 	async delete(userId: string, key: string): Promise<void> {

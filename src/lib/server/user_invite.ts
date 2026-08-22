@@ -21,6 +21,9 @@ export async function createInvite(user_id: string, email: string): Promise<User
 	const valid_until = Math.floor(now.getTime() / 1000) + INVITE_TOKEN_TIMEOUT;
 
 	await prisma.userInvite.create({
+		select: {
+			token: true,
+		},
 		data: {
 			userId: user_id,
 			token: invite_token,

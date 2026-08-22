@@ -4,8 +4,7 @@ import polarflow from '$lib/server/polarflow';
 import type { HandleServerError } from '@sveltejs/kit';
 
 db.init();
-strava.registerWebhook();
-polarflow.registerWebhook();
+await Promise.all([strava.init(), polarflow.init()]);
 
 export const handleError: HandleServerError = async ({ error, message }) => {
 	console.error(error);

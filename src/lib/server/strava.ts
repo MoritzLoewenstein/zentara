@@ -13,10 +13,13 @@ import { dev } from '$app/environment';
 import type { JsonObject } from '@prisma/client/runtime/client';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import option from './option';
+import { cuid } from './util/cuid';
 
 const STRAVA_WEBHOOK_VERIFY_TOKEN_KEY = 'strava.webhook.verify_token';
 
 class Strava {
+	#recordType: string | null = null;
+
 	#getRedirectUrl() {
 		return dev
 			? 'http://localhost:5173/oauth/strava/callback'
@@ -27,6 +30,14 @@ class Strava {
 		return dev
 			? 'https://hooks.monilo.org/hook/01KRVSRT0A6VTXKBN3DYVQEKMB'
 			: `${env.ORIGIN}/api/webhook/strava`;
+	}
+
+	async init(): Promise<void> {
+		const [recordType] = await Promise.all([
+			option.getOrInsert<string>('STRAVA_RECORD_TYPE', cuid()),
+			this.#registerWebhook()
+		]);
+		this.#recordType = recordType;
 	}
 
 	async getAuthUrl(user_id: string): Promise<string> {
@@ -179,7 +190,7 @@ class Strava {
 	 * Strava only allows a single subscription per application.
 	 * https://developers.strava.com/docs/webhooks/
 	 */
-	async registerWebhook(): Promise<void> {
+	async #registerWebhook(): Promise<void> {
 		if (dev) {
 			console.info('strava: skipping webhook registration in dev');
 			return;
