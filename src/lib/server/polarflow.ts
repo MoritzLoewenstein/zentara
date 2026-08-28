@@ -83,7 +83,6 @@ class PolarFlow {
 		await updateOauthConnection(
 			user_id,
 			'polarflow',
-			'',
 			body.access_token,
 			body.refresh_token,
 			body.expires_in
@@ -136,7 +135,6 @@ class PolarFlow {
 		await updateOauthConnection(
 			user_id,
 			'polarflow',
-			'',
 			body.access_token,
 			body.refresh_token,
 			body.expires_in

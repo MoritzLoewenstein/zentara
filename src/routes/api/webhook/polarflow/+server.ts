@@ -27,6 +27,6 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	// TODO: dispatch event for processing
-	console.info("polarflow webhook: ", event, rawBody);
+	console.info('polarflow webhook: ', event, rawBody);
 	return new Response(null, { status: 200 });
 };

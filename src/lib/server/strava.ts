@@ -75,7 +75,6 @@ class Strava {
 		await updateOauthConnection(
 			user_id,
 			'strava',
-			athlete_id,
 			body.access_token,
 			body.refresh_token,
 			body.expires_in
@@ -84,10 +83,10 @@ class Strava {
 		if (profile === null) {
 			console.error('Strava profile failed');
 			// rollback oauth connection, we require a successfull fetchProfile call
-			//await this.delete(user_id);
+			await this.delete(user_id);
 			return false;
 		}
-		await updateOauthAccountInfo(user_id, 'strava', profile);
+		await updateOauthAccountInfo(user_id, 'strava', profile, athlete_id);
 		return true;
 	}
 
@@ -126,7 +125,6 @@ class Strava {
 		await updateOauthConnection(
 			user_id,
 			'strava',
-			'',
 			body.access_token,
 			body.refresh_token,
 			body.expires_in

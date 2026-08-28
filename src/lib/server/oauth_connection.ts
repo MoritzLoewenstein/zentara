@@ -70,7 +70,6 @@ export async function verifyOauthState(
 export async function updateOauthConnection(
 	user_id: string,
 	provider: OAuthProvider,
-	external_account_id: string,
 	access_token: string,
 	refresh_token: string,
 	expires_in: number
@@ -87,7 +86,6 @@ export async function updateOauthConnection(
 			}
 		},
 		update: {
-			externalAccountId: external_account_id,
 			accessToken: access_token,
 			refreshToken: refresh_token,
 			expiresAt: expiresAtDate
@@ -95,7 +93,6 @@ export async function updateOauthConnection(
 		create: {
 			userId: user_id,
 			provider,
-			externalAccountId: external_account_id,
 			accessToken: access_token,
 			refreshToken: refresh_token,
 			expiresAt: expiresAtDate
