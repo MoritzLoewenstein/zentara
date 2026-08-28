@@ -31,8 +31,11 @@ jobs:
           npm run prisma:generate
           rm -rf .env
 
-      - name: Run check
-        run: npm run check
+      - name: npm run check
+        run: |
+          echo "${{ vars.ENV_FILE }}" > .env
+          npm run check
+          rm -rf .env
 
       - name: Run lint
         run: npm run lint
