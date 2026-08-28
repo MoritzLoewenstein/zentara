@@ -70,7 +70,7 @@ class Strava {
 
 		if (!res.ok) {
 			const body = await res.json();
-			console.error('Strava receiveAccessToken failed', res.status, body);
+			console.error('strava: receiveAccessToken failed', res.status, body);
 			return false;
 		}
 
@@ -85,7 +85,7 @@ class Strava {
 		);
 		const profile = await this.fetchProfile(user_id);
 		if (profile === null) {
-			console.error('Strava profile failed');
+			console.error('strava: profile failed');
 			// rollback oauth connection, we require a successfull fetchProfile call
 			await this.delete(user_id);
 			return false;
@@ -121,7 +121,7 @@ class Strava {
 
 		if (!res.ok) {
 			const body = await res.json();
-			console.error('Strava getAccessToken failed', res.status, body);
+			console.error('strava: getAccessToken failed', res.status, body);
 			return null;
 		}
 
@@ -143,7 +143,7 @@ class Strava {
 	): Promise<[boolean, T | null]> {
 		const access_token = await this.#getAccessToken(user_id);
 		if (access_token === null) {
-			console.error('Strava fetch no access_token');
+			console.error('strava: fetch no access_token');
 			return [false, null];
 		}
 		const base_url = 'https://www.strava.com/api/v3';
@@ -269,7 +269,6 @@ class Strava {
 		if (mode !== 'subscribe' || !challenge || !verify_token) {
 			return null;
 		}
-		console.info(mode, challenge, verify_token);
 		const stored = await option.get(STRAVA_WEBHOOK_VERIFY_TOKEN_KEY);
 		if (typeof stored !== 'string') {
 			return null;

@@ -80,7 +80,7 @@ class PolarFlow {
 
 		if (!res.ok) {
 			const body = await res.json();
-			console.error('PolarFlow receiveAccessToken failed', res.status, body);
+			console.error('polarflow: receiveAccessToken failed', res.status, body);
 			return false;
 		}
 
@@ -94,7 +94,7 @@ class PolarFlow {
 		);
 		const profile = await this.fetchProfile(user_id);
 		if (profile === null) {
-			console.error('PolarFlow profile failed');
+			console.error('polarflow: profile failed');
 			// rollback oauth connection, we require a successfull fetchProfile call
 			await this.delete(user_id);
 			return false;
@@ -132,7 +132,7 @@ class PolarFlow {
 
 		if (!res.ok) {
 			const body = await res.json();
-			console.error('PolarFlow getAccessToken failed', res.status, body);
+			console.error('polarflow: getAccessToken failed', res.status, body);
 			return null;
 		}
 
@@ -154,7 +154,7 @@ class PolarFlow {
 	): Promise<[boolean, T | null]> {
 		const access_token = await this.#getAccessToken(user_id);
 		if (access_token === null) {
-			console.error('PolarFlow fetch no access_token');
+			console.error('polarflow: fetch no access_token');
 			return [false, null];
 		}
 		const base_url = 'https://www.polaraccesslink.com/v4/data';
