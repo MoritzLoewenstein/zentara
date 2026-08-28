@@ -27,5 +27,6 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	// TODO: dispatch event for processing
+	console.info("strava webhook: ", rawBody);
 	return new Response(null, { status: 200 });
 };

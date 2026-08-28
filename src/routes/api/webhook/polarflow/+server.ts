@@ -20,11 +20,13 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	const rawBody = await request.text();
-	if (!(await polarflow.verifyWebhookSignature(signature, rawBody))) {
+	const signatureValid = await polarflow.verifyWebhookSignature(signature, rawBody);
+	if (!signatureValid) {
 		console.warn('polarflow webhook: invalid signature', { event });
 		return new Response(null, { status: 401 });
 	}
 
 	// TODO: dispatch event for processing
+	console.info("polarflow webhook: ", event, rawBody);
 	return new Response(null, { status: 200 });
 };
