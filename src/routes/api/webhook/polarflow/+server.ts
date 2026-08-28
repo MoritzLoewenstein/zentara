@@ -6,8 +6,6 @@ import polarflow from '$lib/server/polarflow';
 // https://www.polar.com/accesslink-api/#webhooks
 export const POST: RequestHandler = async ({ request }) => {
 	const event = request.headers.get('polar-webhook-event');
-	const signature = request.headers.get('polar-webhook-signature');
-	const rawBody = await request.text();
 
 	// PING is sent during webhook (re-)registration / activation. The signing
 	// secret is only returned in the create response, so on first registration
@@ -16,6 +14,12 @@ export const POST: RequestHandler = async ({ request }) => {
 		return new Response(null, { status: 200 });
 	}
 
+	const signature = request.headers.get('polar-webhook-signature');
+	if (event === null || signature === null) {
+		return new Response(null, { status: 404 });
+	}
+
+	const rawBody = await request.text();
 	if (!(await polarflow.verifyWebhookSignature(signature, rawBody))) {
 		console.warn('polarflow webhook: invalid signature', { event });
 		return new Response(null, { status: 401 });
