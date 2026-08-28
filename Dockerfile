@@ -1,5 +1,5 @@
 # step 1: build sveltekit app
-FROM node:24-slim AS builder
+FROM node:24 AS builder
 WORKDIR /app
 COPY . .
 RUN npm install --include=dev
