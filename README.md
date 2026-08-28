@@ -31,7 +31,7 @@ Because of the simple architecture, Zentara should be easy to run on any server.
 Use the `-d` flag to run the container in the background.
 
 ```bash
-docker run -p 3000:3000 -e ORIGIN="https://zentara.example.org" ghcr.io/moritzloewenstein/zentara/zentara:latest
+docker run -p 3000:3000 -e ORIGIN="https://zentara.example.org" ghcr.io/moritzloewenstein/zentara:latest
 # Listening on http://0.0.0.0:3000
 ```
 
