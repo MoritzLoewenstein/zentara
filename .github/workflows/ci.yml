@@ -17,6 +17,9 @@ jobs:
     needs: check
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ghcr-release.yml
+    permissions:
+      contents: read
+      packages: write
     secrets: inherit
     concurrency:
       group: docker-build
