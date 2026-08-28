@@ -16,7 +16,7 @@ RUN npm run build
 RUN npm prune --omit=dev
 
 # step 2: copy sveltekit build output to a new image
-FROM node:24-alpine
+FROM node:24-slim
 WORKDIR /app
 COPY --from=builder /app/build build/
 COPY --from=builder /app/static static/
