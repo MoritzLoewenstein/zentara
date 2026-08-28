@@ -25,6 +25,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: npm run prisma:generate
+        run: |
+          echo "${{ vars.ENV_FILE }}" > .env
+          npm run prisma:generate
+          rm -rf .env
+
       - name: Run check
         run: npm run check
 
