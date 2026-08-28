@@ -1,8 +1,5 @@
-name: Release Image to GHCR
-
 on:
-  push:
-    branches: [main]
+  workflow_call:
 
 jobs:
   release:
