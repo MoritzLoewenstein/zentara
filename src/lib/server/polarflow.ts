@@ -223,20 +223,25 @@ class PolarFlow {
 
 			if (getRes.ok) {
 				const body = await getRes.json();
-				const existing = body?.data;
+				const webhooks: Array<{ id: string; url: string }> = Array.isArray(body?.data)
+					? body.data
+					: [];
+
 				const haveSecret = (await option.get(POLARFLOW_WEBHOOK_SECRET_KEY)) !== null;
-				if (existing?.url === callback_url && haveSecret) {
-					console.info('polarflow: webhook already registered, id=', existing.id);
+				const exactMatch = webhooks.find((w) => w.url === callback_url);
+				if (exactMatch && haveSecret) {
+					console.info('polarflow: webhook already registered, id=', exactMatch.id);
 					return;
 				}
-				if (existing?.id) {
-					console.warn('polarflow: deleting existing webhook to recreate', existing.url);
-					await fetch(`https://www.polaraccesslink.com/v3/webhooks/${existing.id}`, {
+
+				for (const hook of webhooks) {
+					console.warn('polarflow: deleting existing webhook to recreate', hook.url, hook.id);
+					await fetch(`https://www.polaraccesslink.com/v3/webhooks/${hook.id}`, {
 						method: 'DELETE',
 						headers: { Authorization: this.#getBasicAuthHeader() }
 					});
-					await option.delete(POLARFLOW_WEBHOOK_SECRET_KEY);
 				}
+				await option.delete(POLARFLOW_WEBHOOK_SECRET_KEY);
 			} else if (getRes.status !== HttpStatusCode.NOT_FOUND) {
 				console.error('polarflow: failed to get webhook', getRes.status, await getRes.text());
 				return;

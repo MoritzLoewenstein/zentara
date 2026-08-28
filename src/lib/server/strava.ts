@@ -239,12 +239,13 @@ class Strava {
 				headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
 				body: createBody
 			});
+			// single-use
+			await option.delete(STRAVA_WEBHOOK_VERIFY_TOKEN_KEY);
 			if (!createRes.ok) {
 				console.error(
 					'strava: failed to register webhook',
 					createRes.status,
-					await createRes.text(),
-					callback_url
+					await createRes.text()
 				);
 				await option.delete(STRAVA_WEBHOOK_VERIFY_TOKEN_KEY);
 				return;
@@ -278,8 +279,6 @@ class Strava {
 		if (a.length !== b.length || !timingSafeEqual(a, b)) {
 			return null;
 		}
-		// single-use
-		await option.delete(STRAVA_WEBHOOK_VERIFY_TOKEN_KEY);
 		return challenge;
 	}
 
