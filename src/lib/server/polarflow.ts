@@ -18,6 +18,7 @@ import type { PolarFlowProfile } from '$lib/shared/types';
 const POLARFLOW_WEBHOOK_SECRET_KEY = 'polarflow.webhook.signature_secret';
 
 class PolarFlow {
+	// eslint-disable-next-line no-unused-private-class-members
 	#recordType = 'polar.activity.v1';
 
 	#getRedirectUrl() {

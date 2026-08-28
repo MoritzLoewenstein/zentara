@@ -17,6 +17,7 @@ import option from './option';
 const STRAVA_WEBHOOK_VERIFY_TOKEN_KEY = 'strava.webhook.verify_token';
 
 class Strava {
+	// eslint-disable-next-line no-unused-private-class-members
 	#recordType = 'strava.activity.v1';
 
 	#getRedirectUrl() {
