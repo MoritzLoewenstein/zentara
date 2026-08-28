@@ -13,6 +13,7 @@ import { dev } from '$app/environment';
 import type { JsonObject } from '@prisma/client/runtime/client';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import option from './option';
+import type { RouteId } from '$app/types';
 
 const STRAVA_WEBHOOK_VERIFY_TOKEN_KEY = 'strava.webhook.verify_token';
 
@@ -21,15 +22,17 @@ class Strava {
 	#recordType = 'strava.activity.v1';
 
 	#getRedirectUrl() {
-		return dev
-			? 'http://localhost:5173/oauth/strava/callback'
-			: `${env.ORIGIN}/oauth/strava/callback`;
+		const route: RouteId = '/oauth/strava/callback';
+		const host = dev ? 'http://localhost:5173' : env.ORIGIN;
+		return host + route;
 	}
 
 	#getWebhookCallbackUrl(): string {
-		return dev
-			? 'https://hooks.monilo.org/hook/01KRVSRT0A6VTXKBN3DYVQEKMB'
-			: `${env.ORIGIN}/api/webhook/strava`;
+		if (dev) {
+			return 'https://hooks.monilo.org/hook/01KRVSRT0A6VTXKBN3DYVQEKMB';
+		}
+		const route: RouteId = '/api/webhook/strava';
+		return env.ORIGIN + route;
 	}
 
 	async init(): Promise<void> {
@@ -240,7 +243,8 @@ class Strava {
 				console.error(
 					'strava: failed to register webhook',
 					createRes.status,
-					await createRes.text()
+					await createRes.text(),
+					callback_url
 				);
 				await option.delete(STRAVA_WEBHOOK_VERIFY_TOKEN_KEY);
 				return;
@@ -264,6 +268,7 @@ class Strava {
 		if (mode !== 'subscribe' || !challenge || !verify_token) {
 			return null;
 		}
+		console.info(mode, challenge, verify_token);
 		const stored = await option.get(STRAVA_WEBHOOK_VERIFY_TOKEN_KEY);
 		if (typeof stored !== 'string') {
 			return null;

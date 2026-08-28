@@ -10,7 +10,7 @@ export const GET: RequestHandler = async ({ url }) => {
 	if (challenge === null) {
 		return new Response(null, { status: 403 });
 	}
-	return json({ 'hub.challenge': challenge });
+	return json({ 'hub.challenge': challenge }, { status: 200 });
 };
 
 // Strava webhook event delivery. Must respond 200 within 2 seconds.

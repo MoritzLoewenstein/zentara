@@ -14,6 +14,7 @@ import type { JsonObject } from '@prisma/client/runtime/client';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import option from './option';
 import type { PolarFlowProfile } from '$lib/shared/types';
+import type { RouteId } from '$app/types';
 
 const POLARFLOW_WEBHOOK_SECRET_KEY = 'polarflow.webhook.signature_secret';
 
@@ -22,13 +23,16 @@ class PolarFlow {
 	#recordType = 'polar.activity.v1';
 
 	#getRedirectUrl() {
-		return dev
-			? 'https://redir.monilo.org/http://localhost:5173/oauth/polarflow/callback'
-			: `${env.ORIGIN}/oauth/polarflow/callback`;
+		const route: RouteId = '/oauth/polarflow/callback';
+		if (dev) {
+			return `https://redir.monilo.org/http://localhost:5173${route}`;
+		}
+		return env.ORIGIN + route;
 	}
 
 	#getWebhookCallbackUrl(): string {
-		return `${env.ORIGIN}/api/webhook/polarflow`;
+		const route: RouteId = '/api/webhook/polarflow';
+		return env.ORIGIN + route;
 	}
 
 	#getBasicAuthHeader(): string {
