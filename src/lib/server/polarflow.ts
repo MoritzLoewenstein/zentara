@@ -13,12 +13,12 @@ import { dev } from '$app/environment';
 import type { JsonObject } from '@prisma/client/runtime/client';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import option from './option';
-import { cuid } from './util/cuid';
+import type { PolarFlowProfile } from '$lib/shared/types';
 
 const POLARFLOW_WEBHOOK_SECRET_KEY = 'polarflow.webhook.signature_secret';
 
 class PolarFlow {
-	#recordType: string | null = null;
+	#recordType = 'polar.activity.v1';
 
 	#getRedirectUrl() {
 		return dev
@@ -38,11 +38,7 @@ class PolarFlow {
 	}
 
 	async init(): Promise<void> {
-		const [recordType] = await Promise.all([
-			option.getOrInsert<string>('POLARFLOW_RECORD_TYPE', cuid()),
-			this.#registerWebhook()
-		]);
-		this.#recordType = recordType;
+		await this.#registerWebhook();
 	}
 
 	async getAuthUrl(user_id: string): Promise<string> {
@@ -99,7 +95,7 @@ class PolarFlow {
 			await this.delete(user_id);
 			return false;
 		}
-		await updateOauthAccountInfo(user_id, 'polarflow', profile);
+		await updateOauthAccountInfo(user_id, 'polarflow', profile, profile.basicInfo.email);
 		return true;
 	}
 
@@ -189,8 +185,8 @@ class PolarFlow {
 		return true;
 	}
 
-	async fetchProfile(user_id: string): Promise<JsonObject | null> {
-		const [_, user] = await this.#fetch<JsonObject>(user_id, `/user/account-data`);
+	async fetchProfile(user_id: string): Promise<PolarFlowProfile | null> {
+		const [_, user] = await this.#fetch<PolarFlowProfile>(user_id, `/user/account-data`);
 		return user;
 	}
 

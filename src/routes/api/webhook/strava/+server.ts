@@ -16,9 +16,12 @@ export const GET: RequestHandler = async ({ url }) => {
 // Strava webhook event delivery. Must respond 200 within 2 seconds.
 export const POST: RequestHandler = async ({ request }) => {
 	const signature = request.headers.get('x-strava-signature');
-	const rawBody = await request.text();
+	if (signature === null) {
+		return new Response(null, { status: 404 });
+	}
 
-	if (signature && !strava.verifyWebhookSignature(signature, rawBody)) {
+	const rawBody = await request.text();
+	if (!strava.verifyWebhookSignature(signature, rawBody)) {
 		console.warn('strava webhook: invalid signature');
 		return new Response(null, { status: 401 });
 	}

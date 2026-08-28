@@ -13,12 +13,11 @@ import { dev } from '$app/environment';
 import type { JsonObject } from '@prisma/client/runtime/client';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import option from './option';
-import { cuid } from './util/cuid';
 
 const STRAVA_WEBHOOK_VERIFY_TOKEN_KEY = 'strava.webhook.verify_token';
 
 class Strava {
-	#recordType: string | null = null;
+	#recordType = 'strava.activity.v1';
 
 	#getRedirectUrl() {
 		return dev
@@ -33,11 +32,7 @@ class Strava {
 	}
 
 	async init(): Promise<void> {
-		const [recordType] = await Promise.all([
-			option.getOrInsert<string>('STRAVA_RECORD_TYPE', cuid()),
-			this.#registerWebhook()
-		]);
-		this.#recordType = recordType;
+		await this.#registerWebhook();
 	}
 
 	async getAuthUrl(user_id: string): Promise<string> {

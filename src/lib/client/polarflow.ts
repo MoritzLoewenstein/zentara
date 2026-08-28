@@ -1,14 +1,4 @@
-import type { OauthProfileBasic } from '$lib/shared/types';
-
-type PolarFlowProfile = {
-	basicInfo: {
-		firstName: string;
-		lastName: string;
-	};
-	physicalInformation: {
-		birthday: string; // YYYY-MM-DD
-	};
-};
+import type { OauthProfileBasic, PolarFlowProfile } from '$lib/shared/types';
 
 class PolarFlow {
 	profileToBasic(profile: PolarFlowProfile): OauthProfileBasic {

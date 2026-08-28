@@ -32,6 +32,35 @@ class UserRecordClass {
 		});
 	}
 
+	async upsertExternal(
+		userId: string,
+		recordType: string,
+		externalId: string,
+		value: Exclude<JsonValue, null>
+	): Promise<void> {
+		await prisma.userRecord.upsert({
+			select: {
+				id: true
+			},
+			create: {
+				userId,
+				externalId,
+				recordType,
+				value
+			},
+			update: {
+				value
+			},
+			where: {
+				userId_recordType_externalId: {
+					userId,
+					recordType,
+					externalId
+				}
+			}
+		});
+	}
+
 	async getSingle(userId: string, id: string): Promise<UserRecord | null> {
 		const row = await prisma.userRecord.findUnique({
 			where: {

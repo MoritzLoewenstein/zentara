@@ -106,7 +106,8 @@ export async function updateOauthConnection(
 export async function updateOauthAccountInfo(
 	user_id: string,
 	provider: OAuthProvider,
-	external_account_info: JsonObject
+	external_account_info: JsonObject,
+	external_account_id?: string
 ): Promise<void> {
 	await prisma.oAuthConnection.update({
 		select: { userId: true },
@@ -117,7 +118,8 @@ export async function updateOauthAccountInfo(
 			}
 		},
 		data: {
-			externalAccountInfo: external_account_info
+			externalAccountInfo: external_account_info,
+			externalAccountId: external_account_id ?? undefined
 		}
 	});
 }

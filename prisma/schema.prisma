@@ -82,6 +82,7 @@ model OAuthConnection {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, provider])
+  @@unique([provider, externalAccountId])
   @@map("oauth_connections")
 }
 
@@ -106,9 +107,10 @@ model UserOption {
 }
 
 model UserRecord {
-  id         String @id @default(cuid())
-  userId     String @map("user_id")
-  recordType String @map("record_type")
+  id         String  @id @default(cuid())
+  externalId String? @map("external_id")
+  userId     String  @map("user_id")
+  recordType String  @map("record_type")
   value      Json
 
   createdAt DateTime @default(now()) @map("created_at")
@@ -116,5 +118,6 @@ model UserRecord {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, recordType, externalId])
   @@index([userId, recordType])
 }
